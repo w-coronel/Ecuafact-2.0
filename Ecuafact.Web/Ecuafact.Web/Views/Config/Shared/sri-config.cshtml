@@ -1,0 +1,126 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+@{
+    var buttonText = "Conectar";
+
+    var ruc = "0000000000";
+    var nombre = "Usuario Desconocido";
+    var sri = false;
+    var messages = new List<string>();
+    var pro = false;
+
+    if (SessionInfo.Issuer != null)
+    {
+        ruc = SessionInfo.Issuer.RUC;
+        nombre = SessionInfo.Issuer.BussinesName;
+        sri = SessionInfo.UserSession.SRIConnected;
+        messages = SessionInfo.UserSession.Messages;
+        if(SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.Activa)
+        {
+            if (SessionInfo.UserSession?.Subscription?.LicenceType.Code == Ecuafact.Web.Constants.PlanPro)
+            {
+                pro = true;
+            }
+        }
+    }
+    else if (SessionInfo.UserInfo != null)
+    {
+        ruc = SessionInfo.UserInfo.Username;
+        nombre = SessionInfo.UserInfo.Name;
+        sri = SessionInfo.UserInfo.SRIConnected;
+        messages = SessionInfo.UserInfo.Messages;
+    }
+
+}
+
+<div class="kt-heading kt-heading--md">Integracion con el SRI</div>
+
+
+<div class="kt-form__section kt-form__section--first">
+    <div class="kt-wizard-v2__form">
+        <div class="row">
+            @if (sri)
+            {
+                buttonText = "Cambiar Clave";
+                <div class="alert alert-primary alert-close alert-dismissible fade show" role="alert">
+                    <div class="alert-icon"><i class="flaticon2-check-mark"></i></div>
+
+                    <div class="alert-text">
+                        <h4 class="alert-heading">
+                            Su cuenta está conectada con el SRI
+                        </h4>
+
+                        Ahora, todos tus documentos electr&oacute;nicos ser&aacute;n sincronizados autom&aacute;ticamente a trav&eacute;s de nuestros servicios.
+                    </div>
+                </div>
+            }
+            else
+            {
+            <div class="alert alert-danger alert-close alert-dismissible fade show" role="alert">
+                <div class="alert-icon"><i class="flaticon-warning-sign"></i></div>
+                <div class="alert-text">
+                    <h4 class="alert-heading">
+                        Su cuenta no est&aacute; conectada con el SRI
+                    </h4>
+                    Para poder sincronizar sus documentos electr&oacute;nicos es necesario que conecte su cuenta al SRI.
+
+                </div>
+            </div>
+            }
+        </div>
+
+        @if(messages != null && messages.Count>0){
+        <div class="alert alert-outline-dark alert-close alert-dismissible fade show" role="alert">
+            <div class="alert-text">
+                <ul>
+                    @foreach (var msg in messages)
+                    {
+                    <li>@msg</li>
+                    }
+                </ul>
+            </div>
+        </div>
+        
+        }
+
+        <div class="row">
+            <div class="form-group">
+                <button class="btn btn-warning btn-tall btn-pill btn-elevated conectar-sri" type="button">&nbsp;&nbsp;<i class="flaticon-rotate"></i>&nbsp;@buttonText &nbsp;&nbsp;</button>
+                @if (sri && pro)
+                {
+                    <button class="btn btn-success btn-tall btn-pill btn-elevated sincronizar-recibido" title="Sincronizar documentos" data-toggle='tooltip' type="button">
+                        <i class='fa fa-hourglass'></i> &nbsp; Sincronizar &nbsp;&nbsp;
+                    </button>
+                }
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+
+    $(".conectar-sri").on("click", function () {
+
+        var sriJson = @Html.Raw(Json.Encode(SessionInfo.UserSession));
+        showModal("@Url.Action("Conectar","SRI")");
+
+    });
+
+    $(".sincronizar-recibido").on("click", function () {
+        var sincronizarUrl = '@Url.Action("SincronizarAsync", "Comprobantes")';
+        showLoader();
+        $.get(sincronizarUrl, {}, function (data) {
+
+            if (data.id > 0 && data.status) {
+                Swal.fire("Informaci&oacute;n", data.message, "info");
+            }
+            else {
+                Swal.fire("Oops!", data.message, "warning");
+            }
+
+        }).always(function () {
+            hideLoader();
+        });
+    });
+</script>

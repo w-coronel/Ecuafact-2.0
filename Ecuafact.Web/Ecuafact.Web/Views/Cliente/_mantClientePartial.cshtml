@@ -1,0 +1,325 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices
+
+@model Ecuafact.Web.Domain.Entities.ContributorDto
+
+@{
+    var token = SessionInfo.UserSession.Token;
+    var tiposIdentificacion = ServicioCatalogos.ObtenerTiposIdentificacion(token);
+    var urlAction = "GuardarAsync";
+    var tipoMantenimiento = "Agregar";
+
+    // Elimino de la lista el consumidor final
+    var consumidorFinal = tiposIdentificacion.Find(o => o.SriCode == "07");
+    if (consumidorFinal != null)
+    {
+        tiposIdentificacion.Remove(consumidorFinal);
+    }
+
+    if (Model.Id > 0)
+    {
+        tipoMantenimiento = "Actualizar";
+        urlAction = "ActualizarAsync/" + Convert.ToString(Model.Id);
+    }
+
+}
+<script src="~/Assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+<link href="~/Assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet" />
+
+@section styles{
+    <link href="~/assets/css/pages/invoices/invoice-1.css" rel="stylesheet" />
+    <link href="~/assets/css/pages/invoices/invoice-1.min.css" rel="stylesheet" />
+    <link href="~/assets/css/pages/invoices/invoice-1.rtl.css" rel="stylesheet" />
+    <link href="~/assets/css/pages/invoices/invoice-1.rtl.min.css" rel="stylesheet" />
+}
+
+@using (Html.BeginForm(urlAction, "Cliente", FormMethod.Post, new { @id = "contribForm", @name = "contribForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.ContributorTypeId)
+    @Html.HiddenFor(model => model.IssuerId)
+
+    <div class="modal-dialog">
+
+        <div class="modal-dialog modal-notify modal-info" role="document">
+
+            <div class="modal-content">
+
+                <div class="loaderV1"></div>
+
+                <div class="alert alert-primary fade show" role="alert">
+
+                    <div class="alert-text">
+
+                        <h4 class="modal-title">@tipoMantenimiento Cliente</h4>
+
+                    </div>
+
+                    <div class="alert-close">
+
+                        <button type="button" class="btn btn-outline-hover-info btn-elevate btn-circle btn-icon" data-dismiss="modal" aria-label="Close">
+
+                            <i class="flaticon-close"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-body" style="text-align:left;">
+                    <div class="row">
+                        <div class="col-md-12 normalform">
+
+                            <div class="form-group col-lg-12 cliente_identificacion_group">
+                                <label class="col-lg-3 control-label">Identificacion:</label>
+                                <div class="col-lg-6">
+                                    @Html.DropDownListFor(model => model.IdentificationTypeId,
+        new SelectList(tiposIdentificacion, "Id", "Name", Model.IdentificationTypeId),
+        new { @onchange = "actualizarTipoCliente()", @class = "form-control m-b", @style = "width:100%;", @required = "" })
+                                    @Html.ValidationMessageFor(model => model.IdentificationTypeId)
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 cliente_identificacion_group">
+                                <label class="col-lg-3 control-label">Identificacion:</label>
+                                <div class="col-lg-9">
+                                    @Html.EditorFor(model => model.Identification, new { htmlAttributes = new { @class = "form-control", @placeholder = "# Identificacion", @type = "tel", @style = "width:150px;", @required = "" } })
+                                    @Html.ValidationMessageFor(model => model.Identification)
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 cliente_razon_social_group">
+                                <label id="title_razon_social" name="title_razon_social" class="col-lg-3 control-label">Nombres y Apellidos:</label>
+                                <div class="col-lg-9">
+                                    @Html.EditorFor(model => model.TradeName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Razon Social", @required = "", @onchange = "actualizarRazonSocial()" } })
+                                    @Html.ValidationMessageFor(model => model.TradeName)
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 cliente_nombre_comercial_group">
+                                <label class="col-lg-3 control-label">Nombre Comercial:</label>
+                                <div class="col-lg-9">
+                                    @Html.EditorFor(model => model.BussinesName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Nombre Comercial" } })
+                                    @Html.ValidationMessageFor(model => model.BussinesName)
+                                </div>
+                            </div>
+
+                            <div class="form-group col-lg-12 cliente_direccion_group">
+                                <label class="col-lg-3 control-label">Direccion:</label>
+                                <div class="col-lg-9">
+                                    @Html.TextAreaFor(model => model.Address, new { @height = "200", @class = "form-control", @placeholder = "Direccion, Ciudad, Pais", @rows = "3", @style = "resize: none;", @required = "" })
+                                    @Html.ValidationMessageFor(model => model.Address)
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 cliente_email_group">
+                                <label class="col-lg-3 control-label">Email:</label>
+                                <div class="col-lg-9">
+                                    @Html.EditorFor(model => model.EmailAddresses, new { htmlAttributes = new { @class = "form-control", @placeholder = "nombre@correo.com", @required = "", @multiple = "" } })
+                                    @Html.ValidationMessageFor(model => model.EmailAddresses)
+
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 cliente_telefono_group">
+                                <label class="col-lg-3 control-label">Telefono:</label>
+                                <div class="col-lg-9">
+                                    @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", @type = "text", @placeholder = "(XX) XXX-XXXX", @minlength = "7", @maxlength = "50" } })
+                                    @Html.ValidationMessageFor(model => model.Phone)
+                                </div>
+                            </div>
+
+                            <div class="form-group col-lg-12 ">
+                                <label class="col-lg-3 control-label">Habilitado:</label>
+                                <div class="col-lg-9">
+                                    @Html.DropDownListFor(model => model.IsEnabled, new SelectList(new[] { new { Text = "Si", Value = true }, new { Text = "No", Value = false } }, "Value", "Text", Model.IsEnabled), new { @class = "form-control", @required = "" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer flex-center bg-dark text-white">
+                    <button id="btnsaveContrib" type="button" class="btn btn-primary" onclick="saveContrib()"><span class="fa fa-save"></span>  Guardar</button>
+                    <button id="btncancelContrib" type="button" class="btn btn-secondary" data-dismiss="modal"><span class="fa fa-close"></span>  Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+<script>
+
+    var cliente_id = @Html.Raw(Json.Encode(Model.Id));
+
+    var clienteData = null;
+    var modalDiv = $("#myModal");
+
+    function saveContrib() {
+        var $form = $('#contribForm');
+
+        var formAction = $form.attr('action');
+        var formData = $form.serialize();
+
+        if (!$form[0].checkValidity()) {
+            swal("Oops!", "Debe rellenar el formulario con datos válidos!", "error");
+            return false;
+        }
+
+        showLoader();
+        $.ajax({
+            url: formAction,
+            type: "POST",
+            data: formData,
+            async: true,
+            error: function (data, o, e) {
+                debugger;
+                if(modalDiv!=null && typeof modalDiv.modal != 'undefined'){
+                    modalDiv.modal('show');
+                }
+
+                swal("Oops!", data.statusText, "error");
+                hideLoader();
+
+            },
+            success: function (data, o, e) {
+                hideLoader();
+                modalDiv.addClass("disabled");
+
+                debugger;
+                if (data.id > 0) {
+
+                    if(modalDiv!=null && typeof modalDiv.modal != 'undefined'){
+                        // Si existe este control entonces se esta trabajando desde la pantalla de facturas
+                        modalDiv.modal('hide');
+
+                        // Si el proceso es una actualizacion debemos modificar los datos de la pantalla
+                        if (cliente_id > 0 && $(".select2-result-repository__meta").length > 0) {
+                            var customer = data.result;
+                            $(".select2-result-repository__title").html(customer.Identification + " - " + customer.TradeName)
+                            $(".select2-result-repository__description").html("<i class='fa fa-area-chart'></i> Nombre Comercial: " + customer.BussinesName)
+                            $(".select2-result-repository__address").html("<i class='fa fa-map-marker'></i> Direccion: " + customer.Address)
+                            $(".select2-result-repository__email").html("<i class='fa fa-envelope-o'></i> E-mail:" + customer.EmailAddresses)
+                            $(".select2-result-repository__phone").html("<i class='fa fa-phone'></i> Telefono:" + customer.Phone)
+                        }
+                    }
+
+
+                    swal("Cliente", data.statusText, "success");
+                }
+                else {
+                    if(modalDiv!=null && typeof modalDiv.modal != 'undefined'){
+                        modalDiv.modal('show');
+                    }
+
+                    swal(data.statusText, data.error.DeveloperMessage, "error");
+
+                }
+            }
+        });
+
+        return;
+
+    }
+
+
+
+    function actualizarTipoCliente() {
+        var objIdentidad = $('select[name="IdentificationTypeId"]')[0];
+
+        if (objIdentidad) {
+            var tipoIdentidad = objIdentidad[objIdentidad.selectedIndex].text;
+            var objRazonSocial = $('input[name="TradeName"]');
+            var objNombreComercial = $('input[name="BussinesName"]');
+            var objIdentificacion = $('input[name="Identification"]');
+
+            var labRazonSocial = $("#title_razon_social");
+
+            if (tipoIdentidad.includes('RUC')) {
+                $('.cliente_nombre_comercial_group').removeClass("hidden");
+                objRazonSocial.attr("placeholder", "Razon Social")
+                labRazonSocial.html("Razon Social:");
+
+                objIdentificacion.attr("type","tel");
+
+                objIdentificacion.attr("maxlength","13");
+                objIdentificacion.attr("mminlength","13");
+            }
+            else {
+                $('.cliente_nombre_comercial_group').addClass("hidden");
+
+                //objNombreComercial.val("");
+
+                if (tipoIdentidad.includes('EXTERIOR')) {
+                    objRazonSocial.attr("placeholder", "Descripcion")
+                    labRazonSocial.html("Descripcion:");
+
+                    objIdentificacion.attr("type","text");
+
+                    objIdentificacion.attr("maxlength","20");
+                    objIdentificacion.attr("mminlength","20");
+                }
+                else if (tipoIdentidad.includes('PLACA')) {
+                    objRazonSocial.attr("placeholder", "Nombres Completos")
+                    labRazonSocial.html("Nombre del Chofer:");
+
+                    objIdentificacion.attr("type","text");
+                    objIdentificacion.attr("min","AAAA-00000");
+                    objIdentificacion.attr("max","ZZZZ-99999");
+
+                    objIdentificacion.attr("maxlength","9");
+                    objIdentificacion.attr("mminlength","9");
+                }
+                else if (tipoIdentidad.includes('PASAPORTE')) {
+                    objRazonSocial.attr("placeholder", "Nombres Completos")
+                    labRazonSocial.html("Nombres y Apellidos:");
+
+                    objIdentificacion.attr("type","text");
+                    objIdentificacion.attr("min","");
+                    objIdentificacion.attr("max","");
+
+                    objIdentificacion.attr("maxlength","20");
+                    objIdentificacion.attr("mminlength","20");
+                }
+                else {
+                    objRazonSocial.attr("placeholder", "Nombres Completos")
+                    labRazonSocial.html("Nombres y Apellidos:");
+
+                    objIdentificacion.attr("type","tel");
+                    objIdentificacion.attr("min","0");
+                    objIdentificacion.attr("max","9999999999");
+
+                    objIdentificacion.attr("mminlength","10");
+                    objIdentificacion.attr("maxlength","10");
+                    objIdentificacion.attr("mminlength","10");
+                }
+            }
+
+
+        }
+    }
+
+    function actualizarRazonSocial() {
+        var objIdentidad = $('select[name="IdentificationTypeId"]')[0];
+
+        if (objIdentidad) {
+            var tipoIdentidad = objIdentidad[objIdentidad.selectedIndex].text;
+            var objRazonSocial = $('input[name="TradeName"]');
+            var objNombreComercial = $('input[name="BussinesName"]');
+
+            if (!tipoIdentidad.includes('RUC')) {
+                objNombreComercial.val(objRazonSocial.val());
+            }
+        }
+    }
+
+    // cargo los tipo de identificacion desde el modelo de datos.
+
+    if(modalDiv!=null && typeof modalDiv.modal!='undefined'){
+        modalDiv.on('shown.bs.modal', function () {
+            $('input[name="Identification"]').trigger('focus')
+        });
+    }
+
+    actualizarTipoCliente();
+
+
+</script>

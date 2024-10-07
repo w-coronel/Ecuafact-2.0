@@ -1,0 +1,184 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices
+
+@model Ecuafact.Web.Domain.Entities.Establishments
+
+@{
+    Culture = "en-US";
+    var token = SessionInfo.ApplicationToken;   
+    var tipoMantenimiento = "Agregar";
+    var urlAction = "GuardarEstablecimientoAsync";
+
+    if (Model.Id > 0)
+    {
+        tipoMantenimiento = "Editar";
+        urlAction += "/" + Convert.ToString(Model.Id);
+    }  
+   
+
+}
+
+
+@using (Html.BeginForm(urlAction, "Cooperativa", FormMethod.Post, new { @id = "establecimientoForm", @name = "establecimientoForm" }))
+{
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.IssuerId)
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="loaderV1"></div>
+
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="flaticon2-gift"></i>&nbsp;&nbsp;&nbsp;@tipoMantenimiento Establecimiento</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-content">
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="row">
+
+                                <div class="form-group col-md-8 col-sm-12 col-xs-12">
+                                    <label for="Name" class="control-label col-md-10 col-sm-12 col-xs-12">Código del Establecimiento:</label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="flaticon-home-2"></i>
+                                            </span>
+                                        </span>
+                                        @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control placeholder-no-fix Establishment-Code", @type = "number", @min = "1", @max = "999", @minlength = "3", @maxlength = "3", @required = "required", @data_msg = "Código del establecimiento es requerido" } })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                    <label for="Name" class="control-label col-md-10 col-sm-12 col-xs-12">Nombre Comercial Establecimiento:</label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="flaticon-profile"></i>
+                                            </span>
+                                        </span>
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @required = "required", @data_msg = "El nombre comercial del establecimiento es requerido" } })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                    <label for="Name" class="control-label col-md-10 col-sm-12 col-xs-12">Dirección Comercial Establecimiento:</label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="flaticon-placeholder-3"></i>
+                                            </span>
+                                        </span>
+                                        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control placeholder-no-fix", @required = "required", @data_msg = "La dirección del establecimiento es requerido" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btnSave" type="button" class="btn btn-outline-brand text-dark" style="margin-right:5px"><i class="la la-save"></i> Guardar</button>
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> Cancelar</button>
+            </div>
+        </div>
+
+    </div>
+}
+
+
+@Scripts.Render("~/js/inputmask")
+
+<script>
+
+    $(document).ready(function () {
+        var changing = false;
+        var $div = $("#myModal");
+        if ($div != null && typeof $div.modal != 'undefined') {
+            $div.on('shown.bs.modal', function () {
+                $('input[name="MainCode"]').trigger('focus')
+            });
+        }
+
+        $establishment = $('.Establishment-Code');
+        $establishment.on("change", handleLeadingZeros);
+        function handleLeadingZeros()
+        {
+            if (changing) {
+                return;
+            }
+            changing = true;
+            var $me = $(this);
+            if ($me[0].value.length > $me[0].maxLength) {
+                $me[0].value = $me[0].value.slice(0, $me[0].maxLength)
+            }
+
+            var value = $me.val();
+            if (value.length > 0 && value.length < 3) {
+                value = value.padStart(3, "0");
+                $me.val(value);
+            }
+            changing = false;
+        };
+
+        $(".form-control").upperText();
+
+        $("#btnSave").on("click", function () {
+
+
+            var $form = $('#establecimientoForm');
+            var formAction = $form.attr('action');
+            var formData = $form.serializeJSON();
+
+            if (!$form.valid()) {
+                toastr.warning("Debe rellenar el formulario con datos válidos!");
+                return false;
+            }
+
+            showLoader();
+
+            $.ajax({
+                url: formAction,
+                type: "POST",
+                data: formData,
+                error: function (data, o, e) {
+                    hideLoader();
+                    $div.modal('show');
+
+                    Swal.fire("Oops!", (data && data.message)
+                        ? data.message
+                        : "Hubo un error al guardar el establecimiento!", "error");
+                },
+                success: function (data, o, e) {
+                    if (typeof data == 'string' && data.includes("kt-login")) {
+                        Swal.fire("Sesión Caducada", "Vuelva a Iniciar Sesión", "info");
+                        window.open(location.origin, "_blank")
+                        return false;
+                    }
+
+                    hideLoader();
+                    if (data.id > 0) {
+                        console.log(data);
+                        toastr.success(data.message);
+                        $div.modal('hide');                        
+                    }
+                    else {
+                        $div.modal('show');
+                        toastr.error(data.message);
+                        Swal.fire("",data.message, "error");
+                    }
+                }
+            });
+            return;
+        });
+
+    });
+
+</script>

@@ -1,0 +1,402 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices;
+@using Ecuafact.Web.Domain.Entities
+@model InvoiceRequestModel
+@{
+    ViewBag.Title = "Crear Factura";
+    ViewBag.ParentTitle = "Emitidos";
+
+    this.PageOptions(options =>
+    {
+        options.Select2 = true;
+        options.DataTables = true;
+        options.DatePicker = true;
+
+    });
+
+    var emisorActual = SessionInfo.Issuer;
+}
+
+@Html.HiddenFor(m => m.Id)
+
+@section styles{
+    <link href="~/content/invoice.css" rel="stylesheet" />
+}
+
+
+@using (Html.BeginForm("Save"))
+{
+    if (Model.Id > 0)
+    {
+        @Html.HiddenFor(model => model.Id)
+    }
+
+    @Html.HiddenFor(model => model.Identification)
+    @Html.HiddenFor(model => model.ContributorName)
+    @Html.HiddenFor(model => model.Address)
+    @Html.HiddenFor(model => model.Phone)
+    @Html.HiddenFor(model => model.EmailAddresses)
+
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+
+        <div class="kt-portlet">
+
+            <div class="kt-portlet__body kt-portlet__body--fit">
+
+                <div class="kt-invoice-1">
+
+                    <div class="kt-invoice__head" style="background-image: url(@Url.Content("~/assets/media/bg/300.jpg"));">
+
+                        <div class="kt-invoice__container">
+
+                            <div class="kt-invoice__brand">
+
+                                <h1 class="kt-invoice__title">FACTURA</h1>
+
+                            </div>
+
+                            <div class="kt-invoice__items">
+
+                                <div class="kt-invoice__item col-12 col-md-7">
+
+                                    <div class="row">
+
+                                        <div class="col-12">
+
+                                            <div class="row align-items-center" style="padding-bottom:5px">
+
+                                                <span class="kt-invoice__subtitle col-10">Cliente:</span>
+
+                                                <!--No aparece-->
+                                                <div class="col-2">
+
+                                                    <button id="actualizarClienteButton" data-toggle="modal" data-target="#modal-cliente" type="button" onclick="editarComprador();" class="btn btn-pill btn-outline-dark btn-brand kt-hide" title="Actualizar información Contribuyente">
+
+                                                        <i class="la la-pencil"></i>
+
+                                                    </button>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div id="bodyContrib" name="bodyContrib" class="col-12">
+
+                                                <div class="row">
+                                                    @Html.DropDownList("ContributorId", new SelectList(new object[0]), new { } )
+                                                    <select style="width:100%;" class="js-customerSelector col-12" id="inputClienteId"></select>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-2 col-12"></div>
+
+                                <div class="kt-invoice__item col-md-3 col-12">
+
+                                    <div class="row">
+
+                                        <div class="col-12 col-sm-6 col-md-12" style="padding-bottom:5px">
+
+                                            <span class="kt-invoice__subtitle">Fecha Emisión</span>
+
+                                            <div class="kt-input-icon kt-input-icon--right">
+
+                                                <span class="kt-input-icon__icon kt-input-icon__icon--right">
+
+                                                    <span>
+
+                                                        <i class="fa fa-calendar-alt"></i>
+
+                                                    </span>
+
+                                                </span>
+
+                                                <input name="fecha_documento" id="fecha_documento" type="text" class="form-control input-readonly bg-white"
+                                                       style="width: 100%;border:none none solid none; text-align:right;" placeholder="Fecha" value="@DateTime.Now.ToString("dd/MM/yyyy")"
+                                                       aria-describedby="addon-fecha_documento" readonly>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-12 col-sm-6 col-md-12" style="padding-bottom:5px">
+
+                                            <span class="kt-invoice__subtitle">Guia de Remisión</span>
+
+                                            <div class="kt-input-icon kt-input-icon--right">
+
+                                                <span class="kt-input-icon__icon kt-input-icon__icon--right">
+
+                                                    <span>
+
+                                                        <i class="fa flaticon2-file-1"></i>
+
+                                                    </span>
+
+                                                </span>
+
+                                                <input name="guia_remision" id="guia_remision" type="text" class="form-control input-readonly bg-white"
+                                                       style="width: 100%;border:none none solid none; text-align:right;" placeholder="00X-00X-XXXXXXXXX">
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    @* Detalle de los productos *@
+                    <div class="row" name="productosPage">
+
+                        @{
+                            Html.RenderPartial("Shared/_productosPartial", Model, ViewData);
+                        }
+
+                    </div>
+                    <div class="kt-invoice__container row">
+
+                        <div class="col-12 col-md-7 col-lg-8">
+
+                            <div class="kt-portlet__body">
+
+
+                                <div class="accordion accordion-solid accordion-toggle-plus" id="accordionAdditionals">
+
+                                    <div class="card">
+                                        <div class="card-header" id="paymentHeading">
+                                            <div class="card-title collapsed" data-toggle="collapse" data-target="#paymentCollapse" aria-expanded="false" aria-controls="paymentCollapse">
+                                                <i class="flaticon-price-tag"></i> Forma de Pago
+                                            </div>
+                                        </div>
+                                        <div id="paymentCollapse" class="collapse" aria-labelledby="paymentHeading" data-parent="#accordionAdditionals" style="">
+                                            <div class="card-body">
+                                                @{
+                                                    Html.RenderPartial("Shared/_formaPagoPartial", Model, ViewData);
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header" id="infoHeading">
+                                            <div class="card-title collapsed" data-toggle="collapse" data-target="#infoCollapse" aria-expanded="false" aria-controls="infoCollapse">
+                                                <i class="flaticon2-layers-1"></i> Informaci&oacute;n Adicional
+                                            </div>
+                                        </div>
+                                        <div id="infoCollapse" class="collapse" aria-labelledby="infoHeading" data-parent="#accordionAdditionals" style="">
+                                            <div class="card-body">
+                                                @{
+                                                    Html.RenderPartial("Shared/_infoAdicionalPartial", Model, ViewData);
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-12 col-md-5 col-lg-4">
+
+                            <div class="kt-invoice__total align-content-center align-items-center justify-content-center align-self-center">
+
+                                @*Total de la Facura*@
+                                @{
+                                    Html.RenderPartial("Shared/_totalFacturaPartial", Model);
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+@section toolbar{
+
+    <div class="btn-group">
+
+        <button type="button" class="btn btn-brand guardar-button">
+            <i class="la la-check"></i>
+            <span class="kt-hidden-mobile">Guardar</span>
+        </button>
+
+        <button type="button" class="btn btn-brand dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </button>
+
+        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-58px, 38px, 0px);">
+            <ul class="kt-nav">
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link guardar-button" id="btnGuardar">
+                        <i class="kt-nav__link-icon flaticon2-shield"></i>
+                        <span class="kt-nav__link-text">Guardar borrador</span>
+                    </a>
+                </li>
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link" id="btnEnviar">
+                        <i class="kt-nav__link-icon flaticon2-paper-plane"></i>
+                        <span class="kt-nav__link-text">Enviar al SRI</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+}
+
+
+
+@{ // SCRIPTS C#
+
+    var formasPago = SessionInfo.Catalog.PaymentMethod.Select(o => new { id = o.SriCode, text = o.Name, data = o });
+    var ivaList = SessionInfo.Catalog.IVARates.Select(o => new { id = o.SriCode, text = o.Name, rate = o.RateValue, data = o });
+}
+
+@section scripts{
+
+    @Scripts.Render("~/js/facturas")
+
+    <script>
+
+    // Configuramos las variables que requieren informacion del Servidor
+    invoiceSaveAction = '@Url.Action("SaveInvoiceAsync", "Factura")';
+    printInvoiceAction = '@Url.Action("PrintDocument", "Factura")';
+    fecha_mes_atras = '@System.DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy")';
+    fecha_actual = '@System.DateTime.Now.ToString("dd/MM/yyyy")';
+
+    ivaList = @Html.Raw(Json.Encode(ivaList));
+
+    documentoFactura = @Html.Raw(Json.Encode(new InvoiceModel()));
+    productData = @Html.Raw(Json.Encode(new ProductDto()));
+    var adicionalItemCount = 0;
+
+    var getFormasDePago = function () { return @Html.Raw(Json.Encode(formasPago)); };
+
+    getSearchProductUrl = function(){
+        return  '@Url.Action("SearchProductAsync", "Producto")';
+    }
+    getCreateProductUrl = function(){
+        return "@Url.Action("Nuevo", "Producto")";
+    }
+
+    redirectAction = function(action, data){
+        var urlAction = '@Url.Action("", "Factura")';
+        urlAction +='/'+action+'/'+data;
+        window.location.href = urlAction;
+    };
+
+    getUrlAuthorization = function (docTypeCode, docNumber) {
+        return '@Url.Action("GetDocumentAuthSync", "Factura")' + '?docType=' + docTypeCode + '&docNumber=' + docNumber;
+    }
+
+    getUrlContribAction = function (id) {
+
+        if (typeof id !== 'undefined' && id>0) {
+            return "@Url.Action("Editar", "Contribuyentes")/"+id;
+        }
+        else {
+            return "@Url.Action("Nuevo", "Contribuyentes")";
+        }
+
+    }
+
+    getUrlSearchContrib = function () { return '@Url.Action("SearchContribAsync", "Contribuyentes")'; }
+
+    getLoginFormUrl = function () {
+        return '@Url.Action("Index", "Auth")?ReturnURL=' + location.href;
+    }
+
+    validarguia = function(){
+        var guiaObj = $("#guia_remision");
+        var text = guiaObj.val();
+        guiaObj.val(formatNumDoc(text));
+    }
+
+    // Configuracion de Controles
+    var fechaDocObj = $('input[name="fecha_documento"]');
+
+
+    fechaDocObj.datepicker({
+        startDate: fecha_mes_atras,
+        endDate: fecha_actual,
+        keyboardNavigation: false,
+        format: "dd/mm/yyyy",
+        language: "es",
+        forceParse: false,
+        autoclose: true
+    });
+
+    fechaDocObj.val(fecha_actual);
+
+    $(".guardar-button").click(function () {
+        if (!$(".guardar-button").hasClass("disabled")) {
+            guardarFactura();
+        }
+    });
+
+    $("#btnEnviar").click(function () {
+        if (!$("#btnEnviar").hasClass("disabled")) {
+            guardarFactura(1);
+        }
+    });
+
+    $("#btnCancelar").click(function () {
+        if (!$("#btnCancelar").hasClass("disabled")) {
+            history.go(-1);
+        }
+    });
+
+    //CONECTAMOS LA LISTA DEL CLIENTE
+    startCustomerSelector();
+
+
+    // AGREGAMOS EL TIPO DE PAGO PRINCIPAL
+    agregarPayment();
+
+    // CREAMOS LA PRIMERA LINEA DE ITEM
+    agregarItem();
+
+    // ADICIONALES PRINCIPALES
+    if (typeof agregarAditional != 'undefined') {
+        agregarAditional("Direccion", "");
+        agregarAditional("Telefono", "");
+        agregarAditional("Email", "");
+        agregarAditional("Observaciones", "");
+    }
+
+    </script>
+
+
+    <script type="text/javascript">
+        window.scrollTo(0, 0);
+        $(".js-customerSelector a").focus();
+        initialized = true; // hack initial element of page;
+    </script>
+}

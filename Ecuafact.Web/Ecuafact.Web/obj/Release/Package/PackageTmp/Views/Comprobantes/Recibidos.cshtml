@@ -1,0 +1,142 @@
+﻿@using Ecuafact.Web.Models
+@using Ecuafact.Web.Domain.Entities
+@model RecibidosQueryModel
+
+@{
+    ViewBag.Title = "Recibidos";
+    ViewBag.Description = "Documentos Recibidos";
+
+    this.PageOptions(model =>
+    {
+        model.DataTables = true;
+        model.DateRangePicker = true;
+        model.DatePicker = true;
+        model.Select2 = true;
+        model.SidebarSearch = true;
+        model.DateRangeTool = true;
+    });
+
+    var _types = SessionInfo.Catalog.SustenanceType;
+    var tiposDocumento = new List<SelectListItem>{
+        new SelectListItem { Value="0", Text="TODOS" },
+        new SelectListItem{ Value="01", Text="FACTURA" },
+        new SelectListItem{ Value="04", Text="NOTAS DE CRÉDITO" },
+        new SelectListItem{ Value="05", Text="NOTAS DE DÉBITO" },
+        new SelectListItem{ Value="07", Text="COMPROBANTES DE RETENCIÓN" },
+        new SelectListItem{ Value="06", Text="GUÍAS DE REMISIÓN" },
+        new SelectListItem{ Value="03", Text="LIQUIDACIÓN DE COMPRA" }
+    };
+
+    var tiposDeducibles = new List<SelectListItem> {
+        new SelectListItem{ Value="-1", Text="Todos" },
+        new SelectListItem{ Value="0", Text="Sin Clasificar" },
+        new SelectListItem{ Value="1", Text="Vivienda" },
+        new SelectListItem{ Value="2", Text="Educación" },
+        new SelectListItem{ Value="3", Text="Alimentación" },
+        new SelectListItem{ Value="4", Text="Vestimenta" },
+        new SelectListItem{ Value="5", Text="Salud" },
+        new SelectListItem{ Value="6", Text="Arte y Cultura" },
+        new SelectListItem{ Value="7", Text="Turismo" }
+    };
+
+    var msg = AnulacionMsg.MensajeStatus(DocumentStatusEnum.Validated);
+}
+
+@using (Html.BeginForm("Recibidos", "Comprobantes", FormMethod.Get, new { id = "formConsultas", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.From, new { @id = "dateFrom" })
+    @Html.HiddenFor(model => model.To, new { @id = "dateTo" })
+    @Html.HiddenFor(model => model.SearchTerm, new { @id = "searchTerm" })
+
+
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <div class="input-group">
+
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-layers"></i>&nbsp;&nbsp;Tipo: </span></div>
+
+                    @Html.DropDownListFor(model => model.DocumentType, tiposDocumento, new { @class = "bs-dropdown circle-right input-sm input-inline form-control  filter-control " })
+
+                </div>
+                <div class="kt-margin-5"></div>
+                <div class="input-group">
+
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-pie-chart"></i>&nbsp;&nbsp;Clasificaci&oacute;n: </span></div>
+
+                    @Html.DropDownListFor(model => model.DeductibleType, tiposDeducibles, new { @class = "bs-dropdown circle-right input-sm input-inline  form-control filter-control " })
+                </div>
+
+
+            </div>
+
+            <div class="kt-portlet__head-toolbar">
+                @*<button type="button" title="Subir archivo txt" onclick="Comprobantes.ImportData()" data-toggle='tooltip' class="btn btn-primary btn-bold btn-pill btn-elevate btn-elevate-air btn-import-data">
+                        <i class='fa fa-upload'></i> Importar Documento
+                    </button> &nbsp;*@
+                @*<button type="button" title="Sincronizar documentos" onclick="Comprobantes.Sincronizar()" data-toggle='tooltip' class="btn btn-primary btn-bold btn-pill btn-elevate btn-elevate-air btn-sincronizar">
+                        <i class='fa fa-hourglass'></i> Sincronizar
+                    </button> &nbsp;*@
+                <a class="btn btn-success btn-elevate btn-pill pull-right btn-descarga" href="#">&nbsp; <i class="fa fa-file-excel "></i>  Descargar</a>
+                @*<a class="btn btn-success btn-elevate btn-pill pull-right" href="@Url.Action("Recibidos", new { id = "descargar" })">&nbsp;<i class="fa fa-file-excel "></i>  Descargar</a>*@
+                &nbsp;
+                <div class="btn-group">
+                    <button type="button" class="btn btn-brand" data-toggle="tooltip" title="Seleccione la opción de crear nota de venta ó importar documento recibido en formato XML">
+                        <i class="la la-upload"></i>
+                        <span class="kt-hidden-mobile">Importar</span>
+                    </button>
+                    <button type="button" class="btn btn-brand dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-58px, 38px, 0px);">
+                        <ul class="kt-nav">
+                            <li class="kt-nav__item">
+                                <a href="~/NotaVenta/Nuevo" class="kt-nav__link btn-document-manual">
+                                    <i class="kt-nav__link-icon flaticon2-edit"></i>
+                                    <span class="kt-nav__link-text">Notas de Venta</span>
+                                </a>
+                            </li>
+                            <li class="kt-nav__item">
+                                <a href="#" onclick="Comprobantes.ImportData()" class="kt-nav__link btn-document-support">
+                                    <i class="kt-nav__link-icon flaticon2-document"></i>
+                                    <span class="kt-nav__link-text">Importar XML recibido</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="kt-portlet__body" id="divConsultas">
+
+            @*@{ Html.RenderPartial("Shared/_RecibidosPartial", Model); }*@
+            @{ Html.RenderPartial("Shared/_RecibidosPartial2", Model); }
+
+        </div>
+    </div>
+}
+
+@section toolBar{
+}
+
+@section Scripts {
+    @Scripts.Render("~/js/documents")
+
+    <script type="text/javascript">
+        var url = "@Url.Action("GetRecibidosAsync", "Comprobantes")";
+        var table = "_recibidos";
+        var loginUrl = "@Url.Action("Index", "Auth")";
+        Comprobantes.ImportarDataUrl = "@Url.Action("ImportarData")";
+        Comprobantes.DeductibleURL = '@Url.Content("~/Comprobantes/")';
+        Comprobantes.SustentoURL = '@Url.Content("~/Comprobantes/")';
+        Comprobantes.PreviewURL = '@Url.Action("Preliminar")';
+        Comprobantes.SincronizarUrl = '@Url.Action("SincronizarAsync", "Comprobantes")';
+        Comprobantes.Configure(url, table, loginUrl, false);
+        Comprobantes.htmlmsg = "@Html.Raw(msg)";
+        /*Comprobantes.SetDocumento()*/
+        function _cancelDocument(id) { Comprobantes.GetCancelDocument(id);};
+        function _sendEmail(id) { Comprobantes.GetEmail(id); };
+    </script>
+}
+

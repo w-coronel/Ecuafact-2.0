@@ -1,0 +1,59 @@
+﻿@model Ecuafact.Web.Domain.Entities.AtsFactura
+@using Ecuafact.Web.MiddleCore.ApplicationServices
+@{
+    var token = SessionInfo.ApplicationToken;
+    //var _tipoSustento = ServicioCatalogos.ObtenerTiposSustento(token);
+    var _tipoSustento = SessionInfo.Catalog.SustenanceType;
+    var tipoSustento = _tipoSustento.Select(x => new SelectListItem { Text = string.Format("{0}-{1}", x.Codigo, x.Nombre), Value = x.Codigo}).ToList();
+}
+
+<div class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: block;" aria-modal="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Seleccionar Tipo Sustento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.TipoEmision)
+                <form>
+                    <div class="text-center">
+                        <h3>@Model.RazonSocialProveedor</h3>
+                        <span>@Model.DocumentoType</span><br />
+                        <span>No. @Model.NumeroDocumento</span><br />
+                        <span>Total: @Model.Total</span><br />
+
+                    </div>
+                    <br />
+                    <br />
+                    <div class="row">
+
+                        <div class="form-group col-12">
+                            <label for="Name" class="control-label col-12">Tipo Sustento:</label>
+                            @Html.DropDownListFor(model => model.CodSustento, new SelectList(tipoSustento, "Value", "Text", Model.CodSustento), "Seleccione tipo sustento del documento", new { @class = "form-control", @required = "", @style = "width:100%;" })
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <br />
+            <br />
+            <div class="modal-footer">
+                <button id="btnSave" type="button" class="btn btn-outline-brand text-dark bt-save-sustento" style="margin-right:5px"><i class="la la-save"></i> Guardar</button>
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(".bt-save-sustento").on("click", function () {           
+            var $pk = $("#Id").val();
+            var $tipEmi = $("#TipoEmision").val();
+            var $sustento = $("#CodSustento").val();
+            Ats.Sustento($pk, $sustento, $tipEmi);
+        });
+    });
+</script>

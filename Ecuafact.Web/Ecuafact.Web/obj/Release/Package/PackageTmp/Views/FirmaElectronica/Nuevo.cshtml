@@ -1,0 +1,1305 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web
+@model ElectronicSignRequest
+@{
+    ViewBag.Title = "Firma Electrónica";
+
+    if (Model.InvoiceInfo == null)
+    {
+        Model.InvoiceInfo = new ElectronicSignInvoice
+        {
+
+        };
+    }
+    var cartAutorizacion = $"{(Model.SignType == RucTypeEnum.Juridical ? "Autorización_Especial_Firma_Electrónica_RL" : "Autorización_Especial_Firma_Electrónica_PN")}.docx";
+    var plans = SessionInfo.Catalog.LicenceType.Where(p => p.Code != Constants.PlanBasic).ToList();
+
+    this.PageOptions(x =>
+    {
+        x.DropZone = true;
+        x.DatePicker = true;
+
+    });
+
+    int Older = -System.Math.Abs(Constants.Older);
+    var minDate = $"{DateTime.Now.AddYears(-100):yyyy-MM-dd}";
+    var maxDate = $"{DateTime.Now.AddYears(Older):yyyy-MM-dd}";
+    var proveedor = Constants.SupplierElectronicSign;
+
+    var countries = new List<SelectListItem>()
+{
+        new SelectListItem { Text = "ECUADOR", Value = "EC" }
+    };
+
+
+    var provinces = new List<SelectListItem>();
+    if (!string.IsNullOrEmpty(Model.Province))
+    {
+        provinces.Add(new SelectListItem { Text = Model.Province, Value = Model.Province });
+    }
+
+    var cities = new List<SelectListItem>();
+    if (!string.IsNullOrEmpty(Model.City))
+    {
+        cities.Add(new SelectListItem { Text = Model.City, Value = Model.City });
+    }
+
+    var docTypes = new List<SelectListItem> {
+        new SelectListItem{ Text="Cedula", Value="1" },
+        new SelectListItem{ Text="Pasaporte", Value="6" },
+    };
+
+    if ((int)SupplierElectronicSignEnum.GSV == Constants.SupplierElectronicSign)
+    {
+        docTypes.Add(new SelectListItem { Text = "RUC", Value = "4" });
+    }
+    else
+    {
+        if (Model.SignType == RucTypeEnum.Juridical)
+        {
+            Model.DocumentType = IdentificationTypeEnum.IdentityCard;
+            Model.Identification = "";
+            Model.FirstName = "";
+            Model.LastName = "";
+        }
+        else
+        {
+            if (Model.DocumentType != IdentificationTypeEnum.Passport)
+            { Model.Identification = Model.Identification.Substring(0, 10); }
+        }
+    }
+
+    var signTypes = new List<SelectListItem> {
+        new SelectListItem{ Text="Persona Natural", Value="1" },
+        new SelectListItem{ Text="Persona Jurídica", Value="2" }
+    };
+
+    var sexTypes = new List<SelectListItem> {
+        new SelectListItem{ Text="Masculino", Value="1" },
+        new SelectListItem{ Text="Femenino", Value="2" }
+    };
+
+    Model.SignType = 0;
+
+    var display_perJur = "style='display: none'";
+    var display_juridical = "style='display: none'";
+    if (Model.SignType == RucTypeEnum.Juridical)
+    {
+        display_juridical = "";
+        display_perJur = "";
+    }
+    if (Model.Id == 0)
+    {
+        Model.FirstName = "";
+        Model.LastName = "";
+    }
+
+
+    Html.EnableClientValidation(false);
+    Html.EnableUnobtrusiveJavaScript(false);
+
+
+    //var prodServices = SessionInfo.Catalog.ProductServicesEcuafact.ToList().Where(s => s.Code == "01").FirstOrDefault();
+    //var taxes = SessionInfo.Catalog.IVARates.ToList().Where(s => s.SriCode == "2").FirstOrDefault();
+    //Model.InvoiceInfo.Product = prodServices.Name;
+    //Model.InvoiceInfo.Price = prodServices.Price;
+    //Model.InvoiceInfo.SubTotal = prodServices.Price;
+    //Model.InvoiceInfo.Iva = (prodServices.Price * (taxes.RateValue / 100));
+    //Model.InvoiceInfo.Total = ((prodServices.Price * (taxes.RateValue / 100)) + prodServices.Price);
+    //Model.InvoiceInfo.IvaRate = taxes.RateValue;
+}
+
+
+@section Styles{
+
+    @Styles.Render("~/assets/css/pages/wizard/wizard-1.css")
+    @*@Styles.Render("~/assets/css/pages/pricing/pricing-3.css")
+      @Styles.Render("~/assets/css/pages/pricing/pricing.css")
+      <style >
+            label.dropzone-input {
+                border: 1px solid green;
+                padding: 10px;
+                width: 100%;
+                height: 150px;
+            }
+     </style>*@
+    <style >
+        .kt-callout--diagonal-bg:after{
+            left: 37%;          
+        }
+        .kt-callout .kt-callout__body .kt-callout__content .kt-callout__desc{
+           font-size:11px;
+        }
+        .file-select {
+            position: relative;
+            display: inline-block;
+        }
+        .container-input {
+            text-align: center;
+            padding: 50px 0;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+
+        .inputfile {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+            .inputfile + label {
+                /*max-width: 80%;*/
+                font-size: 1.25rem;
+                font-weight: 700;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                cursor: pointer;
+                display: inline-block;
+                overflow: hidden;
+                padding: 0.4rem 1.25rem;
+                height:32.06px;
+            }
+            .inputfile + label svg {
+                width: 1em;
+                height: 1em;
+                vertical-align: middle;
+                fill: currentColor;
+                margin-top: -0.25em;
+                margin-right: 0.25em;
+            }
+
+        .iborrainputfile {
+            font-size: 12px;
+            /*font-weight: normal;*/
+            font-family: 'Poppins';
+        }
+        .inputfile-1 + label {
+            color: #fff;
+            background-color: #2786fb;
+            border-radius: 20px;
+        }
+        .inputfile-1:focus + label,
+        .inputfile-1.has-focus + label,
+        .inputfile-1 + label:hover {
+            background-color: #518bd3;
+        }
+
+    </style>
+}
+
+<div class="kt-portlet">
+
+    <div class="kt-portlet__body kt-portlet__body--fit">
+        <div class="kt-grid  kt-wizard-v1 kt-wizard-v1--white" id="kt_wizard_v1" data-ktwizard-state="step-first">
+            <div class="kt-grid__item">
+
+                <!--begin: Form Wizard Nav -->
+                <div class="kt-wizard-v1__nav" style="">
+                    <div class="kt-wizard-v1__nav-items">
+                        @{
+                            var i = 1;
+                        }
+                        <!--doc: Replace A tag with SPAN tag to disable the step link click -->
+                        <div class="kt-wizard-v1__nav-item" data-ktwizard-type="step" data-ktwizard-state="current">
+                            <div class="kt-wizard-v1__nav-body">
+                                <div class="kt-wizard-v1__nav-icon"> <i class="flaticon-notes"></i> </div>
+                                <div class="kt-wizard-v1__nav-label"> @(i++). Antes de empezar tu solicitud </div>
+                            </div>
+                        </div>
+
+                        <div class="kt-wizard-v1__nav-item" data-ktwizard-type="step">
+                            <div class="kt-wizard-v1__nav-body">
+                                <div class="kt-wizard-v1__nav-icon"> <i class="flaticon-medal"></i> </div>
+                                <div class="kt-wizard-v1__nav-label"> @(i++). Información del RUC </div>
+                            </div>
+                        </div>
+
+                        <div class="kt-wizard-v1__nav-item" data-ktwizard-type="step">
+                            <div class="kt-wizard-v1__nav-body">
+                                <div class="kt-wizard-v1__nav-icon"> <i class="flaticon-list"></i> </div>
+                                <div class="kt-wizard-v1__nav-label"> @(i++). Representante Legal </div>
+                            </div>
+                        </div>
+                        @if (Model.Id == 0)
+                        {
+
+                            <div class="kt-wizard-v1__nav-item" data-ktwizard-type="step">
+                                <div class="kt-wizard-v1__nav-body">
+                                    <div class="kt-wizard-v1__nav-icon"> <i class="flaticon-file-1"></i> </div>
+                                    <div class="kt-wizard-v1__nav-label"> @(i++). Suba los documentos </div>
+                                </div>
+                            </div>
+
+                        }
+                        @if (SessionInfo.UserSession?.Subscription?.Status == SubscriptionStatusEnum.Activa && !Model.SendProcessElectronicSign)
+                        {
+                            <div class="kt-wizard-v1__nav-item" data-ktwizard-type="step">
+                                <div class="kt-wizard-v1__nav-body">
+                                    <div class="kt-wizard-v1__nav-icon"> <i class="flaticon-notepad"></i> </div>
+                                    <div class="kt-wizard-v1__nav-label"> @(i++). Datos de Facturaci&oacute;n </div>
+                                </div>
+                            </div>
+                            <div class="kt-wizard-v1__nav-item" data-ktwizard-type="step">
+                                <div class="kt-wizard-v1__nav-body">
+                                    <div class="kt-wizard-v1__nav-icon"> <i class="flaticon-price-tag"></i> </div>
+                                    <div class="kt-wizard-v1__nav-label"> @(i++). Datos de Compra </div>
+                                </div>
+                            </div>
+
+                        }
+                    </div>
+                </div>
+
+                <!--end: Form Wizard Nav -->
+            </div>
+
+            <div class="kt-grid__item kt-grid__item--fluid kt-wizard-v1__wrapper">
+
+                <!--begin: Form Wizard Form-->
+                <form class="kt-form" id="kt_form" method="post" action="@Url.Action("GuardarFirmaAsync")" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.Id)
+                    @Html.HiddenFor(model => model.AuthorizationAgeFormat)
+
+                    <!--begin: Form Wizard Step 1-->
+                    <div class="kt-wizard-v1__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
+                        <div class="kt-heading kt-heading--md">Antes de enviar tu solicitud:  </div>
+                        <div class="kt-form__section kt-form__section--first">
+                            <div class="kt-wizard-v1__form">
+                                <p class="text-justify" style="font-size:15px;">
+                                    <i class="fa fa-check text-success"></i>&nbsp; Verificar el ingreso correcto de toda la información <br />
+                                    <i class="fa fa-check text-success"></i>&nbsp; Los documentos adjuntos deben ser claros. <br />
+                                </p>
+                            </div>
+                        </div>
+                        <div class="kt-heading kt-heading--md">Después de enviar tu solicitud:   </div>
+                        <div class="kt-form__section kt-form__section--first">
+                            <div class="kt-wizard-v1__form">
+                                <p class="text-justify" style="font-size:15px;">
+                                    <i class="fa fa-check text-success"></i>&nbsp; Podrás revisar el estado de tu solicitud dando clic en este botón: &nbsp; <img src="~/Images/edit5.png" width="35"> <br />
+                                    <i class="fa fa-check text-success"></i>&nbsp; En 24 a 48 horas recibirás un correo con el remitente <strong>Uanataca</strong>, con el link de la descarga de tu firma. <br />
+                                    <i class="fa fa-check text-success"></i>&nbsp; No descargar la firma desde un celular, el archivo se dañará.<br />
+                                    <i class="fa fa-check text-success"></i>&nbsp; No coloques como contraseña caracteres especiales o la letra ñ. <br />
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!--end: Form Wizard Step 1-->
+                    <!--begin: Form Wizard Step 2-->
+                    <div class="kt-wizard-v1__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
+                        <div class="kt-heading kt-heading--md">Ingrese los datos del RUC para el Certificado Digital</div>
+                        <div class="kt-form__section kt-form__section--first">
+                            <div class="kt-wizard-v1__form">
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("SignType", "Tipo de Firma:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.SignType, new SelectList(signTypes, "Value", "Text", Model.DocumentType),"Seleccione tipo persona", new { @class = "form-control", @required = true, @placeholder = "Tipo de Firma" })
+                                            @Html.ValidationMessageFor(model => model.SignType, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("RUC", "RUC:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.RUC, new { @type = "number", @class = "form-control readonly", @minlength = "13", @maxlength = "13", @required = true, @placeholder = "RUC", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(model => model.RUC, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("BusinessName", "Razón Social:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.BusinessName, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Razon Social" })
+                                            @Html.ValidationMessageFor(model => model.BusinessName, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.Label("BusinessAddress", "Dirección:", new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.BusinessAddress, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Dirección" })
+                                    @Html.ValidationMessageFor(model => model.BusinessAddress, "", new { @class = "form-text text-muted" })
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            @Html.Label("Country", "País:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.Country, new SelectList(countries, "Value", "Text", Model.Country), "Seleccione el Pais", new { @class = "form-control", @required = true, @placeholder = "País" })
+                                            @Html.ValidationMessageFor(model => model.Country, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            @Html.Label("Province", "Provincia:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.Province, new SelectList(provinces, "Value", "Text", Model.Province), "Seleccione la Provincia", new { @class = "form-control", @required = true, @placeholder = "Provincia" })
+                                            @Html.ValidationMessageFor(model => model.Province, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            @Html.Label("City", "Ciudad:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.City, new SelectList(cities, "Value", "Text", Model.City), "Seleccione la Provincia", new { @class = "form-control", @required = true, @placeholder = "Ciudad" })
+                                            @Html.ValidationMessageFor(model => model.City, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <!--end: Form Wizard Step 2-->
+                    <!--begin: Form Wizard Step 3-->
+                    <div class="kt-wizard-v1__content" data-ktwizard-type="step-content">
+                        <div class="kt-heading kt-heading--md">Ingrese los datos del Contacto o Representante Legal</div>
+                        <div class="kt-form__section kt-form__section--first">
+                            <div class="kt-wizard-v1__form">
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("DocumentType", "Identificación:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.DocumentType, new SelectList(docTypes, "Value", "Text", Model.DocumentType), new { @class = "form-control", @required = true, @placeholder = "País" })
+                                            @Html.ValidationMessageFor(model => model.DocumentType, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("Identification", "Número:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Identification, new { @type = "number", @class = "form-control ", @required = true, @placeholder = "Identificación" })
+                                            @Html.ValidationMessageFor(model => model.Identification, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("FirstName", "Nombres:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.FirstName, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Nombres", @pattern = Constants.FirstName })
+                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "form-text text-muted" })
+                                            <div class="invalid-feedback">Debe ingresar el nombre completo</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("LastName", "Apellidos:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.LastName, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Apellidos", @pattern = Constants.LastName })
+                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "form-text text-muted" })
+                                            <div class="invalid-feedback">Debe ingresar los apellidos completos</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("Sexo", "Sexo:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.Sexo, new SelectList(sexTypes, "Value", "Text", Model.Sexo), "Seleccione sexo", new { @class = "form-control", @required = true, @placeholder = "Sexo" })
+                                            @Html.ValidationMessageFor(model => model.Sexo, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("BirthDate", "Fecha Nacimiento:", new { @class = "control-label" })
+                                            <input type="date" id="BirthDate" name="BirthDate" value="" min="@minDate" max="@maxDate" class="form-control" required>
+                                            @Html.ValidationMessageFor(model => model.BirthDate, "")
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Address", "Dirección:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Address, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Dirección", @minlength = "20" })
+                                            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Email", "Email:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Email, new { @type = "email", @class = "form-control", @required = true, @placeholder = "Correo Electrónico" })
+                                            <span class="form-text text-muted">A este email, se enviará el link de descarga de la firma</span>
+                                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("ConfirmEmail", "Confirmar Email:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.ConfirmEmail, new { @type = "email", @class = "form-control", @required = true, @placeholder = "Confirmar Correo Electrónico" })
+                                            @Html.ValidationMessageFor(model => model.ConfirmEmail, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Phone", "Celular:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Phone, new { @type = "number", @minlength = "10", @maxlength = "10", @pattern = "(09)?([0-9]){8}", @data_val_pattern = "Debe ingresar un número de celular válido (09XXXXXXXXXX)", @class = "form-control ", @required = true, @placeholder = "Celular", })
+                                            <span class="form-text text-muted">Para descargar la firma, te enviaremos un código de verificación a este número</span>
+                                            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "form-text text-muted" })
+                                            @*<div class="invalid-feedback">Debe ingresar un número de celular válido (09XXXXXXXXXX)</div>*@
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("ConfirmPhone", "Confirmar Celular:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.ConfirmPhone, new { @type = "number", @minlength = "10", @maxlength = "10", @pattern = "(09)?([0-9]){8}", @data_val_pattern = "Debe ingresar un número de celular válido (09XXXXXXXXXX)", @class = "form-control ", @required = true, @placeholder = "Confirmar Celular", })
+                                            @Html.ValidationMessageFor(model => model.ConfirmPhone, "", new { @class = "form-text text-muted" })
+                                            @*<div class="invalid-feedback">Debe ingresar un número de celular válido (09XXXXXXXXXX)</div>*@
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row email-soliictud" style="display:none">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Email2", "Email 2:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Email2, new { @type = "email", @class = "form-control", @placeholder = "Correo Electrónico" })
+                                            <span class="form-text text-muted">A este email, se enviará el link de descarga de la firma</span>
+                                            @Html.ValidationMessageFor(model => model.Email2, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("ConfirmEmail2", "Confirmar Email 2:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.ConfirmEmail2, new { @type = "email", @class = "form-control", @placeholder = "Confirmar Correo Electrónico" })
+                                            @Html.ValidationMessageFor(model => model.ConfirmEmail2, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row email-soliictud" style="display:none">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Phone2", "Celular2:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Phone2, new { @type = "number", @minlength = "10", @maxlength = "10", @pattern = "(09)?([0-9]){8}", @data_val_pattern = "Debe ingresar un número de celular válido (09XXXXXXXXXX)", @class = "form-control ", @placeholder = "Celular", })
+                                            <span class="form-text text-muted">Para descargar la firma, te enviaremos un código de verificación a este número</span>
+                                            @Html.ValidationMessageFor(model => model.Phone2, "", new { @class = "form-text text-muted" })
+                                            @*<div class="invalid-feedback">Debe ingresar un número de celular válido (09XXXXXXXXXX)</div>*@
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("ConfirmPhone2", "Confirmar Celular2:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.ConfirmPhone2, new { @type = "number", @minlength = "10", @maxlength = "10", @pattern = "(09)?([0-9]){8}", @data_val_pattern = "Debe ingresar un número de celular válido (09XXXXXXXXXX)", @class = "form-control ", @placeholder = "Confirmar Celular", })
+                                            @Html.ValidationMessageFor(model => model.ConfirmPhone2, "", new { @class = "form-text text-muted" })
+                                            @*<div class="invalid-feedback">Debe ingresar un número de celular válido (09XXXXXXXXXX)</div>*@
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6 carg_juridico" id="carg_juridico" @display_perJur>
+                                        <div class="form-group">
+                                            @Html.Label("WorkPosition", "Cargo:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.WorkPosition, new { @type = "text", @required = true, @class = "form-control ", @placeholder = "Cargo" })
+                                            @Html.ValidationMessageFor(model => model.WorkPosition, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row email-soliictud" style="display:none">
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                        <div class="kt-portlet kt-callout">
+                                            <div class="kt-portlet__body">
+                                                <div class="kt-callout__body">
+                                                    <div class="kt-callout__content">
+                                                        <p class="text-justify" style="font-size:12px;">
+                                                            <i class="fa fa-info-circle fa-2x text-primary"></i>&nbsp; Si estás realizando la solicitud a nombre de una <strong>Tercera Persona</strong>, por favor adjuntar la carta de autorización con el formato respectivo y firmada
+                                                        </p>
+                                                        <p>
+                                                            Descargue el formato, llene los datos, fírmelo, guárdelo en formato PDF y luego adjúntelo a esta solicitud.
+                                                        </p>
+                                                        <p>
+                                                            <center>
+                                                                <a class="btn btn-danger btn-sm btn-pill btn-elevate btn-elevate-air btn-tall" target="_blank" href="~/docs/@cartAutorizacion"> <i class="flaticon-download"></i> Descargar Formato</a>
+                                                            </center>
+                                                        </p>
+                                                    </div>
+                                                    <div class="kt-callout__action">
+                                                        <div class="form-group">
+                                                            <label class="dropzone-input" for="DesignationFile">
+                                                                Carta de Autorización
+                                                                <br />
+                                                                <span class="container-input">
+                                                                    <input type="file" name="AuthorizationFile" id="AuthorizationFile" class="inputfile inputfile-1" accept="application/pdf" />
+                                                                    <label for="AuthorizationFile">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="iborrainputfile" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                        <span class="iborrainputfile">Seleccionar archivo</span>
+                                                                    </label>
+                                                                </span>
+                                                                <div id="AuthorizationFile-error" class="error invalid-feedback"></div>
+                                                            </label>
+                                                        </div>
+                                                        <p id="size_file_authorization" style="color: #9c9c9c;">
+
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--end: Form Wizard Step 3-->
+
+                    @if (Model.Id == 0)
+                    {
+
+                        <!--begin: Form Wizard Step 4-->
+                        <div class="kt-wizard-v1__content" data-ktwizard-type="step-content">
+                            <div class="alert alert-info alert-close alert-dismissible fade show" role="alert">
+                                <div class="alert-icon"><i class="flaticon-information"></i></div>
+                                <div class="alert-text">
+                                    <h4 class="alert-heading">
+                                        Nota: Documentos legibles
+                                    </h4>
+                                    <p>
+                                        Por favor verificar que los documentos adjuntos como cédula frontal, cédula reverso y selfie, sean legibles,
+                                        caso contrario su trámite podría tardar mas tiempo.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="kt-heading kt-heading--md">Adjunte los siguientes requisitos para completar su solicitud:</div>
+                            <div class="kt-form__section kt-form__section--first">
+                                <div class="kt-wizard-v1__form">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--info kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <h6 class="kt-callout__title">Código Dactilar</h6>
+                                                            <p class="kt-callout__desc">
+                                                                Digitar código dactilar registrado en la parte reverso del documento de identidad.
+                                                            </p>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <img src="@Url.Content("~/images/firmaelectronica/coddactilar.png")" width="150">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--success kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <div class="form-group fingerPrintCode-panel">
+                                                                @Html.Label("FingerPrintCode", "Digite código dactilar:", new { @class = "control-label" })
+                                                                @Html.TextBoxFor(model => model.FingerPrintCode, new
+                                                                {
+                                                                   @minlength = "10",
+                                                                   @maxlength = "10",
+                                                                   @type = "text",
+                                                                   @class = "form-control",
+                                                                   @required = true,
+                                                                   @placeholder = "Código dactilar",
+                                                                   @data_toggle = "kt-popover",
+                                                                   @data_container = "body",
+                                                                   @data_placement = "bottom",
+                                                                   @data_html = "true",
+                                                                   @data_skin = "dark",
+                                                                   @data_content = "> Digitar código dactilar registrado en la parte reverso del documento de identidad. <br/> <span><img src='" + @Url.Content("~/images/firmaelectronica/coddactilar.png") + "' width='150'  style='margin-bottom:2px'></span><br />",
+                                                                   @data_original_title = "Código dactilar de la cédula"
+                                                                })
+                                                                @Html.ValidationMessageFor(model => model.FingerPrintCode, "", new { @class = "form-text text-muted" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--info kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <h6 class="kt-callout__title">Imagen frontal</h6>
+                                                            <p class="kt-callout__desc">
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Imagen de la cara frontal de la cédula.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Adjuntar la última cédula adquirida.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; El formato del archivo debe ser .JPG o PNG. <br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Tamaño del archivo:(max 2mb) <br />
+                                                            </p>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <img src="@Url.Content("~/images/firmaelectronica/cedulafront.png")" width="150">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--success kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <div class="form-group">
+                                                                <label class="dropzone-input" for="CedulaFrontFile" title=""
+                                                                       data-toggle="kt-popover"
+                                                                       data-container="body"
+                                                                       data-placement="bottom"
+                                                                       data-html="true"
+                                                                       data-skin="dark"
+                                                                       data-content=">Subir el archivo en formato .JPG o PNG <br/> <span><img src='@Url.Content("~/images/firmaelectronica/cedulafront.png")' width='150'  style='margin-bottom:2px'></span><br />"
+                                                                       data-original-title='Imagen de la cara frontal de la cédula'>
+                                                                    Frontal de la Cédula
+                                                                    <br />
+                                                                    <span class="container-input">
+                                                                        <input type="file" required name="CedulaFrontFile" id="CedulaFrontFile" class="inputfile inputfile-1" accept="image/jpeg, image/png" />
+                                                                        <label for="CedulaFrontFile">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="iborrainputfile" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                            <span class="iborrainputfile">Seleccionar archivo</span>
+
+                                                                        </label>
+                                                                    </span>
+                                                                    <div id="CedulaFrontFile-error" class="error invalid-feedback"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <img id="img_file_cedfront" style="display:none" src="#" width="150" class="rounded" />
+                                                            <p id="size_file_cedfront" style="color: #9c9c9c;">
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--info kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <h6 class="kt-callout__title">Imagen reverso</h6>
+                                                            <p class="kt-callout__desc">
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Imagen de la cara reverso de la cédula.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; El documento debe estar vigente, no expirado.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; El formato del archivo debe ser .JPG o PNG. <br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Tamaño del archivo:(max 2mb) <br />
+                                                            </p>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <img src="@Url.Content("~/images/firmaelectronica/cedulaBack.png")" width="150">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--success kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <div class="form-group">
+                                                                <label class="dropzone-input" for="CedulaBackFile" title=""
+                                                                       data-toggle="kt-popover"
+                                                                       data-container="body"
+                                                                       data-placement="bottom"
+                                                                       data-html="true"
+                                                                       data-skin="dark"
+                                                                       data-content=">Subir el archivo en formato .JPG o PNG <br/> <span><img src='@Url.Content("~/images/firmaelectronica/cedulaBack.png")' width='150'  style='margin-bottom:2px'></span><br />"
+                                                                       data-original-title='Imagen de la cara reverso de la cédula.'>
+                                                                    Reverso de la Cédula
+                                                                    <br />
+                                                                    <span class="container-input">
+                                                                        <input type="file" required name="CedulaBackFile" id="CedulaBackFile" class="inputfile inputfile-1" accept="image/jpeg, image/png" />
+                                                                        <label for="CedulaBackFile">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="iborrainputfile" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                            <span class="iborrainputfile">Seleccionar archivo</span>
+
+                                                                        </label>
+                                                                    </span>
+                                                                    <div id="CedulaBackFile-error" class="error invalid-feedback"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <img id="img_file_cedBack" style="display:none" src="#" width="150" class="rounded" />
+                                                            <p id="size_file_cedBack" style="color: #9c9c9c">
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--info kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <h6 class="kt-callout__title">Selfie</h6>
+                                                            <p class="kt-callout__desc">
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Subir selfie con la cédula.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; La identificación debe estar justo debajo del mentón, como se muestra en la imagen.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; No debe usar gorra, lentes o gafas.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Si su equipo cuenta con camara puede tomarse una selfie con la cédula.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; El formato del archivo debe ser .JPG o PNG. <br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Tamaño del archivo:(max 2mb) <br />
+                                                            </p>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <img src="@Url.Content("~/images/firmaelectronica/selfie.jpg")" width="150">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--success kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <div class="form-group">
+                                                                <label class="dropzone-input" for="SelfieFile" title=""
+                                                                       data-toggle="kt-popover"
+                                                                       data-container="body"
+                                                                       data-placement="bottom"
+                                                                       data-html="true"
+                                                                       data-skin="dark"
+                                                                       data-content=">Subir selfie con la cédula en formato .JPG o PNG <br/> >Si su equipo cuenta con camara puede tomarse una selfie con la cédula <br/> <span><img src='@Url.Content("~/images/firmaelectronica/selfie.jpg")' width='100' style='margin-bottom:2px'></span><br />"
+                                                                       data-original-title='Imagen de la Selfie con la cédula.'>
+                                                                    Selfie con la Cédula
+                                                                    <br />
+                                                                    <span class="container-input">
+                                                                        <input type="file" required name="SelfieFile" id="SelfieFile" class="inputfile inputfile-1" accept="image/jpeg, image/png" />
+                                                                        <label for="SelfieFile">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="iborrainputfile" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                            <span class="iborrainputfile">Seleccionar archivo</span>
+                                                                        </label>
+                                                                    </span>
+                                                                    <button title="" data-toggle="modal" data-target="#modCamara" class="btn btn-info btn-bold btn-pill btn-sm btn-elevate btn-modCamara" type="button">
+                                                                        <i class="flaticon-photo-camera"></i>&nbsp;Tomar Selfie
+                                                                    </button>
+                                                                    <div id="SelfieFile-error" class="error invalid-feedback"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <img id="img_file_selfie" style="display:none" src="#" width="150" class="rounded" />
+                                                            <p id="size_file_selfie" style="color: #9c9c9c">
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--info kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <h6 class="kt-callout__title">RUC</h6>
+                                                            <p class="kt-callout__desc">
+                                                                <i class="fa fa-check text-success"></i>&nbsp; RUC original del SRI.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Descargar archivo desde el SRI.<br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; El formato del archivo debe ser .PDF <br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Tamaño del archivo:(max 2mb) <br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; <a class="ruc_original" target="_blank" href="https://srienlinea.sri.gob.ec/tuportal-internet/accederAplicacion.jspa?redireccion=8&idGrupo=1"> <i class="flaticon-download"></i> Descargar Archivo</a> <br />
+
+                                                            </p>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <img src="@Url.Content("~/images/firmaelectronica/RUC.png")" width="100">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--success kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <div class="form-group">
+                                                                <label class="dropzone-input" for="RucFile" title=""
+                                                                       data-toggle="kt-popover"
+                                                                       data-container="body"
+                                                                       data-placement="bottom"
+                                                                       data-html="true"
+                                                                       data-skin="dark"
+                                                                       data-content='> Descargar archivo desde el SRI <br> > Subir el archivo descargado .PDF '
+                                                                       data-original-title='RUC original del SRI'>
+                                                                    Copia del RUC<br />
+                                                                    <span class="container-input">
+                                                                        <input type="file" required class="inputfile inputfile-1" id="RucFile" name="RucFile" accept="application/pdf" />
+                                                                        <label for="RucFile">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="iborrainputfile" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                            <span class="iborrainputfile">Seleccionar archivo</span>
+
+                                                                        </label>
+                                                                    </span>
+                                                                    <div id="RucFile-error" class="error invalid-feedback"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <embed id="pdf_file_ruc" src="#" width="150" style="display:none;border:0px;">
+                                                            <p id="size_file_ruc" style="color: #9c9c9c">
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="doc_juridico" id="doc_juridico" @display_juridical>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-10 col-sm-12">
+                                                <div class="kt-portlet kt-callout kt-callout--info kt-callout--diagonal-bg">
+                                                    <div class="kt-portlet__body">
+                                                        <div class="kt-callout__body">
+                                                            <div class="kt-callout__content">
+                                                                <h6 class="kt-callout__title">Nombramiento</h6>
+                                                                <p class="kt-callout__desc">
+                                                                    <i class="fa fa-check text-success"></i>&nbsp; Nombramiento de Representante Legal.<br />
+                                                                    <i class="fa fa-check text-success"></i>&nbsp; El formato del archivo debe ser .PDF <br />
+                                                                    <i class="fa fa-check text-success"></i>&nbsp; Tamaño del archivo:(max 5mb) <br />
+                                                                </p>
+                                                            </div>
+                                                            <div class="kt-callout__action">
+                                                                <img src="@Url.Content("~/images/firmaelectronica/nobramiento.png")" width="100">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-10 col-sm-12">
+                                                <div class="kt-portlet kt-callout kt-callout--success kt-callout--diagonal-bg">
+                                                    <div class="kt-portlet__body">
+                                                        <div class="kt-callout__body">
+                                                            <div class="kt-callout__content">
+                                                                <div class="form-group">
+                                                                    <label class="dropzone-input" for="DesignationFile">
+                                                                        Nombramiento de
+                                                                        Representante Legal
+                                                                        <br />
+                                                                        <span class="container-input">
+                                                                            <input type="file" class="inputfile inputfile-1" id="DesignationFile" name="DesignationFile" accept="application/pdf" />
+                                                                            <label for="DesignationFile">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="iborrainputfile" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                                <span class="iborrainputfile">Seleccionar archivo</span>
+                                                                            </label>
+                                                                        </span>
+                                                                        <div id="DesignationFile-error" class="error invalid-feedback"></div>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="kt-callout__action">
+                                                                <embed id="pdf_file_nombramiento" src="#" width="150" height="150" style="display:none;border:0px;">
+                                                                <p id="size_file_nombramiento" style="color: #9c9c9c">
+
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-10 col-sm-12">
+                                                <div class="kt-portlet kt-callout kt-callout--info kt-callout--diagonal-bg">
+                                                    <div class="kt-portlet__body">
+                                                        <div class="kt-callout__body">
+                                                            <div class="kt-callout__content">
+                                                                <h6 class="kt-callout__title">Constitución</h6>
+                                                                <p class="kt-callout__desc">
+                                                                    <i class="fa fa-check text-success"></i>&nbsp; Constitución de Compañia.<br />
+                                                                    <i class="fa fa-check text-success"></i>&nbsp; El formato del archivo debe ser .PDF <br />
+                                                                    <i class="fa fa-check text-success"></i>&nbsp; Tamaño del archivo:(max 5mb) <br />
+                                                                </p>
+                                                            </div>
+                                                            <div class="kt-callout__action">
+                                                                <img src="@Url.Content("~/images/firmaelectronica/constitucion.png")" width="100">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-10 col-sm-12">
+                                                <div class="kt-portlet kt-callout kt-callout--success kt-callout--diagonal-bg">
+                                                    <div class="kt-portlet__body">
+                                                        <div class="kt-callout__body">
+                                                            <div class="kt-callout__content">
+                                                                <div class="form-group">
+                                                                    <label class="dropzone-input" for="ConstitutionFile">
+                                                                        Constitución de Compañia
+                                                                        <br />
+                                                                        <span class="container-input">
+                                                                            <input type="file" class="inputfile inputfile-1" id="ConstitutionFile" name="ConstitutionFile" accept="application/pdf" />
+                                                                            <label for="ConstitutionFile">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="iborrainputfile" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                                <span class="iborrainputfile">Seleccionar archivo</span>
+                                                                            </label>
+                                                                        </span>
+                                                                        <div id="ConstitutionFile-error" class="error invalid-feedback"></div>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="kt-callout__action">
+                                                                <embed id="pdf_file_constcomp" src="#" width="150" height="150" style="display:none;border:0px;">
+                                                                <p id="size_file_constcomp" style="color: #9c9c9c">
+
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" id="video_autorizacion" style="display:none">
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--info kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <h6 class="kt-callout__title">Video Autorización</h6>
+                                                            <p class="kt-callout__desc natural-person">
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Estimado cliente, es un requisito obligatorio para las solicitudes realizadas por personas mayores a 65 años,
+                                                                adjuntar un video de autorización con el siguiente diálogo: Hoy (dd/mm/aaaa) Yo (nombres completos)
+                                                                autorizo emitir mi firma electrónica al correo xxxxxxxx@xxxxx.xxx <br />                                                                
+                                                                <i class="fa fa-check text-success"></i>&nbsp; El formato del archivo debe ser .mp4, .avi, .flv, .mkv, .3gp, .mov, .mpeg <br />
+                                                                <i class="fa fa-check text-success"></i>&nbsp; Tamaño del archivo:(max 100mb) <br />
+                                                            </p>                                                           
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-10 col-sm-12">
+                                            <div class="kt-portlet kt-callout kt-callout--success kt-callout--diagonal-bg">
+                                                <div class="kt-portlet__body">
+                                                    <div class="kt-callout__body">
+                                                        <div class="kt-callout__content">
+                                                            <div class="form-group">
+                                                                <label class="dropzone-input" for="AuthorizationAgeFile">
+                                                                    Video Autorización
+                                                                    <br />
+                                                                    <span class="container-input">
+                                                                        <input type="file" class="inputfile inputfile-1" id="AuthorizationAgeFile" name="AuthorizationAgeFile" accept="video/mp4, video/mov, video/avi, video/flv, video/mkv, video/3gp, video/mov, video/mpeg" />
+                                                                        <label for="AuthorizationAgeFile">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="iborrainputfile" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                            <span class="iborrainputfile">Seleccionar archivo</span>
+                                                                        </label>
+                                                                    </span>
+                                                                    <div id="AuthorizationAgeFile-error" class="error invalid-feedback"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="kt-callout__action">
+                                                            <video id="vid_file_edadAut"  width="150" height="150" style="display:none;border:0px;" autoplay></video>                                                           
+                                                                <br />
+                                                                <p id="size_file_edadAut" style="color: #9c9c9c">
+
+                                                                </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--end: Form Wizard Step 4-->
+
+                    }
+                    @if (SessionInfo.UserSession?.Subscription?.Status == SubscriptionStatusEnum.Activa && !Model.SendProcessElectronicSign)
+                    {
+                        var prodServices = SessionInfo.Catalog.ProductServicesEcuafact.ToList().Where(s => s.Code == "01").FirstOrDefault();
+                        var taxes = SessionInfo.Catalog.IVARates.ToList().Where(s => s.SriCode == "2").FirstOrDefault();
+                        Model.InvoiceInfo.Product = prodServices.Name;
+                        Model.InvoiceInfo.Price = prodServices.Price;
+                        Model.InvoiceInfo.SubTotal = prodServices.Price;
+                        Model.InvoiceInfo.Iva = (prodServices.Price * (taxes.RateValue / 100));
+                        Model.InvoiceInfo.Total = ((prodServices.Price * (taxes.RateValue / 100)) + prodServices.Price);
+                        Model.InvoiceInfo.IvaRate = taxes.RateValue;
+
+                        <!--begin: Form Wizard Step 5-->
+                        <div class="kt-wizard-v1__content" data-ktwizard-type="step-content">
+                            <div class="kt-heading kt-heading--md">Facturar a nombre de:</div>
+                            <div class="kt-form__section kt-form__section--first">
+                                <div class="kt-wizard-v1__form">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                @Html.Label("InvoiceInfo.Identificacion", "Identificación:", new { @class = "control-label" })
+                                                @Html.TextBoxFor(model => model.InvoiceInfo.Identification, new { @type = "number", @class = "form-control ", @minlength = "10", @maxlength = "13", @required = true, @placeholder = "Identificación" })
+                                                @Html.ValidationMessageFor(model => model.InvoiceInfo.Identification, "", new { @class = "form-text text-muted" })
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="form-group">
+                                                @Html.Label("InvoiceInfo.Name", "Nombre:", new { @class = "control-label" })
+                                                @Html.TextBoxFor(model => model.InvoiceInfo.Name, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Razon Social" })
+                                                @Html.ValidationMessageFor(model => model.InvoiceInfo.Name, "", new { @class = "form-text text-muted" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                @Html.Label("InvoiceInfo.Address", "Dirección:", new { @class = "control-label" })
+                                                @Html.TextBoxFor(model => model.InvoiceInfo.Address, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Dirección" })
+                                                @Html.ValidationMessageFor(model => model.InvoiceInfo.Address, "", new { @class = "form-text text-muted" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-7">
+                                            <div class="form-group">
+                                                @Html.Label("InvoiceInfo.Email", "Email:", new { @class = "control-label" })
+                                                @Html.TextBoxFor(model => model.InvoiceInfo.Email, new { @type = "email", @data_val_pattern = "Debe ingresar un correo electrónico válido", @class = "form-control ", @required = true, @placeholder = "Correo Electrónico" })
+                                                @Html.ValidationMessageFor(model => model.InvoiceInfo.Email, "", new { @class = "form-text text-muted" })
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <div class="form-group">
+                                                @Html.Label("InvoiceInfo.Phone", "Teléfono:", new { @class = "control-label" })
+                                                @Html.TextBoxFor(model => model.InvoiceInfo.Phone, new { @type = "number", @class = "form-control ", @required = true, @placeholder = "Phone" })
+                                                @Html.ValidationMessageFor(model => model.InvoiceInfo.Address, "", new { @class = "form-text text-muted" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end: Form Wizard Step 5-->
+
+                        <!--begin: Form Wizard Step 6-->
+                        <div class="kt-wizard-v1__content" data-ktwizard-type="step-content">
+                            <div class="kt-heading kt-heading--md">Informaci&oacute;n de la compra:</div>
+                            <div class="kt-form__section kt-form__section--first">
+                                <div class="kt-wizard-v1__form">
+                                    @Html.HiddenFor(model => model.InvoiceInfo.Price, new { @class = "Price" })
+                                    @Html.HiddenFor(model => model.InvoiceInfo.IvaRate, new { @class = "IvaRate" })
+                                    @Html.HiddenFor(model => model.InvoiceInfo.Product, new { @class = "Product-Name" })
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-6 col-xl-6 order-lg-1 order-xl-1">
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <div class="form-group">
+                                                        @Html.Label("InvoiceInfo.DiscountCode", "Si tienes un código promocional, ingresalo aquí:", new { @class = "control-label" })
+                                                        @Html.TextBoxFor(model => model.InvoiceInfo.DiscountCode, new { @autocomplete = "off", @type = "text", @class = "form-control DiscountCode", @placeholder = "EFG0896H" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4" style="margin-top:24px;">
+                                                    <div class="kt-portlet__head-toolbar">
+                                                        <button type="button" class="btn btn-info btn-bold btn-pill btn-tall btn-sm btnAplicar">
+                                                            <i class='fa fa-check'></i> Aplicar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <i id="imgCode"></i>
+                                                    <span class="kt-inbox__label">
+                                                        <strong id="msg_code"></strong>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1 col-lg-1 col-xl-1 order-lg-1 order-xl-1"></div>
+                                        <div class="col-md-5 col-lg-5 col-xl-5 order-lg-1 order-xl-1">
+
+                                            <h3 class="kt-invoice__title text-center">
+                                                <small>RESUMEN</small>
+                                            </h3>
+
+
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h6 class="kt-invoice__title">Producto:</h6>
+                                                </div>
+                                                <div class="col text-right">
+                                                    <h5 class="kt-invoice__title name-product"> @(Model.InvoiceInfo.Product ?? "")</h5>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h6 class="kt-invoice__title">Precio:</h6>
+                                                </div>
+                                                <div class="col text-right">
+                                                    <h5 class="kt-invoice__title price-product"> $ @Model.InvoiceInfo.Price.ToString("#.00")</h5>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h6 class="kt-invoice__title">Descuento:</h6>
+                                                </div>
+                                                <div class="col text-right">
+                                                    <h5 class="kt-timeline-v1__item-title totalDiscount"> $ @Model.InvoiceInfo.Discount.ToString("#.00")</h5>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h6 class="kt-invoice__title">Subtotal 12%:</h6>
+                                                </div>
+                                                <div class="col text-right">
+                                                    <h5 class="kt-invoice__title subtotal"> $ @Model.InvoiceInfo.SubTotal.ToString("#.00")</h5>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h6 class="kt-invoice__title">IVA 12%:</h6>
+                                                </div>
+                                                <div class="col text-right">
+                                                    <h5 class="kt-invoice__title totalIva"> $ @Model.InvoiceInfo.Iva.ToString("#.00")</h5>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h6 class="kt-invoice__title">Total a Pagar:</h6>
+                                                </div>
+                                                <div class="col text-right">
+                                                    <h5 class="kt-invoice__title total"> $ @Model.InvoiceInfo.Total.ToString("#.00")</h5>
+                                                </div>
+                                            </div>
+
+                                            <div class="kt-invoice-1">
+                                                <div class="kt-invoice__container">
+                                                    <div class="kt-invoice__total text-center">
+                                                        <h6 class="kt-invoice__title">TOTAL</h6>
+                                                        <h4 class="kt-invoice__price _total text-success">  $ @Model.InvoiceInfo.Total.ToString("#.00")  </h4>
+                                                        <span class="kt-invoice__notice text-success">Incluye impuestos</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end: Form Wizard Step 6-->
+
+                    }
+                    <div class="kt-form__actions">
+                        <button class="btn btn-secondary btn-md btn-pill btn-elevate btn-elevate-air btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-prev">
+                            Anterior
+                        </button>
+                        <button type="submit" class="btn btn-success btn-md btn-pill btn-elevate btn-elevate-air btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-submit">
+                            Guardar
+                        </button>
+                        <button class="btn btn-brand btn-md btn-pill btn-elevate btn-elevate-air btn-tall  btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-next">
+                            Siguiente
+                        </button>
+                    </div>
+
+                    <!--end: Form Actions -->
+                </form>
+
+                <!--end: Form Wizard Form-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--begin: Camara-->
+
+<div class="modal" id="modCamara">
+    <div class="modal-dialog modal-lg modal-notify modal-info show" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="fa fa-camera"></i> &nbsp;&nbsp; Selfie</h4>
+                <button type="button" class="close modal_Close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-5">
+                        <div class="video-wrap">
+                            <video id="video" playsinline autoplay></video>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <canvas id="canvas"> </canvas>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-5 text-center">
+                        <button style="display:none;" type="button" id="btnGrabar" class="btn btn-primary btn-pill btn-sm btn_Grabar" title="Tomar selfie"> Tomar <i class="fa fa-camera"></i></button>
+                    </div>
+                    <div class="col-5 text-center">
+                        <button style="display:none;" type="button" id="btnGuardar" class="btn btn-success btn-elevate btn-pill  btn-sm btn_Guardar" title="Tomar selfie">&nbsp;<i class="flaticon2-check-mark text-light"></i>  Aceptar</button>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--end: camara-->
+
+@section Scripts{
+    @Scripts.Render("~/js/inputmask")
+
+    @Scripts.Render("~/scripts/electronicSign.js")
+
+<script>
+
+    $(document).ready(function () {
+
+        electronicSign.PaymentUrl = "@Url.Action("Checkout", "Payment")";
+        electronicSign.HomeUrl = "@Url.Action("")";
+        electronicSign.VerUrl = "@Url.Action("Ver", "FirmaElectronica")";
+        electronicSign.SupElectSign = "@proveedor";
+        electronicSign.CodePromUrl = "@Url.Action("ValidateCode", "Payment")";
+        electronicSign.Plans = @Html.Raw(Json.Encode(plans));
+        electronicSign.EmailUrl =  '@Url.Content("~/FirmaElectronica/ValidarRequestEmail")';
+        electronicSign.Init();
+
+    });
+
+</script>
+}

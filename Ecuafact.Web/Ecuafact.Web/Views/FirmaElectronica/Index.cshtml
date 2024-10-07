@@ -1,0 +1,215 @@
+﻿@using Ecuafact.Web.Domain.Entities;
+@using System.Globalization;
+@using Ecuafact.Web;
+
+@model IEnumerable<ElectronicSignModel>
+
+@{
+    ViewBag.Title = "Solicitudes de Firma Electronica";
+    var msg = "Estimado Cliente: Tu solicitud de firma electrónica no podrá ser realizada, debido a que existe un pago de suscripción que aún no hemos validado";
+    if (SessionInfo.UserSession?.Subscription?.Status == SubscriptionStatusEnum.Saved)
+    {
+        msg = "Estimado Cliente: Tu solicitud de firma electrónica no podrá ser realizada, debido a que existe un pago pendiente de suscripción.";
+    }
+    else if (SessionInfo.UserSession?.Subscription?.Status == SubscriptionStatusEnum.Inactiva)
+    {
+        msg = "Estimado Cliente: Antes de solicitar tu firma electrónica, por favor renovar tu suscripción, te recordamos que el pago de la  renovación de suscripción incluye GRATIS la emisión de la firma electrónica.";
+    }
+    else if (SessionInfo.UserSession?.Subscription == null)
+    {
+        msg = "Estimado Cliente: Antes de solicitar tu firma electrónica, debes seleccionar un PLAN de suscripción, Incluye GRATIS la emisión de la firma electrónica";
+    }
+    this.PageOptions(model =>
+    {
+        model.DataTables = true;
+        model.Select2 = true;
+    });
+}
+
+<div class="kt-portlet">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-toolbar">
+            <div class="kt-portlet__head-actions" style="margin-left:20px">
+                @if (SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.ValidatingPayment
+                     || SessionInfo.UserSession?.Subscription?.Status == SubscriptionStatusEnum.Inactiva
+                     || SessionInfo.UserSession?.Subscription?.Status == SubscriptionStatusEnum.Saved
+                     || SessionInfo.UserSession?.Subscription == null)
+                {
+                    <button class="btn btn-warning btn-pill btn-sm" title="Solicitar nueva firma electrónica" onclick="Swal.fire('Información', '@msg', 'info')">
+                        <i class='fa fa-plus-circle'></i>   Nuevo <i class='fa fa-plus'></i>
+                    </button>
+                }
+                else if (SessionInfo.UserSession?.Subscription.LicenceType.Code == Constants.PlanBasic)
+                {
+                    msg = "Estimado Cliente, el precio de una firma electrónica es de 19,90 + Iva, por el mismo valor, puedes cambiarte a un Plan Pymes que incluye firma electrónica y 60 documentos para emitir.";
+                    <button class="btn btn-warning btn-pill btn-sm" title="Solicitar nueva firma electrónica" onclick="Swal.fire('Información', '@msg', 'info')">
+                        <i class='fa fa-plus-circle'></i>   Nuevo <i class='fa fa-plus'></i>
+                    </button>
+                }
+                else if (SessionInfo.UserSession?.Subscription.RequestElectronicSign > 0)
+                {
+                    msg = " Has solicitado una firma electrónica anteriormente, si deseas realizar otra solicitud por favor comunícate al teléfono: 0998027365";
+                    <button class="btn btn-warning btn-pill btn-sm" title="Solicitar nueva firma electrónica" onclick="Swal.fire('Información', '@msg', 'info')">
+                        <i class='fa fa-plus-circle'></i>   Nuevo <i class='fa fa-plus'></i>
+                    </button>
+                }
+                else
+                {
+                    <a id="btnNuevo" href="@Url.Action("Nuevo")" class="btn btn-warning btn-pill btn-sm" title="Solicitar nueva firma electrónica"><i class='fa fa-plus-circle'></i>   Nuevo <i class='fa fa-plus'></i></a>
+                }
+            </div>
+        </div>
+        <div class="kt-portlet__head-toolbar align-content-end">
+            <div class="kt-portlet__head-actions" style="margin-left:20px">
+                <button class="btn btn-primary btn-pill btn-sm align-content-end conf-certificado" title="Configurar Firma">
+                    <i class='fa fa-cogs'></i>   Configurar Firma <i class='fa fa-pencil-alt'></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="kt-portlet__body">
+        <table class="table table-striped table-bordered table-hover responsive dt-responsive table-checkable order-column" id="listaSolicitudes" name="listaProductos" style="width:100%!important">
+
+            <thead>
+                <tr>
+                    <th class="text-center">Id</th>
+                    <th class="text-center">No Orden</th>
+                    <th class="text-center">Identificacion</th>
+                    <th class="text-center">Nombres</th>
+                    <th class="text-center">Apellidos</th>
+                    <th class="text-center">Email</th>
+                    <th class="text-center">Telefono</th>
+                    <th class="text-center">Fecha Creación</th>
+                    <th class="text-center">Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var statusMessage = "";
+                    var styleClass = "";
+                    var statusMsg = "";
+                    var statusType = "";
+                    var iconClass = "";
+
+                    if (item.Status == ElectronicSignStatusEnum.Approved)
+                    {
+                        iconClass = "la la-gears";
+                        statusMessage = "EN PROCESO";
+                        styleClass = "info";
+                        statusType = "info";
+                        statusMsg = "Solicitud en proceso";
+                    }
+                    else if (item.Status == ElectronicSignStatusEnum.Error)
+                    {
+                        var msjs = item.StatusMsg?.Split('>');
+                        var msj = msjs?[msjs.Length - 1];
+                        iconClass = "fa fa-times-circle";
+                        statusMessage = "ERROR";
+                        styleClass = "danger";
+                        statusType = "error";
+                        statusMsg = item.StatusMsg?.Replace("fortega@ -->", " ").Replace("operador2@ -->", " ").Replace("Cliente@ -->", " ");
+                    }
+                    else if (item.Status == ElectronicSignStatusEnum.Processed)
+                    {
+                        iconClass = "fa fa-check-circle";
+                        statusMessage = "PROCESADA";
+                        styleClass = "success";
+                        statusType = "success";
+                        statusMsg = "Solicitud procesada";
+                    }
+                    else if (item.Status == ElectronicSignStatusEnum.ValidatingPayment)
+                    {
+                        iconClass = "flaticon2-warning";
+                        statusMessage = "VALIDANDO PAGO";
+                        styleClass = "warning";
+                        statusType = "warning";
+                        statusMsg = "Validando pago de la solicitud";
+                    }
+                    else
+                    {
+                        iconClass = "flaticon2-warning";
+                        statusMessage = "PENDIENTE DE PAGO";
+                        styleClass = "warning";
+                        statusType = "warning";
+                        statusMsg = "Pendiente pago de la solicitud";
+                    }
+                    <tr>
+                        <td class=" text-success" data-order="@item.Id">@item.Id</td>
+                        <td>@item.PurchaseOrderId.ToString("D10")</td>
+                        <th>
+                            <a href="@Url.Action("Ver", new { id = item.Id })">
+                                @item.Identification
+                            </a>
+                        </th>
+                        <td>@item.FirstName</td>
+                        <td>@item.LastName</td>
+                        <td>@item.Email</td>
+                        <td>@item.Phone</td>
+                        <td class="text-center">@item.CreatedOn.ToString("yyyy/MM/dd")</td>
+                        <td class="text-center text-@styleClass" title="@statusMessage">
+                            <a class="text-center btn btn-circle btn-pill btn-sm btn-small btn-outline-@styleClass" href="javascript:;" onclick='Swal.fire("@statusMessage", `@statusMsg`, "@statusType" );'>
+                                <i class="@iconClass"></i> @statusMessage
+                            </a>
+                        </td>
+
+                        <td class="hidden-print">
+                            @{
+                                var Idbtn = "Ver-CSS";
+                                var title = "Ver solicitud";
+                                if (item.Status == ElectronicSignStatusEnum.Error && item.InvoiceId > 0)
+                                {
+                                    Idbtn = "Edit-CSS";
+                                    title = "Editar solicitud";
+                                }
+                            }
+
+                            <a title="@title" data-toggle="tooltip" data-placement="bottom" href="@Url.Action("Ver", new{ id=item.Id })">
+                                <div id="@Idbtn"></div>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        $('#listaSolicitudes').DataTable({
+            "language": {
+                "url": "@Url.Content("~/scripts/dt_spanish.json")"
+            },
+            bFilter: false//,
+            //dom: 'BRfrtip',
+            //buttons: {
+            //    buttons: [
+            //        { extend: 'excel', className: 'btn btn-success btn-elevate btn-pill', text:' <i class="la la-file-excel-o "></i> ' },
+            //        { extend: 'pdf', className: 'btn btn-danger btn-elevate btn-pill', text:'  <i class="la la-file-pdf-o "></i> ' },
+            //        { extend: 'print', className: 'btn btn-brand btn-elevate btn-pill', text:' <i class="flaticon2-printer"></i> ' }
+            //    ]
+            //}
+        } );
+
+        $(".conf-certificado").on("click", function () {
+            configurarCertificado();
+        });
+
+    function configurarCertificado() {
+       showLoader();
+       $.get("@Url.Action("ConfigurarCertificado", "FirmaElectronica")", {}, function (data) {
+            $("#myModal").html(data);
+            hideLoader();
+            $("#myModal").fadeIn();
+            $("#myModal").modal("show");
+       });
+    }
+    </script>
+}

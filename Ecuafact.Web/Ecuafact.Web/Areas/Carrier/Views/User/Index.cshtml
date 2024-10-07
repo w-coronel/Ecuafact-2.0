@@ -1,0 +1,120 @@
+﻿@using System
+@{
+
+
+    ViewBag.Title = "Perfil del Usuario";
+
+    var logoFile = ViewData["LogoFile"] as string;
+
+}
+
+@section styles{
+    @Styles.Render("~/css/issuers") 
+}
+
+<div class="kt-portlet">
+    <div class="kt-portlet__body kt-portlet__body--fit">
+        <div class="kt-grid  kt-wizard-v2 kt-wizard-v2--white" id="kt_wizard_v2" data-ktwizard-state="first">
+            <div class="kt-grid__item kt-wizard-v2__aside bg-secondary">
+                <!--begin: Form Wizard Nav -->
+                <div class="kt-wizard-v2__nav">
+                     
+
+                    <div class="kt-wizard-v2__nav-items">
+
+                        <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="current">
+                            <div class="kt-wizard-v2__nav-body">
+                                <div class="kt-wizard-v2__nav-icon">
+                                    <i class="flaticon-user-settings"></i>
+                                </div>
+                                <div class="kt-wizard-v2__nav-label">
+                                    <div class="kt-wizard-v2__nav-label-title">
+                                        Perfil del Usuario
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label-desc">
+                                        Datos personales del usuario actual.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <!--end: Form Wizard Nav -->
+            </div>
+            <div class="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
+                <!--begin: Form Wizard Form-->
+
+                @Html.Hidden("AutoCompleteOff", null, new { @autocomplete = "off" })
+
+                <!--begin: Form Wizard Step 0-->
+                <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
+                    <div class="kt-form" id="kt_form">
+
+                        <div class="kt-heading kt-heading--md">Datos personales</div>
+                        <div class="kt-form__section kt-form__section--first">
+                            <div class="kt-wizard-v2__form">
+                                <div class="col-1"></div>
+                                <div class="col-md-4">
+
+                                </div>
+
+                                <div class="col-md-7">
+
+
+                                    <div class="form-group ">
+                                        <label>Identificaci&oacute;n</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-black-back-closed-envelope-shape"></i></span></div>
+                                            @Html.TextBox("Username", SessionInfo.UserInfo.Username, new { @class = "form-control  readonly", @disabled = "disabled", @readonly = "readonly", @style = "maxwidth:150px" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label>Nombre</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-user"></i></span></div>
+                                            @Html.TextBox("Name", SessionInfo.UserInfo.Name, new { @class = "form-control readonly", @disabled = "disabled", @readonly = "readonly", @placeholder = "Tu Nombre" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label>Telefono</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-phone"></i></span></div>
+                                            @Html.TextBox("Phone", SessionInfo.UserInfo.Phone, new { @class = "form-control readonly", @placeholder = "Telefono", @disabled = "disabled", @readonly = "readonly"  })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label>Correo Electr&oacute;nico</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-black-back-closed-envelope-shape"></i></span></div>
+                                            @Html.TextBox("Email", SessionInfo.UserInfo.Email, new { @class = "form-control readonly", @disabled = "disabled", @readonly = "readonly", @placeholder = "Correo Electrónico", @style = "maxwidth:150px"  })
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Toolbar{
+    <button onclick="location.assign('@Url.Action("Perfil")');" id="btnEditar" class="btn btn-warning">
+        <i class="flaticon2-edit"></i>
+        Editar
+    </button>
+}
+
+@section Scripts{
+    @Scripts.Render("~/js/profile")
+}

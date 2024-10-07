@@ -1,0 +1,7 @@
+﻿@model HandleErrorInfo
+
+@{
+    ViewBag.Title = "Notificación de Error";
+
+    Layout = "~/Views/Shared/Error.cshtml";
+}  

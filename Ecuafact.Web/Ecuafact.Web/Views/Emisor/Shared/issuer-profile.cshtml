@@ -1,0 +1,106 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+
+<div class="kt-heading kt-heading--md">Configuración:</div>
+
+<div class="kt-form__section kt-form__section--first">
+
+    <div class="kt-wizard-v2__form">
+
+
+        <div class="row">
+
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.RUC, htmlAttributes: new { @class = "control-label col-12" })
+                <div class="col-12 kt-input-icon kt-input-icon--right">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon-customer"></i>
+                        </span>
+                    </span>
+
+                    @if (Model.Id > 0)
+                    {
+                        @Html.EditorFor(model => model.RUC, new { htmlAttributes = new { @class = "form-control readonly", @readonly = "readonly" } })
+                    }
+                    else
+                    {
+                        @Html.EditorFor(model => model.RUC, new { htmlAttributes = new { @class = "form-control ruc-control" } })
+                    }
+
+                    @Html.ValidationMessageFor(model => model.RUC, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-12">
+                @Html.LabelFor(model => model.BussinesName, htmlAttributes: new { @class = "control-label col-12" })
+                <div class="col-12 kt-input-icon kt-input-icon--right">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon-profile-1"></i>
+                        </span>
+                    </span>
+                    @Html.EditorFor(model => model.BussinesName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.BussinesName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-12">
+                @Html.LabelFor(model => model.TradeName, htmlAttributes: new { @class = "control-label col-12" })
+                <div class="col-12 kt-input-icon kt-input-icon--right">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon-profile"></i>
+                        </span>
+                    </span>
+                    @Html.EditorFor(model => model.TradeName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TradeName, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+
+            <div class="form-group col-12 col-xl-6">
+                @Html.LabelFor(model => model.Phone, htmlAttributes: new {  @class = "control-label col-12" })
+                <div class="col-12 kt-input-icon kt-input-icon--right">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon2-phone"></i>
+                        </span>
+                    </span>
+                    @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @type = "number", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-12 col-xl-6">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-12" })
+                <div class="col-12 kt-input-icon kt-input-icon--right">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon2-black-back-closed-envelope-shape"></i>
+                        </span>
+                    </span>
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @type="email", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-12 ">
+                @Html.LabelFor(model => model.MainAddress, htmlAttributes: new { @class = "control-label col-12" })
+                <div class="col-12 kt-input-icon kt-input-icon--right">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon-placeholder-3"></i>
+                        </span>
+                    </span>
+                    @Html.EditorFor(model => model.MainAddress, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MainAddress, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>

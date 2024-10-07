@@ -1,0 +1,775 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices;
+@using Ecuafact.Web.Domain.Entities
+@model ReferralGuideRequestModel
+@{
+    ViewBag.Title = "Crear Guia de Remision";
+    ViewBag.ParentTitle = "Emitidos";
+
+    this.PageOptions(options =>
+    {
+        options.Select2 = true;
+        options.DataTables = true;
+        options.DatePicker = true;
+
+    });
+
+    var emisorActual = SessionInfo.Issuer;
+    var tiposDocumento = SessionInfo.Catalog.DocumentTypes;
+    var tiposIdentidad = SessionInfo.Catalog.IdentificationTypes;
+    var drivers = new List<ContributorDto>();
+    var recipients = new List<ContributorDto>();
+
+    if (Model.DriverId > 0)
+    {
+        drivers.Add(Model.ToDriver());
+    }
+    var driverList = drivers.Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.Identification, x.BussinesName), Value = x.Id.ToString() }).ToList();
+
+    if (Model.RecipientId > 0)
+    {
+        recipients.Add(Model.ToRecipient());
+    }
+    var recipientList = recipients.Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.Identification, x.BussinesName), Value = x.Id.ToString() }).ToList();
+
+
+
+    Model.IssuedOn = DateTime.Today.ToString("dd/MM/yyyy");
+    Model.Id = Model.Id ?? 0;
+}
+
+@section styles{
+    <link href="~/content/invoice.css" rel="stylesheet" />
+}
+
+<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+    @Html.HiddenFor(model => model.Id)
+    <div class="kt-portlet">
+
+        <div class="kt-portlet__body kt-portlet__body--fit">
+
+            <div class="kt-invoice-1">
+
+                <div class="kt-invoice__head" style="background-image: url(@Url.Content("~/assets/media/bg/300.jpg"));">
+
+                    <div class="kt-invoice__container">
+
+                        <div class="kt-invoice__brand">
+
+                            <h1 class="kt-invoice__title">Guía De Remisión</h1>
+
+                        </div>
+
+                        <div class="kt-invoice__items">
+
+                            <div class="kt-invoice__item col-12 col-sm-7">
+
+                                <span class="kt-invoice__subtitle">Documento:</span>
+
+                                <select style="width:100%;" class="js-documentSelector" id="ref_documento_id">
+                                    <option></option>
+                                </select>
+                                @Html.HiddenFor(model => model.ContributorId, new { @id = "ref_contribuyente_id" })
+                                @Html.HiddenFor(model => model.ReferenceDocumentId, new { @id = "ref_comprobante_id" })
+                                @Html.HiddenFor(model => model.Phone, new { @id = "ref_phone" })
+                                @Html.HiddenFor(model => model.Address, new { @id = "ref_address" })
+                                @Html.HiddenFor(model => model.EmailAddresses, new { @id = "ref_email" })
+
+                            </div>
+
+                            <div class="col-12 col-sm-2"></div>
+
+                            <div class="kt-invoice__item col-12 col-sm-3">
+
+                                <div class="row">
+
+                                    <div class="col-6 col-sm-12">
+
+                                        <span class="kt-invoice__subtitle">Fecha Emisión</span>
+
+                                        <div class="kt-input-icon kt-input-icon--right">
+
+                                            <span class="kt-input-icon__icon kt-input-icon__icon--right">
+
+                                                <span>
+
+                                                    <i class="fa fa-calendar-alt"></i>
+
+                                                </span>
+
+                                            </span>
+
+                                            <input name="fecha_documento" id="fecha_documento" type="text" class="form-control input-readonly bg-white"
+                                                   style="width: 100%;border:none none solid none; text-align:right;" placeholder="Fecha" value="@DateTime.Now.ToString("dd/MM/yyyy")"
+                                                   aria-describedby="addon-fecha_documento" readonly>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                @* Detalle del Comprobante de Venta *@
+                <div class="row">
+
+                    <div class="col-md-12 normalform">
+
+                        <div class="col-12">
+                            <h3>Datos del Comprobante de Venta </h3>
+
+                            <label>Indique la informacion basica del documento que usted desea utilizar como respaldo del transporte : </label>
+
+                        </div>
+
+                        <div class="row text-dark" style="padding-left:15px;padding-right:15px;">
+
+                            <div class="col-md-6" id="detailDocument" name="detailDocument">
+
+
+                                <table style="width:100%;">
+                                    <tr>
+
+                                        <th style="vertical-align:middle; width:50%; text-align:left;"><i class='fa fa-address-card' style="margin-right:5px"></i>Tipo de Identificacion: &nbsp;</th>
+                                        <td style="text-align:right">
+                                            @Html.DropDownListFor(model => model.IdentificationType,
+                                                new SelectList(tiposIdentidad, "SriCode", "Name", Model.IdentificationType),
+                                                new
+                                                     {
+                                                    @id = "ref_tipoidentificacion_contribuyente",
+                                                    @class = "form-control m-b",
+                                                    @required = ""
+                                                })
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="vertical-align:middle;  width:50%; text-align:left;"><i class='fa fa-address-card' style="margin-right:5px"></i>No. Identificacion: &nbsp;</th>
+                                        <td style="text-align:right;">
+                                            @Html.EditorFor(model => model.Identification,
+                                                            new
+                                                            {
+                                                                htmlAttributes = new
+                                                                {
+                                                                    @id = "ref_identificacion_contribuyente",
+                                                                    @class = "form-control input-readonly",
+                                                                    @placeholder = "Identificacion del Comprador",
+                                                                    @style = "border:none none solid none;background-color:white; text-align:right;",
+                                                                    @required = ""
+                                                                }
+                                                            })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="vertical-align:middle; width:50%; text-align:left;"><i class='la la-briefcase' style="margin-right:5px"></i>Nombre / Razon Social: &nbsp;</th>
+                                        <td style="text-align:right">
+                                            @Html.EditorFor(model => model.ContributorName,
+                                            new
+                                            {
+                                                htmlAttributes = new
+                                                {
+                                                    @id = "ref_nombre_contribuyente",
+                                                    @class = "form-control m-b",
+                                                    @style = "width:100%; text-align:right;",
+                                                    @placeholder = "Nombre del Comprador",
+                                                    @required = ""
+                                                }
+                                            })
+
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <table style="width:100%;">
+                                    <tr>
+
+                                        <th style="vertical-align:middle; width:50%; text-align:left;"><i class='flaticon2-file-1' style="margin-right:5px"></i>Tipo de Comprobante: &nbsp;</th>
+                                        <td style="text-align:right">
+                                            @Html.DropDownListFor(model => model.ReferenceDocumentCode,
+                                                new SelectList(tiposDocumento, "SriCode", "Name", Model.ReferenceDocumentCode),
+                                                new
+                                                     {
+                                                    @id = "ref_tipo_comprobante",
+                                                    @class = "form-control m-b",
+                                                    @style = "width:100%; text-align:right;",
+                                                    @required = ""
+                                                })
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="vertical-align:middle; width:50%; text-align:left;"><i class='flaticon-interface-10' style="margin-right:5px"></i>Número de Comprobante: &nbsp;</th>
+                                        <td style="text-align:left">
+                                            @Html.EditorFor(model => model.ReferenceDocumentNumber,
+                                                new
+                                                {
+                                                    htmlAttributes = new
+                                                    {
+                                                        @id = "ref_numero_comprobante",
+                                                        @class = "form-control",
+                                                        @placeholder = "Numero de Comprobante",
+                                                        @style = "width:100%;border:none none solid none; text-align:right;",
+                                                        @required = "",
+                                                        @onchange = "docNumberChanged()"
+                                                    }
+                                                })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="vertical-align:middle;  width:50%; text-align:left;"><i class='flaticon-event-calendar-symbol' style="margin-right:5px"></i>Fecha del Documento: &nbsp;</th>
+                                        <td style="text-align:left">
+                                            @Html.EditorFor(model => model.ReferenceDocumentDate,
+                                                            new
+                                                                 {
+                                                                htmlAttributes = new
+                                                                {
+                                                                    @id = "ref_fecha_documento",
+                                                                    @class = "form-control input-readonly",
+                                                                    @placeholder = "Fecha del Documento",
+                                                                    @style = "border:none none solid none;background-color:white; text-align:right;",
+                                                                    @required = "",
+                                                                    @readonly = ""
+                                                                }
+                                                            })
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th style="vertical-align:middle; width:50%; text-align:left;"><i class='flaticon-notepad' style="margin-right:5px"></i>Numero Autorizacion: &nbsp;</th>
+                                        <td style="text-align:left">
+                                            @Html.EditorFor(model => model.ReferenceDocumentAuth,
+                                                new
+                                                {
+                                                    htmlAttributes = new
+                                                    {
+                                                        @id = "ref_autorizacion_comprobante",
+                                                        @class = "form-control",
+                                                        @placeholder = "Numero de Autorizacion",
+                                                        @style = "width:100%;border:none none solid none; text-align:right;",
+                                                        @required = "",
+                                                        @onchange = "refautorizacionChanged()"
+                                                    }
+                                                })
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-12 col-md-12 col-xs-12 col-sd-12">
+                        <hr />
+
+                        <div class="col-12">
+
+                            <h3>Datos del Traslado</h3>
+
+                        </div>
+
+                        <div class="panel-body" style="width:100%">
+
+                            <div class="kt-container table-responsive" style="width:auto">
+
+                                <div class="col-12 text-dark">
+
+                                    <div class="row align-items-center">
+
+                                        <div class="col-12">
+
+                                            <div class="row" style="margin-top:20px;margin-bottom:20px;">
+
+                                                <span class="col-12 col-md-6">
+                                                    <i class='fa fa-check-square' style="margin-right:5px"></i>
+                                                    <b>Numero de Declaracion Aduanera: &nbsp;</b>
+
+                                                    @Html.EditorFor(model => model.DAU,
+                                                    new
+                                                    {
+                                                        htmlAttributes = new
+                                                        {
+                                                            @id = "numero_dau",
+                                                            @class = "form-control m-b",
+                                                            @style = "width:100%;",
+                                                            @placeholder = "Documento DAU # ",
+                                                            @onchange = "dauNumberChanged()",
+                                                            @required = ""
+                                                        }
+                                                    })
+
+                                                </span>
+
+                                                <span class="col-12 col-md-6">
+                                                    <i class='flaticon-paper-plane-1' style="margin-right:5px"></i>
+                                                    <b>Destinatario: &nbsp;</b>
+                                                    @Html.DropDownListFor(model => model.RecipientId, new SelectList(recipientList, "Value", "Text", Model.RecipientId),                                                    
+                                                    new { @class = "form-control js-customerSelector", @id = "recipient_id", @style = "width:100%;" })
+                                                    @Html.HiddenFor(model => model.RecipientIdentification, new { @id = "recipient_identificacion" })
+                                                    @Html.HiddenFor(model => model.RecipientIdentificationType, new { @id = "recipient_tipoidentificacion" })
+                                                    @Html.HiddenFor(model => model.RecipientName, new { @id = "recipient_name" })
+
+                                                </span>
+
+                                                <span class="col-12 col-md-6">
+                                                    <i class='fa fa-store' style="margin-right:5px"></i>
+                                                    <b>Numero de Establecimiento: &nbsp;</b>
+
+                                                    @Html.EditorFor(model => model.RecipientEstablishment, new
+                                                    {
+                                                        htmlAttributes = new
+                                                        {
+                                                            @id = "establecimiento_destino",
+                                                            @class = "form-control m-b",
+                                                            @style = "width:100%",
+                                                            @placeholder = "XXX",
+                                                            @min = "000",
+                                                            @max = "999",
+                                                            @maxlength = "3",
+                                                            @tooltip = "Codigo de Establecimiento",
+                                                            @required = ""
+                                                        }
+                                                    })
+
+                                                </span>
+
+                                                <span class="col-12 col-md-6">
+
+                                                    <i class='fa flaticon2-user' style="margin-right:5px"></i>
+                                                    <b>Conductor: &nbsp;</b>
+                                                    @Html.DropDownListFor(model => model.DriverId,
+                                                    new SelectList(driverList, "Value", "Text", Model.DriverId),
+                                                    new { @class = "form-control js-customerSelector", @id = "driver_id", @style = "width:100%;" })
+
+                                                    @Html.HiddenFor(model => model.DriverIdentification, new { @id = "driver_identificacion" })
+                                                    @Html.HiddenFor(model => model.DriverIdentificationType, new { @id = "driver_tipoidentificacion" })
+                                                    @Html.HiddenFor(model => model.DriverName, new { @id = "driver_name" })
+
+                                                </span>
+
+                                                <span class="col-12 col-md-6">
+                                                    <i class='fa fa-truck-moving' style="margin-right:5px"></i>
+                                                    <b>Placa del Vehiculo: &nbsp;</b>
+
+                                                    @Html.EditorFor(model => model.CarPlate, new { htmlAttributes = new
+                                                        {
+                                                           
+                                                            @class = "form-control m-b",
+                                                            @style = "width:100%;",
+                                                            @maxlength = "8",
+                                                            @onchange = "carplateChanged()",
+                                                            @placeholder = "Numero de Placa",
+                                                            @required = ""
+                                                        }
+                                                    })
+
+                                                </span>
+
+                                                <span class="col-12 col-md-6">
+                                                    <i class='fa flaticon2-map' style="margin-right:5px"></i>
+                                                    <b>Ruta de env&iacute;o: &nbsp;</b>
+
+                                                    @Html.EditorFor(model => model.ShipmentRoute,
+                                                    new
+                                                    {
+                                                        htmlAttributes = new
+                                                        {
+                                                            @id = "transporte_ruta",
+                                                            @class = "form-control m-b",
+                                                            @style = "width:100%;",
+                                                            @placeholder = "Ruta",
+                                                            @required = ""
+                                                        }
+                                                    })
+
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-12">
+
+                                            <div class="row border-top">
+
+                                                <span class="col-12 col-sm-1"></span>
+                                                <span class="col-sm-2 col-12"></span>
+                                                <span class="col-5 col-sm-3 kt-font-bolder" style="text-align:center">FECHA</span>
+                                                <span class="col-7 col-sm-5 kt-font-bolder">LUGAR/DIRECCIÓN</span>
+                                                <span class="col-12 col-sm-1" col-sm-1></span>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-12" style="padding-bottom:5px">
+
+                                            <div class="row">
+
+                                                <span class="col-12 col-sm-1"></span>
+                                                <span class="col-12 col-sm-2 kt-font-bolder">PARTIDA:</span>
+
+                                                <span class="col-5 col-sm-3" style="text-align:center;padding-right:0px;">
+
+                                                    @Html.EditorFor(model => model.ShippingStartDate,
+                                                    new
+                                                    {
+                                                        htmlAttributes = new
+                                                        {
+                                                            @id = "fecha_envio",
+                                                            @class = "form-control input-readonly",
+                                                            @placeholder = "Fecha de Inicio",
+                                                            @tooltip = "Fecha de Inicio",
+                                                            @readonly = true,
+                                                            @style = "text-align:center;background:transparent;"
+                                                        }
+                                                    })
+
+                                                </span>
+
+                                                <span class="col-7 col-sm-5">
+
+                                                    @Html.EditorFor(model => model.OriginAddress,
+                                                    new
+                                                    {
+                                                        htmlAttributes = new
+                                                        {
+                                                            @id = "direccion_envio",
+                                                            @class = "form-control input-readonly",
+                                                            @tooltip = "Direccion de Partida",
+                                                            @placeholder = "Direccion de Partida",
+                                                            @width = "100%"
+                                                        }
+                                                    })
+
+                                                </span>
+
+                                                <span class="col-12 col-sm-1"></span>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-12" style="padding-bottom:5px">
+
+                                            <div class="row">
+
+                                                <span class="col-12 col-sm-1"></span>
+                                                <span class="col-12 col-sm-2 kt-font-bolder">LLEGADA:</span>
+                                                <span class="col-5 col-sm-3" style="text-align:center;padding-right:0px;">
+
+                                                    @Html.EditorFor(model => model.ShippingEndDate,
+                                                    new
+                                                    {
+                                                        htmlAttributes = new
+                                                        {
+                                                            @id = "fecha_llegada",
+                                                            @class = "form-control input-readonly",
+                                                            @placeholder = "Fecha Fin",
+                                                            @tooltip = "Fecha de Llegada",
+                                                            @readonly = true,
+                                                            @style = "text-align:center;background:transparent;"
+                                                        }
+                                                    })
+
+                                                </span>
+
+                                                <span class="col-7 col-sm-5">
+
+                                                    @Html.EditorFor(model => model.DestinationAddress,
+                                                    new
+                                                    {
+                                                        htmlAttributes = new
+                                                            {
+                                                            @id = "direccion_llegada",
+                                                            @class = "form-control input-readonly",
+                                                            @placeholder = "Direccion de Llegada",
+                                                            @tooltip = "Direccion de Llegada"
+                                                        }
+                                                    })
+
+                                                </span>
+
+                                                <span class="col-12 col-sm-1"></span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <hr />
+
+                    </div>
+
+                </div>
+
+                @* Footer *@
+                <div class="row">
+
+                    @* Detalle de los productos *@
+                    <div class="col-12 col-lg-6" name="productosPage">
+
+                        @{
+                            Html.RenderPartial("Shared/_productosPartial", Model, ViewData);
+                        }
+
+                    </div>
+
+                    <div class="col-12 col-lg-6" style="padding-top:0px">
+
+                        <div class="panel-color" style="margin-bottom:0px">
+
+                            @{
+                                Html.RenderPartial("Shared/_infoAdicionalPartial", Model);
+                            }
+
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section toolbar{
+
+    <div class="btn-group">
+
+        <button type="button" class="btn btn-brand guardar-button">
+            <i class="la la-check"></i>
+            <span class="kt-hidden-mobile">Guardar</span>
+        </button>
+
+        <button type="button" class="btn btn-brand dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </button>
+
+        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-58px, 38px, 0px);">
+            <ul class="kt-nav">
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link guardar-button" id="btnGuardar">
+                        <i class="kt-nav__link-icon flaticon2-shield"></i>
+                        <span class="kt-nav__link-text">Guardar borrador</span>
+                    </a>
+                </li>
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link" id="btnEnviar">
+                        <i class="kt-nav__link-icon flaticon2-paper-plane"></i>
+                        <span class="kt-nav__link-text">Enviar al SRI</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+}
+
+@{ // SCRIPTS C#
+
+    var formasPago = SessionInfo.Catalog.PaymentMethod.Select(o => new { id = o.SriCode, text = o.Name, data = o });
+    var ivaList = SessionInfo.Catalog.IVARates.Select(o => new { id = o.SriCode, text = o.Name, rate = o.RateValue, data = o });
+}
+
+
+@section scripts{
+
+    @Scripts.Render("~/js/referralguides")
+
+
+<script>
+
+    // Configuramos las variables que requieren informacion del Servidor
+    referralGuideSaveAction = '@Url.Action("SaveReferralGuideAsync", "GuiaRemision")';
+    printReferralGuideAction = '@Url.Action("PrintDocument", "GuiaRemision")';
+    fecha_mes_atras = '@System.DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy")';
+    fecha_actual = '@System.DateTime.Now.ToString("dd/MM/yyyy")';
+    referralGuide =  @Html.Raw(Json.Encode(Model));
+
+    ivaList = @Html.Raw(Json.Encode(ivaList));
+
+    documentoGuiaRemision = @Html.Raw(Json.Encode(new ReferralGuideModel()));
+    productData = @Html.Raw(Json.Encode(new ProductDto()));
+    var adicionalItemCount = 0;
+
+    var getFormasDePago = function () { return @Html.Raw(Json.Encode(formasPago)); };
+
+    getSearchProductUrl = function(){
+        return  '@Url.Action("SearchProductAsync", "Producto")';
+    }
+
+    getCreateProductUrl = function(){
+        return "@Url.Action("Nuevo", "Producto")";
+    }
+
+    redirectAction = function(action, data){
+        var urlAction = '@Url.Action("", "GuiaRemision")';
+        urlAction +='/'+action+'/'+data;
+        window.location.href = urlAction;
+    };
+
+    getUrlAuthorization = function (docTypeCode, docNumber) {
+        return '@Url.Action("GetDocumentAuthSync", "GuiaRemision")' + '?docType=' + docTypeCode + '&docNumber=' + docNumber;
+    }
+
+    getUrlContribAction = function (id) {
+
+        if (typeof id !== 'undefined' && id>0) {
+            return "@Url.Action("Editar", "Contribuyentes")/"+id;
+        }
+        else {
+            return "@Url.Action("Nuevo", "Contribuyentes")";
+        }
+
+    }
+
+    getUrlSearchContrib = function () { return '@Url.Action("SearchContribAsync", "Contribuyentes")'; }
+    getUrlSearchDocument = function () { return '@Url.Action("SearchDocumentsAsync", "GuiaRemision")'; };
+
+    getLoginFormUrl = function () {
+        return '@Url.Action("Index", "Auth")?ReturnURL=' + location.href;
+    }
+
+    getUrlGetDocument = function (id) {
+            return "@Url.Action("GetDocumentById", "GuiaRemision")/"+id;
+    }
+
+    validarguia = function(){
+        var guiaObj = $("#guia_remision");
+        var text = guiaObj.val();
+        guiaObj.val(formatNumDoc(text));
+    }
+
+    // Configuracion de Controles
+    var fechaDocObj = $('input[name="IssuedOn"]');
+
+    fechaDocObj.datepicker({
+        startDate: fecha_mes_atras,
+        endDate: fecha_actual,
+        keyboardNavigation: false,
+        format: "dd/mm/yyyy",
+        language: "es",
+        forceParse: false,
+        autoclose: true
+    });
+
+    fechaDocObj.val(fecha_actual);
+
+
+    var fechaInicioObj = $('input[name="ShippingStartDate"]');
+
+    fechaInicioObj.datepicker({
+        startDate: fecha_mes_atras,
+        endDate: '@System.DateTime.Now.AddDays(30).ToString("dd/MM/yyyy")',
+        keyboardNavigation: false,
+        format: "dd/mm/yyyy",
+        language: "es",
+        forceParse: false,
+        autoclose: true
+    });
+
+    fechaInicioObj.val(fecha_actual);
+
+    var fechaFinObj = $('input[name="ShippingEndDate"]');
+
+    fechaFinObj.datepicker({
+        startDate: fecha_mes_atras,
+        keyboardNavigation: false,
+        format: "dd/mm/yyyy",
+        language: "es",
+        forceParse: false,
+        autoclose: true
+    });
+
+    fechaFinObj.val(fecha_actual);
+
+
+    var fechaRefObj = $('input[name="ReferenceDocumentDate"]');
+
+    fechaRefObj.datepicker({
+        startDate: fecha_mes_atras,
+        keyboardNavigation: false,
+        format: "dd/mm/yyyy",
+        language: "es",
+        forceParse: false,
+        autoclose: true
+    });
+
+
+    $(".guardar-button").click(function () {
+        if (!$(".guardar-button").hasClass("disabled")) {
+            guardarGuiaRemision();
+        }
+    });
+
+    $("#btnEnviar").click(function () {
+        if (!$("#btnEnviar").hasClass("disabled")) {
+            guardarGuiaRemision(1);
+        }
+    });
+
+    $("#btnCancelar").click(function () {
+        if (!$("#btnCancelar").hasClass("disabled")) {
+            history.go(-1);
+        }
+    });
+
+    startDocumentSelector();
+
+    //CONECTAMOS LA LISTA DEL CLIENTE
+    startCustomerSelector();
+
+
+
+    // CREAMOS LA PRIMERA LINEA DE ITEM  &  ADICIONALES PRINCIPALES
+   
+    if (referralGuide.Id > 0) {             
+        adicionalItemCount = parseInt('@(Model?.AdditionalFields?.Count())');
+        actualizarTotales();
+        addAditional(referralGuide.AdditionalFields)
+        
+    }
+    else {
+        agregarItem();
+
+        if (typeof agregarAditional != 'undefined') {
+            agregarAditional("Direccion", "");
+            agregarAditional("Telefono", "");
+            agregarAditional("Email", "");
+            agregarAditional("Observaciones", "");
+        }
+    }
+
+
+    window.scrollTo(0, 0);
+    initialized = true;
+
+
+</script>
+
+}

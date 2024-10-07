@@ -1,0 +1,129 @@
+﻿@using Ecuafact.Web.Models
+@using Ecuafact.Web.MiddleCore.NexusApiServices;
+@model RecibidosQueryModel
+@{ 
+    var tiposDocumento = new List<SelectListItem>{
+        new SelectListItem { Value="0", Text="TODOS" },
+        new SelectListItem{ Value="01", Text="FACTURA" },
+        new SelectListItem{ Value="04", Text="NOTA DE CRÉDITO" },
+        new SelectListItem{ Value="05", Text="NOTA DE DÉBITO" },
+        new SelectListItem{ Value="07", Text="COMPROBANTE DE RETENCIÓN" },
+        new SelectListItem{ Value="06", Text="GUÍA DE REMISIÓN" },
+        new SelectListItem{ Value="03", Text="LIQUIDACIÓN DE COMPRA" }
+    };
+
+    var deducibles = SessionInfo.DeductibleTypes ?? new List<DeductibleType>();;
+    var deducibleDefault = new DeductibleType { id="0", name="Sin Clasificación", maxValue=00 };
+}
+<table  class="table table-striped table-bordered table-hover responsive dt-responsive table-checkable order-column" id="_recibidos" style="width:100%">
+    <thead>
+        <tr>
+            <th><i class="fa fa-bars"></i></th>
+            <!--<th>Tipo</th>-->
+            <th>Documento</th>
+            <!--<th>Identificacion</th>-->
+            <th>Emisor</th>
+            <th class="text-center">Fecha</th>
+            <th class="text-center">Total</th>           
+            <th></th>
+
+        </tr>
+    </thead>
+
+    <tbody>
+    @if (Model.Data.documents != null)
+    {
+        foreach (var item in Model.Data.documents)
+        {
+            var issuedOn = DateTime.Now;
+            var totalDoc = item.total.Replace("$", "").Replace(" ", "");
+            var totalNum = decimal.Parse(totalDoc, this.GetCultureInfo("en-US"));
+
+            DateTime.TryParse(item.date, this.GetCultureInfo("es-ES"), System.Globalization.DateTimeStyles.None, out issuedOn);
+            var deducible = deducibles?.FirstOrDefault(m => m.id == Convert.ToString(item.deductibleId));
+            var deducibleId = item.deductibleId;
+
+            if (!string.IsNullOrEmpty(Model.DeductibleType) && Model.DeductibleType!="-1")
+            {
+                int.TryParse(Model.DeductibleType, out deducibleId);
+            }
+
+        <tr>
+            <td title="@(deducible?.name ?? "")" class="text-center" data-order="@deducibleId">
+                <label class="kt-hidden hidden" style="display:none;">@(deducible?.name ?? "")</label>
+                <a href="#" onclick="Comprobantes.SetDeductibles('@item.pk')" class="btn btn-sm btn-outline-hover-brand btn-circle btn-icon btn-icon-md" title="@(deducible?.name ?? "")">
+                    <img class="kt-avatar--circle" src='~/Images/deducibles/@string.Format("{0}.png", deducibleId)' style="width:auto;height:25px" />
+                </a>
+            </td>
+
+            <td>
+
+                <div>
+                    <b>@tiposDocumento.FirstOrDefault(model => model.Value == item.codTypeDoc).Text</b>
+                </div>
+
+                <div>
+                    <a href="javascript:;" onclick="Comprobantes.Preview(@item.pk)"> @item.sequence</a>
+                </div>
+
+            </td>
+            <td>
+                <div><b>@item.name</b></div>
+                <div>@item.identificationNumber</div>
+
+            </td>
+
+            <td class="text-center" data-order="@issuedOn.ToFileTime()" data-value="@issuedOn">
+                <span style='display:none;'>@($"{issuedOn:yyyy/MM/dd}")</span>  @($"{Convert.ToDateTime(issuedOn):dd/MM/yyyy}") @*@item.date*@
+            </td>
+            <td class="text-right" data-order="@totalNum" data-value="@totalNum">
+                <span class="pull-left">$</span>
+
+                @if (string.IsNullOrEmpty(item.total))
+                {
+                    item.total = "0.00";
+                }
+
+                <span class="pull-right">@item.total.Replace("$", "").Replace(" ", "")</span>
+            </td>           
+            <td class="d-print-none">
+                <div class="btn-group col-12 justify-content-center align-items-center">
+
+                    <div class="dropdown">
+
+                        <a href="#" class="btn btn-sm btn-outline-brand btn-circle btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true" title="Descargar">
+                            <i class="flaticon-download-1"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a target="_pdf" class="dropdown-item text-danger" href="@Url.Action("recibidos", "Comprobantes")/@(item.authorizationNumber)?type=PDF"><i class="la la-file-pdf-o text-danger"></i><span>Descargar PDF</span></a>
+                            <a target="_xml" class="dropdown-item text-info" href="@Url.Action("recibidos", "Comprobantes")/@(item.authorizationNumber)?type=XML"><i class="la la-file-code-o text-info"></i><span>Descargar XML</span></a>
+                        </div>
+
+                        <a href="#" class="btn btn-sm btn-outline-warning btn-circle btn-icon btn-icon-md email-button" data-uid="@item.pk" title="Reenviar Correo Electronico">
+                            <i class="flaticon2-mail-1"></i>
+                        </a>
+
+                    </div>
+                </div>
+            </td>
+        </tr>
+        }
+    }
+    </tbody>
+
+</table>
+
+<script>
+    $(document).ready(function () {
+        var $exportOptions = { columns: [0, 1, 2, 3, 4, 5] };
+
+        $('#_recibidos').DataTable({
+            "order": [[3, "desc"]],
+            "language": {
+                "url": "@Url.Content("~/scripts/dt_spanish.json")"
+            }
+        });
+
+        Comprobantes.SetMail("@Url.Action("SendMail")/Recibidos");
+    });
+</script>

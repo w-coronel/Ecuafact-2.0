@@ -1,0 +1,53 @@
+﻿@using Ecuafact.Web.Domain.Entities
+
+@model ContributorDto
+
+@{
+    ViewBag.Title = "Contribuyentes";
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li>
+                <i class="fa fa-home"></i>
+                <a href="@Url.Action("Index", "Dashboard")"> Inicio</a>
+            </li>
+            <li>
+                <i class="fa fa-gift"></i>
+                <span>Contribuyentes</span>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-10 col-lg-12">
+
+            <div class="portlet light bordered">
+
+                <div class="portlet-body form">
+                    @{
+                        Html.RenderPartial("_mantContribuyentePartial", Model);
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" aria-hidden="true">
+    <div class="col-xs-12" style="text-align:center;"><img src="~/Images/ripple_white.gif" /></div>
+</div>
+
+
+<script>
+    var urlAction = '@Url.Action("Index", "Contribuyentes")';
+
+
+    $("#btncancelContrib").click(function () {
+         
+        window.location.href = urlAction;
+
+    });
+
+</script>

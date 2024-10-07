@@ -1,0 +1,122 @@
+﻿<div class="kt-heading kt-heading--md">Suscripción</div>
+
+<div class="kt-form__section kt-form__section--first">
+    <div class="kt-wizard-v2__form">
+
+        @if (SessionInfo.UserSession?.Subscription == null)
+        {
+
+            <div class="alert alert-danger alert-close alert-dismissible fade show" role="alert">
+                <div class="alert-icon"><i class="flaticon-warning-sign"></i></div>
+                <div class="alert-text">
+                    <h4 class="alert-heading">
+                        Usted no tiene activa una suscripci&oacute;n
+                    </h4>
+                    Para poder emitir sus documentos electr&oacute;nicos es necesario que seleccione un plan.
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <a href="@Url.Action("TypeLicence", "Payment")" class="btn btn-warning btn-tall btn-pill btn-elevated ">
+                        <i class="flaticon2-website"></i>&nbsp;Seleccionar Plan
+                    </a>
+                </div>
+            </div>
+
+        }
+        else if (SessionInfo.UserSession?.Subscription.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.Inactiva)
+        {
+
+            <div class="alert alert-danger alert-close alert-dismissible fade show" role="alert">
+                <div class="alert-icon"><i class="flaticon-warning-sign"></i></div>
+                <div class="alert-text">
+                    <h4 class="alert-heading">
+                        Suscripci&oacute;n Inactiva
+                    </h4>
+                    Es necesario que la renueves para que continues emitiendo tus comprobantes electr&oacute;nicos.
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <a href="@Url.Action("TypeLicence", "Payment")" class="btn btn-warning btn-tall btn-pill btn-elevated">
+                        <i class="flaticon-rotate"></i>&nbsp;Seleccionar Plan
+                    </a>
+                </div>
+            </div>
+        }
+        else if (SessionInfo.UserSession?.Subscription.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.ValidatingPayment)
+        {
+
+            <div class="alert alert-danger alert-close alert-dismissible fade show" role="alert">
+                <div class="alert-icon"><i class="flaticon-warning-sign"></i></div>
+                <div class="alert-text">
+                    <h4 class="alert-heading">
+                        @SessionInfo.UserSession.Subscription.StatusMsg
+                    </h4>
+                    Esta solicitud se encuentra en estado de espera debido a que nos encontramos validando su pago realizado por transferencia.
+                </div>
+            </div>
+        }
+        else if (SessionInfo.UserSession?.Subscription.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.Saved)
+        {
+
+            <div class="alert alert-danger alert-close alert-dismissible fade show" role="alert">
+                <div class="alert-icon"><i class="flaticon-warning-sign"></i></div>
+                <div class="alert-text">
+                    <h4 class="alert-heading">
+                        @SessionInfo.UserSession.Subscription.StatusMsg
+                    </h4>
+                    Esta solicitud se encuentra en estado pendeinte de pago.
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-primary alert-close alert-dismissible fade show" role="alert">
+                <div class="alert-icon"><i class="flaticon2-check-mark"></i></div>
+
+                <div class="alert-text">
+                    <h4 class="alert-heading">
+                        Su plan activado es "@SessionInfo.UserSession.Subscription.LicenceType.Name"
+                    </h4>
+                    Ahora, su suscripción esta activada para emitir todos tus documentos electr&oacute;nicos.
+                </div>
+            </div>
+            <div class="kt-timeline-v2">
+                <div class="kt-timeline-v2__items  kt-padding-top-25 kt-padding-bottom-30">
+
+                    @if (SessionInfo.UserSession.Subscription.LicenceType.Description.Length > 0)
+                    {
+                        var item = SessionInfo.UserSession.Subscription.LicenceType.Description.Split('|');
+                        for (int i = 0; i < item.Length; i++)
+                        {
+                            <div class="kt-timeline-v2__item">
+
+                                <div class="kt-timeline-v2__item-cricle">
+                                    <i class="fa fa-genderless kt-font-@(item[i].Contains("No Incluye Firma") ? "danger":"success")"></i>
+                                </div>
+                                <div class="kt-timeline-v2__item-text  kt-padding-top-5">
+                                    @item[i]&nbsp; <i class="fa @(item[i].Contains("No Incluye Firma") ? "fa-times":"fa-check")"></i>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            if (SessionInfo.UserSession?.Subscription.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.Activa && SessionInfo.UserSession?.Subscription.LicenceType.Code == Ecuafact.Web.Constants.PlanBasic)
+            {
+                <div class="row">
+                    <div class="form-group">
+                        <p> Si deseas emitir más documentos y adquirir una firma electrónica, puedes cambiar tu plan aquí</p>
+                        <a href="@Url.Action("TypeLicence", "Payment")" class="btn btn-warning btn-tall btn-pill btn-elevated">
+                            <i class="flaticon-rotate"></i>&nbsp;Cambiar Plan
+                        </a>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

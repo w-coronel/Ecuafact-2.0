@@ -1,0 +1,70 @@
+<!--begin: Quick actions -->
+<div class="kt-header__topbar-item dropdown">
+    <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px" title="Cuentas de RUC Vinculadas">
+        <span class="kt-header__topbar-icon kt-header__topbar-icon--warning"><i class="flaticon2-grids"></i> </span>
+    </div>
+    <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl" style="max-height:500px; overflow:auto;">
+      
+
+            <!--begin: Head -->
+        <div class="kt-head kt-head--skin-light" style="background-image: url(@Url.Content("~/assets/media/bg/bg-9.jpg"))">
+            <h3 class="kt-head__title">
+                Cuentas de RUC Vinculadas
+                <span class="kt-space-15"></span>
+                <div class="kt-section__content kt-section__content--solid">
+                    <a href="~/Emisor/Nuevo" class="btn btn-success btn-sm btn-bold btn-font-md">
+                        <i class="flaticon-plus"></i> Agregar
+                    </a>
+                    <a href="~/Config" class="btn btn-info btn-sm btn-bold btn-font-md">
+                        <i class="fa fa-user-times"></i> Eliminar
+                    </a>
+                </div>
+            </h3>            
+        </div>
+
+            <!--end: Head -->
+            <!--begin: Grid Nav -->
+            <div class="kt-grid-nav kt-grid-nav--skin-light kt-scroll">
+                @{ var i = 0;
+                    var openb = "<div class='kt-grid-nav__row'>";
+                    var closeb = "</div>";
+                }
+                @foreach (var issuer in SessionInfo.IssuerList)
+                {
+
+                    i++;
+                    
+                    if (i % 3 == 1)
+                    {
+                        @Html.Raw(openb)
+                    }
+
+                    <a href="javascript:;" onclick="changeIssuer('@issuer.RUC');" class="kt-grid-nav__item" style="vertical-align: text-top;" title="@issuer.BusinessName" >
+                        <span class="kt-grid-nav__icon">
+                            <img class="img-thumbnail" src="@Url.Content(Server.GetLogoFile(issuer.RUC))" style="max-height:50px;" />
+                        </span>
+                        <span class="kt-grid-nav__title"><small>@issuer.RUC</small></span>
+                        @*<span class="kt-grid-nav__desc"><small>@issuer.BusinessName</small></span>*@
+                    </a>
+
+                    if (i % 3 == 0)
+                    {
+                        @Html.Raw(closeb)
+                    }
+                }
+
+                @if (i % 3 != 0)
+                {
+                    @Html.Raw(closeb)
+                }
+
+
+            </div>
+
+            <!--end: Grid Nav -->
+        
+    </div>
+</div>
+
+<!--end: Quick actions -->
+ 

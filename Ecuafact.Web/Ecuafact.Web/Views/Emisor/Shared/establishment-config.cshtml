@@ -1,0 +1,187 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+
+<div class="kt-heading kt-heading--md">Configuración de Establecimientos:</div>
+<div class="kt-form__section kt-form__section--first">
+    <div class="kt-wizard-v2__form">
+        @*----------información de los establecimientos------------ *@
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <table class="product-items col-md-12 table table-producto table-hover table-striped table-condensed kt-datatable__table cf">
+                    <thead class="cf card-title kt-datatable__head">
+                        <tr class="kt-datatable__row">
+                            <th>
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-12 col-xs-12" data-title="Codigo" style="padding-bottom:5px">Código</div>
+                                    <div class="col-md-4 col-sm-12 col-xs-12" data-title="Nombre" style="padding-bottom:5px">Nombre Comercial</div>
+                                    <div class="col-md-5 col-sm-12 col-xs-12" data-title="Direccion" style="padding-bottom:5px">Dirección</div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12" data-title="Puntos de Emisón" style="padding-bottom:5px"></div>
+                                </div>
+
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Establishments != null)
+                        {
+                            for (int i = 0; i < Model.Establishments.Count; i++)
+                            {
+                                <tr id="est_item@(i)" class="establishment-item">
+                                    <td data-title="Product" style="width:100%">
+                                        <div class="row">
+                                            @Html.Hidden("Establishments.Index", i, new { @id = $"Establishments.Index{i}" })
+                                            @*@Html.HiddenFor(model => Model.Establishments[i].Id, new { @class = "item-establishment-Id" })*@
+                                            @Html.HiddenFor(model => Model.Establishments[i].IssuerId, new { @class = "item-establishment-IssuerId" })
+
+                                            <div class="col-md-3 col-sm-12 col-xs-12" data-title="Codigo" title="Código establecimiento" style="padding-bottom:5px">
+                                                <div class="kt-input-icon kt-input-icon--right">
+                                                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                                        <span>
+                                                            <i class="flaticon-home-2"></i>
+                                                        </span>
+                                                    </span>
+                                                    @Html.EditorFor(model => model.Establishments[i].Code, new { htmlAttributes = new { @class = "form-control placeholder-no-fix item-Establishment-Code", @type = "number", @min = "1", @max = "999", @minlength = "3", @maxlength = "3", @required = "required", @data_msg = "Código del establecimiento es requerido" } })
+                                                    @Html.ValidationMessageFor(model => model.Establishments[i].Code, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-12 col-xs-12" data-title="Nombre" title="Nombre Comercial Establecimiento" style="padding-bottom:5px">
+                                                <div class="col-12 kt-input-icon kt-input-icon--right">
+                                                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                                        <span>
+                                                            <i class="flaticon-profile"></i>
+                                                        </span>
+                                                    </span>
+                                                    @Html.EditorFor(model => model.Establishments[i].Name, new { htmlAttributes = new { @class = "form-control item-Establishment-Name", @required = "required", @data_msg = "El nombre comercial del establecimiento es requerido" } })
+                                                    @Html.ValidationMessageFor(model => model.Establishments[i].Name, "", new { @class = "text-danger" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 col-sm-12 col-xs-12" data-title="Direccion" title="Direccion Comercial Establecimiento" style="padding-bottom:5px">
+                                                <div class="kt-input-icon kt-input-icon--right">
+                                                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                                        <span>
+                                                            <i class="flaticon-placeholder-3"></i>
+                                                        </span>
+                                                    </span>
+                                                    @Html.EditorFor(model => model.Establishments[i].Address, new { htmlAttributes = new { @class = "form-control placeholder-no-fix address-item", @required = "required", @data_msg = "La dirección del establecimiento es requerido" } })
+                                                    @Html.ValidationMessageFor(model => model.Establishments[i].Address, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            @* puntos de emisión *@
+                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                @if (Model.Establishments[i].IssuePoint != null)
+                                                {
+                                                    <div class="accordion accordion-solid accordion-toggle-plus" id="accordIssuePointItem@(i)">
+                                                        <div class="card">
+                                                            <div class="card-header" id="itemHeading@(i)">
+                                                                <div class="card-title collapsed" data-toggle="collapse" data-target="#itemsCollapse@(i)" aria-expanded="false" aria-controls="itemsCollapse@(i)">
+                                                                    <br /><i class="flaticon2-add"></i>  Configuración Puntos de Emisión
+                                                                </div>
+                                                            </div>
+                                                            <div id="itemsCollapse@(i)" class="collapse" aria-labelledby="itemHeading@(i)" data-parent="#accordIssuePointItem@(i)" style="">
+                                                                <div class="card-body">
+                                                                    <table id="issuePoint-items@(i)" data-content="@(i)" class="table kt-datatable__table table-adicional table-hover table-striped table-condensed cf">
+                                                                        <thead class="cf card-title kt-datatable__head">
+                                                                            <tr class="kt-datatable__row">
+                                                                                <th colspan="2">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-6 col-sm-8 col-xs-10" data-title="Codigo" style="padding-bottom:5px">Código</div>
+                                                                                        <div class="col-md-2 col-sm-2 col-xs-2" data-title="Eliminar" style="padding-bottom:5px"></div>
+                                                                                    </div>
+                                                                                </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @for (int k = 0; k < Model.Establishments[i].IssuePoint.Count; k++)
+                                                                            {
+                                                                                <tr id="issuePoint-item@(k)" class="product-item@(k)">
+                                                                                    <td>
+                                                                                        <div class="row">
+                                                                                            @Html.Hidden($"IssuePoint.Index", k, new { @id= $"IssuePoint.Index{i}_{k}" })
+                                                                                            @*@Html.HiddenFor(model => Model.Establishments[i].IssuePoint[k].Id, new { @class = "item-issuePoint-Id" })*@
+                                                                                            <div class="col-md-6 col-sm-8 col-xs-10" data-title="Codigo" style="padding-bottom:5px">
+                                                                                                <div class="kt-input-icon kt-input-icon--right">
+                                                                                                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                                                                                        <span>
+                                                                                                            <i class="flaticon-map"></i>
+                                                                                                        </span>
+                                                                                                    </span>
+                                                                                                    @Html.HiddenFor(model => model.Establishments[i].IssuePoint[k].Name)
+                                                                                                    @Html.HiddenFor(model => model.Establishments[i].IssuePoint[k].CarrierRUC)
+                                                                                                    @Html.HiddenFor(model => model.Establishments[i].IssuePoint[k].CarrierPhone)
+                                                                                                    @Html.HiddenFor(model => model.Establishments[i].IssuePoint[k].CarrierEmail)                                                                                                
+                                                                                                    @Html.HiddenFor(model => model.Establishments[i].IssuePoint[k].CarPlate)
+                                                                                                    @Html.EditorFor(model => model.Establishments[i].IssuePoint[k].Code, new { htmlAttributes = new { @data_field = $"{i}", @class = "form-control placeholder-no-fix item-IssuePoint-Code", @type = "number", @min = "1", @max = "999", @minlength = "3", @maxlength = "3", @required = "required", @data_msg = "El punto de emisión es requerido" } })
+                                                                                                    @Html.ValidationMessageFor(model => model.Establishments[i].IssuePoint[k].Code, "", new { @class = "text-danger" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-2 col-sm-2 col-xs-2" data-title="Nombre" style="padding-bottom:5px">
+                                                                                                <button title="Eliminar Punto emisión" type="button" class="delete-item btn" data-field="issuePoint-items@(i)" style="width:auto;float:none;">
+                                                                                                    <span class="la la-trash-o"></span>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td data-title="">
+                                                                                      
+                                                                                    </td>
+                                                                                </tr>
+
+                                                                            }
+                                                                        </tbody>
+                                                                        <tfoot>
+                                                                            <tr>
+                                                                                <td align="left" colspan="2">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-sm-12 col-xs-12" align="left">
+                                                                                            <button type='button' id="add-issuePoint@(i)" data-field="issuePoint-items@(i)" title="Agregar puntos de emisión" class="btn btn-brand add-issuePoint btn-sm"><i class='fa fa-plus'></i> P. Emisión</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tfoot>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                }
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                    <td data-title="">
+                                        <button title="Eliminar Registro" type="button" class="estab-delete-item btn" style="width:auto;float:none;">
+                                            <span class="la la-trash-o "></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                    <tfoot>
+                        <tr style="background-color:#FAFAFA">
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12" align="left">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <button type='button' class='add-detail btn btn-brand btn-sm'><i class='fa fa-plus'> Establecimiento </i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-title="">
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+ 

@@ -1,0 +1,267 @@
+﻿@model Ecuafact.Web.Models.ConfigModel
+@{
+
+
+    ViewBag.Title = "Configuración";
+    ViewBag.ShowAds = false;
+    ViewBag.ContentWidth = "700px";
+
+    var logoFile = ViewData["LogoFile"] as string;
+
+    var boolSelectList = new List<SelectListItem>();
+    boolSelectList.Add(new SelectListItem { Value = "true", Text = "Sí" });
+    boolSelectList.Add(new SelectListItem { Value = "false", Text = "No" });
+
+    this.PageOptions(p => p.DataTables = true);
+}
+
+@section styles{
+    @Styles.Render("~/css/issuers")
+}
+<!-- BEGIN REGISTRATION FORM -->
+
+<div class="kt-portlet">
+    <div class="kt-portlet__body kt-portlet__body--fit">
+        <div class="kt-grid  kt-wizard-v2 kt-wizard-v2--white" id="config_wizard" data-ktwizard-state="first">
+            <div class="kt-grid__item kt-wizard-v2__aside">
+                <!--begin: Form Wizard Nav -->
+                <div class="kt-wizard-v2__nav">
+                    <div class="kt-wizard-v2__nav-items">
+
+                        <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="current">
+                            <div class="kt-wizard-v2__nav-body">
+                                <div class="kt-wizard-v2__nav-icon">
+                                    <i class="flaticon-confetti"></i>
+                                </div>
+                                <div class="kt-wizard-v2__nav-label">
+                                    <div class="kt-wizard-v2__nav-label-title">
+                                        Bienvenido
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label-desc">
+                                        Empieza ahora a recibir y emitir documentos electr&oacute;nicos
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="pending">
+                            <div class="kt-wizard-v2__nav-body">
+                                <div class="kt-wizard-v2__nav-icon">
+                                    <i class="flaticon-rotate"></i>
+                                </div>
+                                <div class="kt-wizard-v2__nav-label">
+                                    <div class="kt-wizard-v2__nav-label-title">
+                                        Integraci&oacute;n con el SRI
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label-desc">
+                                        Sincronizaci&oacute;n de datos con el Servicio de Rentas Internas.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="pending">
+                            <div class="kt-wizard-v2__nav-body">
+                                <div class="kt-wizard-v2__nav-icon">
+                                    <i class="flaticon2-protected"></i>
+                                </div>
+                                <div class="kt-wizard-v2__nav-label">
+                                    <div class="kt-wizard-v2__nav-label-title">
+                                        Activaci&oacute;n Ambiente Producci&oacute;n SRI
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label-desc">
+                                        Autorizaci&oacute;n en ambientes de producci&oacute;n de comprobantes electr&oacute;nicos.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="pending">
+                            <div class="kt-wizard-v2__nav-body">
+                                <div class="kt-wizard-v2__nav-icon">
+                                    <i class="flaticon2-user-1"></i>
+                                </div>
+                                <div class="kt-wizard-v2__nav-label">
+                                    <div class="kt-wizard-v2__nav-label-title">
+                                        Facturaci&oacute;n Electr&oacute;nica
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label-desc">
+                                        Configura tu cuenta para la emisi&oacute;n de documentos electr&oacute;nicos.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (SessionInfo.Issuer != null)
+                        {
+                            <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="pending">
+                                <div class="kt-wizard-v2__nav-body">
+                                    <div class="kt-wizard-v2__nav-icon">
+                                        <i class="flaticon-interface-3"></i>
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label">
+                                        <div class="kt-wizard-v2__nav-label-title">
+                                            Suscripción
+                                        </div>
+                                        <div class="kt-wizard-v2__nav-label-desc">                                            
+                                            Activa un plan para la emisi&oacute;n de tus comprobantes electr&oacute;nicos.
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>                           
+
+                            <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="pending">
+                                <div class="kt-wizard-v2__nav-body">
+                                    <div class="kt-wizard-v2__nav-icon">
+                                        <i class="flaticon-safe-shield-protection"></i>
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label">
+                                        <div class="kt-wizard-v2__nav-label-title">
+                                            Firma Electr&oacute;nica
+                                        </div>
+                                        <div class="kt-wizard-v2__nav-label-desc">
+                                            Administre su firma electr&oacute;nica para la autorizaci&oacute;n de documentos.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                        <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="pending">
+                            <div class="kt-wizard-v2__nav-body">
+                                <div class="kt-wizard-v2__nav-icon">
+                                    <i class="flaticon-diagram"></i>
+                                </div>
+                                <div class="kt-wizard-v2__nav-label">
+                                    <div class="kt-wizard-v2__nav-label-title">
+                                        Presupuestos
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label-desc">
+                                        Defina los parametros para el control del presupuesto mensual
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--doc: Replace A tag with SPAN tag to disable the step link click -->
+                        <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="pending">
+                            <div class="kt-wizard-v2__nav-body">
+                                <div class="kt-wizard-v2__nav-icon">
+                                    <i class="flaticon-app"></i>
+                                </div>
+                                <div class="kt-wizard-v2__nav-label">
+                                    <div class="kt-wizard-v2__nav-label-title">
+                                        Cuentas Vinculadas
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label-desc">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!--end: Form Wizard Nav -->
+            </div>
+            <div class="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
+                <!--begin: Form Wizard Form-->
+                <div class="kt-form configure-form" id="kt_form" autocomplete="off" novalidate="novalidate" action="~/Config/ConfigurarAsync" method="post">
+                    @Html.Hidden("AutoCompleteOff", null, new { @autocomplete = "off" })
+                    @if (Model.Issuer != null && Model.Issuer.Id > 0)
+                    {
+                        @Html.HiddenFor(model => model.Issuer.Id)
+                    }
+                    <!--begin: Form Wizard Step 0-->
+                    <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" data-ktwizard-state="current" id="welcome">
+                        @{ Html.RenderPartial("shared/welcome"); }
+                    </div>
+                    <!--end: Form Wizard Step 0-->
+                    <!--begin: Form Wizard Step 1-->
+                    <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" id="sri">
+                        @{ Html.RenderPartial("shared/sri-config", Model.Issuer); }
+                    </div>
+                    <!--end: Form Wizard Step 1-->
+                    <!--begin: Form Wizard Step 2-->
+                    <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" id="sri">
+                        @{ Html.RenderPartial("shared/sri-activation-prod", Model.Issuer); }
+                    </div>
+                    <!--end: Form Wizard Step 2-->
+                    <!--begin: Form Wizard Step 3-->
+                    <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" id="efact">
+                        @{ Html.RenderPartial("shared/efact-profile", Model.Issuer); }
+                    </div>
+                    <!--end: Form Wizard Step 3-->
+                    @if (SessionInfo.Issuer != null)
+                    {
+                        <!--begin: Form Wizard Step 4-->
+                        <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" id="plan">
+                            @{ Html.RenderPartial("shared/plan-activation", Model.Issuer); }
+                        </div>
+                        <!--end: Form Wizard Step 4-->
+                    }
+                    @if (SessionInfo.Issuer != null)
+                    {
+                        <!--begin: Form Wizard Step 5-->
+                        <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" id="esign">
+                            @{ Html.RenderPartial("shared/esign-config", Model.Issuer); }
+                        </div>
+                        <!--end: Form Wizard Step 5-->
+                    }
+                    <!--begin: Form Wizard Step 5-->
+                    <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" id="budget">
+                        @{ Html.RenderPartial("shared/budget-config", Model.Budget); }
+                    </div>
+                    <!--end: Form Wizard Step 5-->
+                    <!--begin: Form Wizard Step 6-->
+                    <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" id="issuers">
+                        @{ Html.RenderPartial("shared/issuers-config"); }
+                    </div>
+                    <!--end: Form Wizard Step 6-->
+                    @**
+                    <!--begin: Form Wizard Step 6-->
+                    <div class="kt-wizard-v2__content" data-ktwizard-type="step-content">
+                        @{ Html.RenderPartial("shared/security-config"); }
+                    </div>
+                    <!--end: Form Wizard Step 6-->
+
+                    <!--begin: Form Wizard Step 7-->
+                    <div class="kt-wizard-v2__content" data-ktwizard-type="step-content">
+                        @{ Html.RenderPartial("shared/email-settings"); }
+                    </div>
+                    <!--end: Form Wizard Step 7-->
+                    *@
+
+                    <!--begin: Form Actions -->
+                    <div class="kt-form__actions">
+                        <button class="btn btn-secondary btn-md btn-elevate btn-elevate-air btn-tall btn-wide kt-font-bold kt-font-transform-u back-button" data-ktwizard-type="action-prev">
+                            <i class="flaticon2-back"></i> Anterior
+                        </button>
+                        <button class="btn btn-success btn-md btn-elevate btn-elevate-air btn-tall  btn-wide kt-font-bold kt-font-transform-u finish-button button-submit" data-ktwizard-type="action-submit">
+                            <i class="flaticon2-check-mark text-light"></i> Finalizar
+                        </button>
+                        <button class="btn btn-brand btn-md btn-tall btn-elevate btn-elevate-air btn-wide kt-font-bold kt-font-transform-u next-button" data-ktwizard-type="action-next">
+                            Siguiente <i class="flaticon2-next"></i>
+                        </button>
+                    </div>
+                    <!--end: Form Actions -->
+
+                </div>
+                <!--end: Form Wizard Form-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    @Scripts.Render("~/js/config")
+
+<script>
+
+    Config.plansUrl = "@Url.Action("TypeLicence", "Payment")";
+    Config.urlDesvincular = "@Url.Action("Desvincular", "Config")";
+    Config.Init();
+</script>
+}

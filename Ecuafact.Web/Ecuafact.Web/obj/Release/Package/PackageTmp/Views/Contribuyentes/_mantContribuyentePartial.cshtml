@@ -1,0 +1,165 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices
+@using Ecuafact.Web.Domain.Entities
+
+@model ContributorDto
+
+@{
+    var tiposIdentificacion = SessionInfo.Catalog.IdentificationTypes.ToList();
+    var tipoMantenimiento = "Agregar";
+
+    // Elimino de la lista el consumidor final
+    var consumidorFinal = tiposIdentificacion.FirstOrDefault(o => o.SriCode == "07");
+    if (consumidorFinal != null)
+    {
+        tiposIdentificacion.Remove(consumidorFinal);
+    }
+
+    if (Model.Id > 0)
+    {
+        tipoMantenimiento = "Actualizar";
+    }
+
+    Model.IsEnabled = true;
+
+    var RefID = Session["_ReferralToken"] = Guid.NewGuid();  
+
+}
+
+@Styles.Render("~/css/inputmask")
+
+@using (Html.BeginForm("ActualizarAsync", "Contribuyentes", FormMethod.Post, new { @id = "contribForm", @name = "contribForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @class = "contrib" })
+    @Html.HiddenFor(model => model.ContributorTypeId, new { @class = "contrib" })
+    @Html.HiddenFor(model => model.IsEnabled, new { @class = "contrib" })
+    @Html.HiddenFor(model => RefID, new { @class = "contrib" })
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="loaderV1"></div>
+
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="flaticon2-user-1"></i>&nbsp;&nbsp;&nbsp;@tipoMantenimiento Clientes</h4>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-12 normalform">
+                        <div class="form-group col-12 contribuyente_identificacion_group">
+                            <div class="row">
+                                <label class="col-sm-4 col-12 control-label align-self-center"><b>Tipo De Identificaci&oacute;n:</b></label>
+                                <div class="col-sm-8 col-12">
+                                    @Html.DropDownListFor(model => model.IdentificationTypeId, new SelectList(tiposIdentificacion, "Id", "Name", Model.IdentificationTypeId),
+                                                new { @class = "form-control m-b contrib", @style = "width:100%;", @required = "", data_msg_required = "Debe especificar el tipo de identificación." })
+                                    @Html.ValidationMessageFor(model => model.IdentificationTypeId)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-12 contribuyente_identificacion_group">
+                            <div class="row">
+                                <label class="col-sm-4 col-12 control-label align-self-center"><b>No. Identificaci&oacute;n:</b></label>
+                                <div class="col-sm-8 col-12">
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right loading-identity" style="display:none">
+                                            <span><i class="fa fa-spinner fa-spin"></i></span>
+                                        </span>
+
+                                        @Html.TextBoxFor(model => model.Identification, new
+                                           {
+                                               @class = "form-control placeholder-no-fix contrib ",
+                                               @placeholder = "# Identificación",
+                                               @required = "",
+                                               data_msg_pattern = "Debe especificar un número de identificación válido.",
+                                               data_msg_required = "Debe especificar el número de identificación.",
+                                               data_msg_maxlength = "No debe exceder el número de dígitos permitidos.",
+                                               data_msg_minlength = "Se requiere un número minimo de {0} dígitos."
+                                           })
+                                    </div>
+
+                                    @Html.ValidationMessageFor(model => model.Identification)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-12 contribuyente_razon_social_group">
+                            <div class="row">
+                                <!--<label id="title_razon_social" class="col-sm-4 col-12 control-label align-self-center" name="title_razon_social"><b>Nombres y Apellidos:</b></label>-->
+                                <label id="title_razon_social" class="col-sm-4 col-12 control-label align-self-center" name="title_razon_social">
+                                    <b>Nombres y Apellidos:</b>
+                                </label>
+
+                                <div class="col-sm-8 col-12">
+                                    @Html.TextBoxFor(model => model.BussinesName, new { @class = "form-control contrib", @placeholder = "Razón Social", @required = "", data_msg_required = "Debe especificar la razón social del contribuyente." })
+                                    @Html.ValidationMessageFor(model => model.BussinesName)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-12 contribuyente_nombre_comercial_group kt-hide">
+                            <div class="row">
+                                <label class="col-sm-4 col-12 control-label align-self-center"><b>Nombre Comercial:</b></label>
+                                <div class="col-sm-8 col-12">
+                                    @Html.TextBoxFor(model => model.TradeName, new { @class = "form-control contrib", @placeholder = "Nombre Comercial" })
+                                    @Html.ValidationMessageFor(model => model.TradeName)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-12 contribuyente_direccion_group">
+                            <div class="row">
+                                <label class="col-sm-4 col-12 control-label align-self-center"><b>Direcci&oacute;n:</b></label>
+                                <div class="col-sm-8 col-12">
+                                    @Html.TextBoxFor(model => model.Address, new { @height = "200", @class = "form-control contrib", @placeholder = "Dirección, Ciudad, País", @rows = "3", @style = "resize: none;", @required = "", data_msg_required = "Debe especificar la dirección del contribuyente." })
+                                    @Html.ValidationMessageFor(model => model.Address)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-12 contribuyente_email_group">
+                            <div class="row">
+                                <label class="col-sm-4 col-12 control-label align-self-center"><b>Email:</b></label>
+
+                                <div class="col-sm-8 col-12">
+                                    @Html.TextBoxFor(model => model.EmailAddresses, new { @class = "form-control bootstrap-tagsinput contrib", @multiple = "", @data_role = "tagsinput", @placeholder = "Correo Electrónico" })
+                                    @Html.ValidationMessageFor(model => model.EmailAddresses)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-12 contribuyente_telefono_group">
+                            <div class="row">
+                                <label class="col-12 col-sm-4 control-label align-self-center"><b>Tel&eacute;fono:</b></label>
+                                <div class="col-12 col-sm-8">
+                                    @Html.TextBoxFor(model => model.Phone, new { @class = "form-control bootstrap-tagsinput contrib", @type = "text", @multiple = "", @data_role = "tagsinput", @placeholder = "Teléfono" })
+                                    @Html.ValidationMessageFor(model => model.Phone)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="btnsave_contrib" class="btn btn-outline-primary text-dark" style="margin-right:5px"><i class="la la-save"></i>  Guardar</button>
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> Cancelar</button>
+            </div>
+
+        </div>
+    </div>
+
+
+}
+
+@Scripts.Render("~/js/inputmask")
+
+<script>
+    $(document).ready(Contribuyentes.Init);
+</script>

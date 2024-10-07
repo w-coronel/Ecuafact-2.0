@@ -1,0 +1,127 @@
+﻿
+.loaderV1 {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 10198;
+    background: url('../Images/ripple_white.gif') 50% 50% no-repeat rgb(249, 249, 249);
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    display: none;
+}
+ 
+
+#loaderV1Text {
+    position: fixed;
+    text-align: center;
+    top: 20%;
+    width: 100%;
+    height: 50%;
+    color: white;
+    font-size: 25px;
+}
+
+.loaderV1 img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+    opacity: 0.75;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* width */
+::-webkit-scrollbar {
+    width:9px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px grey;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #ebedf2;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+        background: #243356;
+}
+
+
+#Ver-CSS {
+    background-image: url(../Images/ver.png);
+    background-size: 30px 30px;
+    height: 30px;
+    width: 30px;
+}
+
+#Edit-CSS {
+    background-image: url(../Images/edit.png);
+    background-size: 30px 30px;
+    height: 30px;
+    width: 30px;
+}
+
+
+#Email-cheking {
+    background-image: url(../Images/email_cheking.png);
+    background-size: 32px 32px;
+    height: 32px;
+    width: 32px;
+}
+
+#Eamil-delete {
+    background-image: url(../Images/email_delete.png);
+    background-size: 32px 32px;
+    height: 32px;
+    width: 32px;
+}
+
+#Eamil-css {
+    background-image: url(../Images/email.png);
+    background-size: 32px 32px;
+    height: 32px;
+    width: 32px;
+}
+
+.transaction-ok {
+    display: inline-flex;
+    margin-right: 15px;
+    color: white;
+    background-color: #41E311;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 0.9em;
+    padding: 2px;
+    align-items: center;
+    justify-content: center;
+}
+
+.transaction-error {
+    display: inline-flex;
+    margin-right: 15px;
+    color: white;
+    background-color: #C50303;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: medium;
+    padding: 2px;
+    align-items: center;
+    justify-content: center;
+}
+
+.disabledInputs {
+    background-color: #c9c8c8;
+}

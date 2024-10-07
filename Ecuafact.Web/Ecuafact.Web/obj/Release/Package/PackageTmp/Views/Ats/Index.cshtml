@@ -1,0 +1,239 @@
+﻿
+@using System.Web.Mvc.Html
+@using Ecuafact.Web.Domain.Entities;
+@model ObjectQueryModel<AtsFacturaReportResponse>
+
+@{
+    ViewBag.Title = "Generar ATS";
+    ViewBag.ParentTitle = "ATS";
+    this.PageOptions(model =>
+    {
+        model.DataTables = true;
+        model.DateRangeTool = true;
+        model.DatePicker = true;
+    });
+
+    var tipoPeriodo = new List<SelectListItem>{
+        new SelectListItem { Value="1", Text="Mensual" },
+        new SelectListItem{ Value="2", Text="Semestral" }
+    };
+
+    var listaPeriodo = new List<SelectListItem>{
+        new SelectListItem { Value="1", Text="Enero-Junio" },
+        new SelectListItem{ Value="2", Text="julio-Diciembre" }
+    };
+
+    var itemYear = new List<SelectListItem>();
+    var itemMonths = new List<SelectListItem>();
+    string[] months = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
+    Model.Month = DateTime.Now.Month.ToString();
+    Model.Year = DateTime.Now.Year.ToString();
+
+    for (int i = 2020; i < DateTime.Now.Year + 1; i++)
+    {
+        itemYear.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+    }
+    for (int i = 0; i < DateTime.Now.Month; i++)
+    {
+        itemMonths.Add(new SelectListItem { Text = months[i], Value = $"{(i + 1)}" });
+    }
+
+    var listaAnos = new SelectList(itemYear, "Value", "Text");
+    var listaMes = new SelectList(itemMonths, "Value", "Text");
+
+    Model.Period = 1;
+    Model.QueryType = "1";
+
+    var _tipoSustento = SessionInfo.Catalog.SustenanceType;
+}
+
+<div class="col-md-12">
+    <div class="kt-portlet">
+        
+        <form id="formConsultas" class="kt-form" role="form">
+
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            @Html.HiddenFor(model => model.FormatType)
+            <div class="kt-portlet__body align-items-center">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group col-md-3 col-sm-10">
+                            @Html.Label("Tipo", new { @class = "col-form-label col-12" })
+                            <div class="col-12">
+                                @Html.DropDownListFor(model => model.QueryType, tipoPeriodo, new { @class = "form-control tipo-periodo", maxlength = 100 })
+                                @Html.ValidationMessageFor(model => model.SearchTerm)
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3 col-sm-10">
+                            @Html.Label("Año", new { @class = "col-form-label col-12" })
+                            <div class="col-12">
+                                @Html.DropDownListFor(model => model.Year, listaAnos, new { @class = "form-control select-year", maxlength = 100 })
+                                @Html.ValidationMessageFor(model => model.Year)
+                            </div>
+                        </div>
+                        <div class="form-group  col-md-3 col-sm-10">
+                            @Html.Label("Mes", new { @class = "col-form-label col-12 periodo-label" })
+                            <div class="col-12 periodo-mes">
+                                @Html.DropDownListFor(model => model.Month, listaMes, new { @class = "form-control select-month", maxlength = 100 })
+                                @Html.ValidationMessageFor(model => model.Month)
+                            </div>
+                            <div class="col-12 periodo-semestral" style="display:none;">
+                                @Html.DropDownListFor(model => model.Period, listaPeriodo, new { @class = "form-control select-Period", maxlength = 100 })
+                                @Html.ValidationMessageFor(model => model.Period)
+                            </div>
+                        </div>
+                        <div class="col-md-3 orm-group">
+                            <div style="padding: 36px 12px 5px 12px; " class="form-group ">
+                                <button type="submit" class="btn btn-dark btn-pill btn-elevate search-button ">&nbsp;&nbsp;&nbsp;<i class="fas fa-search"></i>   Consultar&nbsp;&nbsp;&nbsp;</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-1 ats-download">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-brand" data-toggle="tooltip" title="Seleccione la opción para descar el reporte Ats en formato Excel ó XML">
+                                <i class="la la-download"></i>
+                                <span class="kt-hidden-mobile">Descargar Ats</span>
+                            </button>
+                            <button type="button" class="btn btn-brand dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-58px, 38px, 0px);">
+                                <ul class="kt-nav">
+                                    <li class="kt-nav__item">
+                                        <a href="#" target='_pdf' class="kt-nav__link btn-report-excel">
+                                            <i class="kt-nav__link-icon flaticon-file-2"></i>
+                                            <span class="kt-nav__link-text"> Exportar Excel</span>
+                                        </a>
+                                    </li>
+                                    <li class="kt-nav__item">
+                                        <a href="#"  class="kt-nav__link btn-report-xml">
+                                            <i class="kt-nav__link-icon flaticon2-ui"></i>
+                                            <span class="kt-nav__link-text"> Generar XML</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<!--estadistica-->
+<div class="col-md-12" id="_estadistica">
+        <!--begin:: Widgets/Activity-->
+
+        <div class="kt-portlet kt-portlet--fit kt-portlet--head-lg kt-portlet--head-overlay kt-portlet--height-fluid">
+            <div class="kt-portlet__head kt-portlet__head--noborder kt-portlet__space-x">
+                <div class="kt-portlet__head-label">
+                    <h6 class="kt-portlet__head-sm">
+                        <i class="kt-nav__link-icon flaticon-bell"></i> <b>Importante!</b> Antes de generar el ATS por favor clasificar los documentos (facturas, notas de venta y liquidaciones) según identificación sustento tributario.
+                    </h6>
+                </div>
+
+                <div class="kt-portlet__head-toolbar">
+                </div>
+            </div>
+
+            <div class="kt-portlet__body kt-portlet__body--fit">
+                <div class="kt-widget-buttons">
+                    <div class="kt-widget-buttons__visual kt-widget16__visual--chart kt-portlet-fit--top kt-portlet-fit--sides" style="">
+                        <div class="kt-widget-buttons__chart">
+
+                        </div>
+                    </div>
+
+                    <div class="kt-widget-buttons__stats">
+                        <!--begin:: Widgets/Applications/User/Profile3-->
+                        <div class="kt-portlet__body">
+                            <div class="kt-widget kt-widget--user-profile-3">
+                                <div class="kt-widget__bottom">
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__icon">
+                                            <i class="flaticon-layers kt-font-facebook"></i>
+                                        </div>
+                                        <div class="kt-widget__details">
+                                            <span class="kt-widget__title">Total Recibidos</span>
+                                            <span class="kt-widget__value document-total">@SessionInfo.StatisticsAts.CountDocument</span>
+                                        </div>
+                                    </div>
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__icon">
+                                            <i class="flaticon-file-2 kt-font-primary"></i>
+                                        </div>
+                                        <div class="kt-widget__details">
+                                            <span class="kt-widget__title">Facturas</span>
+                                            <span class="kt-widget__value document-factura">@SessionInfo.StatisticsAts.Factura</span>
+                                        </div>
+                                    </div>
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__icon">
+                                            <i class="flaticon2-files-and-folders kt-font-brand"></i>
+                                        </div>
+                                        <div class="kt-widget__details">
+                                            <span class="kt-widget__title">Nota Crédito</span>
+                                            <span class="kt-widget__value document-notacredito">@SessionInfo.StatisticsAts.NotaCredito</span>
+                                        </div>
+                                    </div>
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__icon">
+                                            <i class="flaticon2-layers-2 kt-font-brand"></i>
+                                        </div>
+                                        <div class="kt-widget__details">
+                                            <span class="kt-widget__title">Nota Débito</span>
+                                            <span class="kt-widget__value document-notadebito">@SessionInfo.StatisticsAts.NotaDebito</span>
+                                        </div>
+                                    </div>
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__icon">
+                                            <i class="flaticon2-copy kt-font-brand"></i>
+                                        </div>
+                                        <div class="kt-widget__details">
+                                            <span class="kt-widget__title">Retenciones</span>
+                                            <span class="kt-widget__value document-retention">@SessionInfo.StatisticsAts.Retencion</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--end:: Widgets/Applications/User/Profile3-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end:: Widgets/Activity-->
+    </div>
+
+
+<div class="col-md-12">
+    <div class="kt-portlet">
+        <div class="kt-portlet__body">
+            <div class="row">
+                <div id="resultDiv" class="col-12">
+                    @{ Html.RenderPartial("atsCompras", Model); }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/ats.js"></script>
+    <script>
+        Ats.months =@Html.Raw(Json.Encode(months));
+        Ats.year = "@Model.Year";
+        Ats.month = "@Model.Month";
+        Ats.urlAts = '@Url.Action("descargarAtsAsync", "ats")';
+        Ats.urlCompras = '@Url.Action("AtsCompras", "ats")';
+        Ats.urlTipoSustento = '@Url.Action("TipoSustento", "ats")';
+        Ats.urlSustento = '@Url.Action("Sustento", "ats")';
+        Ats.sustenanceTypes =@Html.Raw(Json.Encode(_tipoSustento));
+        Ats.urlImgan = '@($"{Url.Content("~/Images/recibidos/")}{1}.png")'
+        Ats.urlEstadistica = '@Url.Action("StatisticsLocalAtsAsync", "ats")';
+        Ats.Init();
+    </script>
+
+}

@@ -1,0 +1,45 @@
+﻿@using Ecuafact.Web.Controllers;
+@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web.MiddleCore.ApplicationServices;
+@model Ecuafact.Web.Domain.Entities.DashboardInfo
+<!-- BEGIN STATISTICAL GRAPHS -->
+<div class="portlet light bordered">
+    <div class="portlet-title tabbable-line">
+        <div class="caption">
+            <i class="fa fa-bar-chart-o font-red"></i>
+            <span class="caption-subject font-red bold uppercase">RECIBIDOS</span><br />
+            <span class="caption-helper">Graficos Estad&iacute;sticos de sus documentos recibidos</span>
+        </div>
+
+    </div>
+    <div class="portlet-body">
+
+        <div id="statistics_2" class="chart" style="padding: 0px; position: relative;"></div>
+
+        <div class="well margin-top-20">
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                    <span class="label label-success"> Facturas: </span>
+                    <h3 id="statistics_2factura">$ 0.00</h3>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                    <span class="label label-info"> Notas de Credito: </span>
+                    <h3 id="statistics_2notacredito">$ 0.00</h3>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                    <span class="label label-danger"> Retenciones: </span>
+                    <h3 id="statistics_2retencion">$ 0.00</h3>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                    <span class="label label-warning"> Guias de Remisi&oacute;n: </span>
+                    <h3 id="statistics_2guia">0 UNDS</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+<!-- END STATISTICAL GRAPHS -->
+

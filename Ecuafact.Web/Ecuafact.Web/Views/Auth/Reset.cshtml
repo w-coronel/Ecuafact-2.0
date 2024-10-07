@@ -1,0 +1,55 @@
+﻿@model Ecuafact.Web.Domain.Entities.API.RegisterModel
+@{
+    Layout = "~/Views/Shared/_Auth.cshtml";
+    ViewBag.Title = "Cambiar Contraseña";
+    ViewBag.ShowAds = false;
+    ViewBag.ContentWidth = "500px";
+    ViewBag.isRedirectedToLogin = true;
+
+}
+<div class="kt-login__form">
+    <div class="kt-login__title">
+        <h3>¿Olvidastes tu Contrase&ntilde;a?</h3>
+        <p> Ingresa tu RUC o n&uacute;mero de C&eacute;dula para recuperarla. </p>
+    </div>
+
+    @using (Html.BeginForm("Reset", "Auth", FormMethod.Post, new { @class = "forget-form", @autocomplete="off" }))
+    {
+
+        <!-- BEGIN FORGOT PASSWORD FORM  --> 
+        <div class="form-group">
+            <div class="kt-input-icon kt-input-icon--right">
+                <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                    <span>
+                        <i class="fa fa-user"></i>
+                    </span>
+                </span>
+                <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="RUC o n&uacute;mero de C&eacute;dula*" name="id" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <small> * Se enviar&aacute; informaci&oacute;n al correo electr&oacute;nico registrado con los pasos para el proceso.</small>
+        </div>
+
+        <div class="form-group">
+            <center>
+                <button type="submit" class="btn btn-dark btn-pill btn-elevate kt-login__btn-primary">Cambiar Contrase&ntilde;a</button>
+            </center>
+        </div>
+        <!-- END FORGOT PASSWORD FORM -->
+
+    }
+
+</div>
+
+@section header{
+    <a href="@Url.Action("")">Regresar al Inicio</a>     
+}
+
+
+@section scripts{
+<script>
+    Login.InitForget();
+</script>    
+}

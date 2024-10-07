@@ -1,0 +1,135 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@model SRIRequestModel
+@{
+    ViewBag.Title = "Configuración del Emisor";
+    this.PageOptions(option => option.DropZone = true);
+}
+
+@section styles {
+    <style type="text/css">
+        .dropzone-input {
+            width: 100% !important;
+        }
+    </style>
+
+    @Styles.Render("~/css/issuers")
+}
+<!--begin: Form Wizard Form-->
+<form method="post" class="issuer_form" id="issuer_form" action="@Url.Action("Nuevo", "Emisor")" novalidate="novalidate"  style="width:100%">
+    @Html.AntiForgeryToken()
+    <div class="kt-portlet">
+        <div class="kt-portlet__body kt-portlet__body--fit">
+            <div class="kt-grid  kt-wizard-v2 kt-wizard-v2--white" id="kt_wizard_v2" data-ktwizard-state="first">
+                <div class="kt-grid__item kt-wizard-v2__aside">
+
+                    <!--begin: Form Wizard Nav -->
+                    <div class="kt-wizard-v2__nav">
+
+                        <div class="row">
+                            <div class="form-group col-12 text-center" >
+                                <img src="~/images/user-key-validation.png" style="width:200px;" />
+                            </div>
+                        </div>
+
+                        <div class="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
+                            <!--doc: Replace A tag with SPAN tag to disable the step link click -->
+
+                            <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="current">
+                                <div class=" kt-wizard-v2__nav-body">
+                                    <div class="kt-wizard-v2__nav-icon">
+                                        <i class="flaticon2-group"></i>
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label">
+                                        <div class="kt-wizard-v2__nav-label-title">
+                                            Habilitar Cuenta RUC para la emisión de documentos electrónicos
+                                        </div>
+                                        <div class="kt-wizard-v2__nav-label-desc">
+                                        
+                                          Es necesario que usted ingrese su RUC y clave válida del SRI para continuar el proceso.
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    
+                        <!--end: Form Wizard Nav -->
+                    </div>
+                    
+                    
+                </div>
+
+                <div class="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
+
+                    <div class="kt-form">
+
+                        <!--begin: Form Wizard Step 1-->
+                        <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
+                            <div class="form-group col-12">
+                                <h4>Configura tu cuenta</h4><hr>
+                                <p>Ingresa las credenciales de tu cuenta del SRI</p>
+                            </div>
+                            <div class="form-group col-12">
+                                @Html.Label("RUC", "RUC: ", htmlAttributes: new { @class = "control-label col-12" })
+                                <div class="col-12 kt-input-icon kt-input-icon--right" style = "max-width:200px;" >
+                                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                        <span>
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                    </span>
+                                    @Html.TextBoxFor(model => model.RUC, new { @type="text", @class = "form-control", @maxlength="13", @minlength = "13", @autocomplete = "new_ruc" })
+                                    @Html.ValidationMessageFor(model => model.RUC, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group col-12" id="sri_password">
+                                @Html.Label("SRIPassword", "Clave del SRI:", htmlAttributes: new { @class = "control-label col-12" })
+                                <div class="col-12 kt-input-icon kt-input-icon--right" style = "max-width:200px;" >
+                                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                        <span>
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                    </span>
+                                    @Html.PasswordFor(model => model.SRIPassword, new { @class = "form-control", @autocomplete="new_sri"} )
+                                    @Html.ValidationMessageFor(model => model.SRIPassword, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                             
+                        </div>
+                        <!--end: Form Wizard Step 1--> 
+
+                        <!--begin: Form Actions -->
+                        <div class="kt-form__actions">
+                            
+
+                            <button type="submit" class="btn btn-primary btn-md btn-pill btn-elevate btn-elevate-air btn-tall  btn-wide kt-font-bold kt-font-transform-u finish-button" data-ktwizard-type="action-submit">
+                                Siguiente <i class="flaticon2-next"></i>
+                            </button>
+
+                        </div>
+                        <!--end: Form Actions -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form> 
+
+
+@section Scripts{
+
+@Scripts.Render("~/js/issuer")
+
+<script>
+    $(document).ready(function () {
+        Emisor.user = "@(SessionInfo.UserInfo.SRIConnected ? SessionInfo.UserInfo.Username : Guid.NewGuid().ToString())";
+        Emisor.urlRUCValidator = "@Url.Action("ValidarEmisor","Emisor")";
+        Emisor.urlPlans = "@Url.Action("TypeLicence", "Payment")";
+        Emisor.new();
+    });
+</script>
+
+}

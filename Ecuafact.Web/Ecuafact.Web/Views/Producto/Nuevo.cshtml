@@ -1,0 +1,179 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices
+
+@model Ecuafact.Web.Domain.Entities.ProductDto
+
+@{
+    Culture = "en-US";
+    var token = SessionInfo.ApplicationToken;
+    var tiposProducto = ServicioCatalogos.ObtenerTiposProducto(token);
+    var impuestosIVA = ServicioCatalogos.ObtenerTiposIVA(token);
+    var impuestosICE = ServicioCatalogos.ObtenerTiposICE(token);
+    var tipoMantenimiento = "Agregar";
+    var urlAction = "GuardarAsync";
+
+    if (Model.Id > 0)
+    {
+        tipoMantenimiento = "Actualizar";
+        urlAction += "/" + Convert.ToString(Model.Id);
+    }
+
+    ViewBag.Title = tipoMantenimiento+ " Producto";
+}
+
+@using (Html.BeginForm(urlAction, "Producto", FormMethod.Post, new { @id = "productForm", @name = "productForm" }))
+{
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.IssuerId)
+
+    
+    <div class="row">
+
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-toolbar">
+                    <div class="kt-portlet__head-label">
+                    </div>
+                </div>
+            </div>
+
+                 <div class="col-md-12 normalform" style="text-align:left;">
+
+                            <div class="form-group col-lg-12 ">
+                                <label class="col-lg-3 control-label">Código *:</label>
+                                <div class="col-lg-9">
+                                    @Html.EditorFor(model => model.MainCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "Requerido", @required = "", @maxlength = "50" } })
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 ">
+                                <label class="col-lg-3 control-label">Código Auxiliar:</label>
+                                <div class="col-lg-9">
+                                    @Html.EditorFor(model => model.AuxCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "Opcional", @maxlength = "50" } })
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 ">
+                                <label class="col-lg-3 control-label">Descripción *:</label>
+                                <div class="col-lg-9">
+                                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @required = "", @placeholder = "" } })
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 ">
+                                <label class="col-lg-3 control-label">Precio *:</label>
+                                <div class="col-lg-9">
+                                    @Html.EditorFor(model => model.UnitPrice, new { htmlAttributes = new { @class = "form-control", @type = "number", @required = "", @placeholder = "", @style = "width:100px;", @min = "0.00", @Step = "0.01" } })
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 ">
+                                <label class="col-lg-3 control-label">Tipo de Producto:</label>
+                                <div class="col-lg-9">
+                                    @Html.DropDownListFor(model => model.ProductTypeId, new SelectList(tiposProducto, "Id", "Name", Model.ProductTypeId), new { @class = "form-control", @required = "", @style = "width:auto;" })
+
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 ">
+                                <label class="col-lg-3 control-label">IVA:</label>
+                                <div class="col-lg-9">
+                                    @Html.DropDownListFor(model => model.IvaRateId, new SelectList(impuestosIVA, "Id", "Name", Model.IvaRateId), new { @class = "form-control", @required = "" })
+
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 ">
+                                <label class="col-lg-3 control-label">ICE:</label>
+                                <div class="col-lg-9">
+                                    @Html.DropDownListFor(model => model.IceRateId, new SelectList(impuestosICE, "Id", "Name", Model.IceRateId), new { @class = "form-control", @required = "" })
+
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-12 ">
+                                <label class="col-lg-3 control-label">Habilitado:</label>
+                                <div class="col-lg-9">
+                                    @Html.DropDownListFor(model => model.IsEnabled, new SelectList(new[] { new { Text = "Si", Value = true }, new { Text = "No", Value = false } }, "Value", "Text", Model.IsEnabled), new { @class = "form-control", @required = "" })
+                                </div>
+                            </div>
+                        </div>
+        </div>
+
+        <div class="row">
+            <button type="button" class="btn btn-primary btn-agregar-producto" onclick="guardarProducto()">Guardar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+
+    </div>
+
+}
+
+<script>
+
+    var modalDiv = $("#myModal");
+    var priceText = '@Html.Raw(Json.Encode(Model.UnitPrice))';
+
+    function guardarProducto() {
+        var objPrice = $("input[name='UnitPrice']");
+
+        if (typeof objPrice!='undefined') {
+            var price = objPrice.val();
+
+            if (priceText.includes(".")) {
+                price.replace(",", ".");
+            }
+            else if (priceText.includes(",")) {
+                price.replace(".", ",");
+            }
+            objPrice.val(price);
+        }
+
+        var $form = $('#productForm');
+        var formAction = $form.attr('action');
+        var formData = $form.serialize();
+
+        if (!$form[0].checkValidity()) {
+            swal("Oops!", "Debe rellenar el formulario con datos válidos!", "error");
+            return false;
+        }
+
+        showLoader();
+
+        $.ajax({
+            url: formAction,
+            type: "POST",
+            data: formData,
+            async: true,
+            error: function (data, o, e) {
+                modalDiv.modal('show');
+                swal("Oops!", data.error.Message, "error");
+                hideLoader();
+
+                },
+            success: function (data, o, e) {
+                debugger;
+                hideLoader();
+                if (data.id > 0) {
+
+                    modalDiv.modal('hide');
+                    swal("Producto", data.statusText, "success");
+
+                }
+                else {
+
+                    modalDiv.modal('show');
+                    swal("Oops!", data.error.Message, "error");
+
+                }
+            }
+        });
+
+        return;
+
+
+    }
+
+    if (modalDiv != null && typeof modalDiv.modal != 'undefined') {
+        modalDiv.on('shown.bs.modal', function () {
+            $('input[name="MainCode"]').trigger('focus')
+        });
+    }
+
+</script>
+
+

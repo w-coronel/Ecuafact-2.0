@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Ecuafact API</title>
+    <!-- needed for adaptive design -->
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <!-- OG Meta Tags to improve the way the post looks when you share the page on LinkedIn, Facebook, Google+-->
+    <meta property="og:site_name" content="Ecuafact" /> <!-- website name -->
+    <meta property="og:site" content="app.ecuafact.com" /> <!-- website link -->
+    <meta property="og:title" content="Ecuafact - Todas tus facturas en un solo lugar" /> <!-- title shown in the actual shared post -->
+    <meta property="og:description" content="Con ECUAFACT recibe y administra todas tus facturas electrónicas en un solo lugar. Disponible para Android, IOS y Web" /> <!-- description shown in the actual shared post -->
+    <meta property="og:image" content="@Url.Content("~/images/banner-ecuafact-2019.jpeg")" /> <!-- image link, make sure it's jpg -->
+    <meta property="og:url" content="https://app.ecuafact.com" /> <!-- where do you want your post to link to -->
+    <meta property="og:type" content="article" />
+
+    <link rel="author" href="http://www.ecuanexus.com" />
+    <link rel="publisher" href="http://www.ecuafact.com" />
+    <link rel="shortcut icon" href="favicon.ico" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.google-analytics.com/analytics.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66553421-2"></script>
+    <script async>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-66553421-2');
+    </script>
+    <!-- End Global site tag (gtag.js) - Google Analytics -->
+    <!-- Facebook Pixel Code -->
+    <script async src="https://connect.facebook.net/en_US/fbevents.js"></script>
+    <script async src="https://connect.facebook.net/signals/config/502287560709781?v=2.9.5&amp;r=stable"></script>
+    <script async>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '502287560709781');
+        fbq('track', 'PageView');
+    </script>
+    <noscript>
+        <img height="1" width="1" src="https://www.facebook.com/tr?id=502287560709781&ev=PageView&noscript=1" />
+    </noscript>
+    <!-- End Facebook Pixel Code -->
+    <!--begin::Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700|Roboto:300,400,500,600,700">
+    <!--end::Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700' rel='stylesheet'>
+    <!--
+    ReDoc doesn't change outer page styles
+    -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: poppins;
+        }
+    </style>
+</head>
+  <body>
+    <redoc spec-url='{{api-file}}'></redoc>
+    <script src='https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js'> </script>
+  </body>
+  <footer><span style='font-family:Courier, Monospace; font-size:10px;'><a href='swagger'><img class='logo__img' alt='Ir a Swagger' height='30' width='30' src='content/nexus_logo.png'></a></span></footer>
+  
+</html>

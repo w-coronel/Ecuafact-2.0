@@ -1,0 +1,211 @@
+﻿
+@using Ecuafact.Web.Domain.Entities
+@model PaymentRequestModel
+@{
+    ViewBag.Title = "Orden de Pago";
+    var urlModalComercio = Model.urlComercio;
+    var urlModalOpen = "";
+
+    // Es Desarrollo?
+    if (Model.development)
+    {
+        urlModalComercio = "https://integracion.alignetsac.com/VPOS2/js/modalcomercio.js";
+        urlModalOpen = "https://integracion.alignetsac.com/";
+    }
+
+    var NumDoc = "0000000000";
+    if (Model != null && Model.PurchaseOrder != null && Model.PurchaseOrder.PurchaseOrderId > 0)
+    {
+        NumDoc = Model.PurchaseOrder.PurchaseOrderId.ToString("D10");
+    }
+}
+
+@section styles{
+    @*<script type="text/javascript" src="@urlModalComercio"></script>*@   
+    <link href="~/Content/invoice.min.css" rel="stylesheet" type="text/css">
+}
+
+<div class="col-md-10 offset-md-1">
+    <div class="kt-portlet">
+        <div class="kt-portlet__body kt-portlet__body--fit">
+            <div class="kt-invoice-1">
+                <div class="kt-invoice__head" style="background-image: url(@Url.Content("~/assets/media/bg/300.jpg"));">
+                    <div class="kt-invoice__container">
+
+                        <div class="kt-invoice__brand">
+                            <div href="#" class="kt-invoice__logo">
+                                <a href="#"><img src="~/Images/ecuafact_logo_transparent.svg" width="165" height="44"></a>
+
+                                <span class="kt-invoice__desc">
+                                    <span>Av. San Jorge 426 entre calle Olimpo y 10ma.</span>
+                                    <span>Guayaquil, ECUADOR</span>
+                                </span>
+                            </div>
+
+                            <h1 class="kt-invoice__title kt-align-right">ORDEN DE PAGO<br /> No. @NumDoc</h1>
+                        </div>
+
+                        <div class="kt-invoice__items">
+
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__subtitle">Guayaquil, @Model.PurchaseOrder.IssuedOn.ToString("d MMMM yyyy", SessionInfo.Culture.Spanish)</span>
+                                <br>
+                                <span class="kt-invoice__subtitle">@Model.shippingFirstName @Model.shippingLastName<br /> @Model.shippingEmail</span>
+                                <span class="kt-invoice__text">@Model.shippingAddress<br>@Model.shippingState, @Model.shippingCountry</span>
+                            </div>
+                            <div class="kt-invoice__item ">
+
+                            </div>
+
+                            <div class="kt-invoice__item text-center">
+
+                                <form name="f1" id="f1" action="@Model.urlComercio" method="post" class="alignet-form-vpos2" runat="server">
+                                    @Html.HiddenFor(m => m.acquirerId)
+                                    @Html.HiddenFor(m => m.descriptionProducts)
+                                    @Html.HiddenFor(m => m.idCommerce)
+                                    @Html.HiddenFor(m => m.language)
+                                    @Html.HiddenFor(m => m.programmingLanguage)
+                                    @Html.HiddenFor(m => m.purchaseAmount)
+                                    @Html.HiddenFor(m => m.purchaseCurrencyCode)
+                                    @Html.HiddenFor(m => m.purchaseOperationNumber)
+                                    @Html.HiddenFor(m => m.purchaseVerification)
+                                    @Html.HiddenFor(m => m.reserved1)
+                                    @Html.HiddenFor(m => m.reserved11)
+                                    @Html.HiddenFor(m => m.reserved12)
+                                    @Html.HiddenFor(m => m.reserved2)
+                                    @Html.HiddenFor(m => m.reserved3)
+                                    @Html.HiddenFor(m => m.reserved4)
+                                    @Html.HiddenFor(m => m.reserved5)
+                                    @Html.HiddenFor(m => m.reserved6)
+                                    @Html.HiddenFor(m => m.reserved9)
+                                    @Html.HiddenFor(m => m.shippingAddress)
+                                    @Html.HiddenFor(m => m.shippingCity)
+                                    @Html.HiddenFor(m => m.shippingCountry)
+                                    @Html.HiddenFor(m => m.shippingEmail)
+                                    @Html.HiddenFor(m => m.shippingFirstName)
+                                    @Html.HiddenFor(m => m.shippingLastName)
+                                    @Html.HiddenFor(m => m.shippingState)
+                                    @Html.HiddenFor(m => m.shippingZIP)
+                                    @Html.HiddenFor(m => m.userCodePayme)
+                                    @Html.HiddenFor(m => m.userCommerce)
+                                    <button class="btn btn-warning btn-bold btn-pill btn-lg btn-elevate btn-elevate-air"  type="submit" >
+                                        <i class="flaticon-price-tag"></i> <br>Pagar<br><small>&nbsp;tarjeta de cr&eacute;dito&nbsp;</small>
+                                    </button>
+
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="kt-invoice__body">
+                    <div class="kt-invoice__container">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+
+                                        <th>DESCRIPCION</th>
+
+                                        <th class="text-center">TOTAL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+
+                                        <td>@Model.descriptionProducts</td>
+
+                                        <td class="text-center">@Model.PurchaseOrder.Subtotal.ToString("C", new System.Globalization.CultureInfo("en-US"))</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="kt-invoice__footer">
+                    <div class="kt-invoice__container">
+                        <div class="kt-invoice__item"></div>
+                        <div class="kt-invoice__bank ">
+                            <div class="kt-invoice__title ">RESUMEN</div>
+
+                            @{
+                                if (Model.PurchaseOrder.TotalDiscount > 0)
+                                {
+
+                                    <div class="kt-invoice__item">
+                                        <span class="kt-invoice__label">Precio:</span>
+                                        <span class="kt-invoice__value">$ @((Model.PurchaseOrder.Subtotal12 + Model.PurchaseOrder.TotalDiscount).ToString("#.00"))</span>
+                                    </div>
+
+                                    <div class="kt-invoice__item">
+                                        <span class="kt-invoice__label">Descuento:</span>
+                                        <span class="kt-invoice__value">$ @Model.PurchaseOrder.TotalDiscount.ToString("#.00")</span>
+                                    </div>
+
+                                }
+
+                            }
+
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__label">Subtotal 0%:</span>
+                                <span class="kt-invoice__value">$ @Model.PurchaseOrder.Subtotal0.ToString("#.00")</span>
+                            </div>
+
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__label">Subtotal 12%:</span>
+                                <span class="kt-invoice__value">$ @Model.PurchaseOrder.Subtotal12.ToString("#.00")</span>
+                            </div>
+
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__label">IVA 12%:</span>
+                                <span class="kt-invoice__value">$ @Model.PurchaseOrder.IVA.ToString("#.00")</span>
+                            </div>
+
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__label">Total a Pagar:</span>
+                                <span class="kt-invoice__value">$ @Model.PurchaseOrder.Total.ToString("#.00")</span>
+                            </div>
+                        </div>
+
+                        <div class="kt-invoice__total text-center">
+                            <span class="kt-invoice__title">TOTAL</span>
+                            <span class="kt-invoice__price">  $ @Model.PurchaseOrder.Total.ToString("#.00")  </span>
+                            <span class="kt-invoice__notice">Incluye impuestos</span>
+
+
+
+                        </div>
+                        <div class="kt-invoice__item">
+
+                            @if (Model != null && Model.purchaseAmount == "3125")
+                            {
+
+                                <img src="~/images/fef.png" style="width:120px;" />
+
+                            }
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>        
+        $(document).ready(function () {
+            // Abre el boton de pagos luego de 5 segundos:
+            //if (modalComercio) {
+            //    setTimeout(function () {
+
+            //        AlignetVPOS2.openModal();
+
+            //    }, 7000);
+            //}
+            $form = $("#f1");
+            $form.on("submit", function (e) { showLoader();})
+        });
+    </script>
+}

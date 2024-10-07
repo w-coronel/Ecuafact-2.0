@@ -1,0 +1,269 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices
+
+@model Ecuafact.Web.Domain.Entities.ProductDto
+
+@{
+    Culture = "en-US";
+    var token = SessionInfo.ApplicationToken;
+    var tiposProducto = ServicioCatalogos.ObtenerTiposProducto(token);
+    var impuestosIVA = ServicioCatalogos.ObtenerTiposIVA(token).Where(s=> s.SriCode != "8");
+    var impuestosICE = ServicioCatalogos.ObtenerTiposICE(token);
+    var tipoMantenimiento = "Agregar";
+    var urlAction = "GuardarAsync";
+
+    if (Model.Id > 0)
+    {
+        tipoMantenimiento = "Actualizar";
+        urlAction += "/" + Convert.ToString(Model.Id);        
+    }
+
+    Model.Status = Model.IsEnabled ? 1 : 0;
+
+    var status = new List<SelectListItem>{
+        new SelectListItem { Value= "1", Text="Activo" },
+        new SelectListItem{ Value="0", Text="Inactivo" }
+    };
+
+}
+
+
+@using (Html.BeginForm(urlAction, "Producto", FormMethod.Post, new { @id = "productForm", @name = "productForm" }))
+{
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.IssuerId)
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="loaderV1"></div>
+
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="flaticon2-gift"></i>&nbsp;&nbsp;&nbsp;@tipoMantenimiento Producto</h4>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-content">
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="row">
+
+                                <div class="form-group col-12 ">
+                                    <div class="row">
+                                        <label for="MainCode" class="col-sm-4 col-12 control-label">Código del Producto:</label>
+                                        <div class="col-sm-4 col-6">
+                                            @Html.TextBoxFor(model => model.MainCode, new { @class = "form-control", @placeholder = "Cod. Principal", @required = "", @maxlength = "25", data_msg_required = "Debe especificar el codigo del producto." })
+                                        </div>
+                                        <div class="col-sm-4 col-6">
+                                            @Html.TextBoxFor(model => model.AuxCode, new { @class = "form-control", @placeholder = "Cod. Auxiliar (opcional)", @maxlength = "25" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12 ">
+                                    <div class="row">
+                                        <label for="Name" class="col-sm-4 col-12 control-label align-self-center">Descripción:</label>
+                                        <div class="col-sm-8 col-12">
+                                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @required = "", @placeholder = "", data_msg_required = "Debe especificar la descripción del producto." })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12 ">
+                                    <div class="row">
+                                        <label for="UnitPrice" class="col-sm-4 col-12 control-label align-self-center">Precio:</label>
+                                        <div class="col-sm-8 col-12">
+                                            @Html.TextBoxFor(model => model.UnitPrice, new
+                                               {
+                                                   @class = "form-control",
+                                                   @type = "number",
+                                                   @required = "",
+                                                   @max = "99999999999999.999999",
+                                                   @maxlength = "14",
+                                                   @placeholder = "######.##",
+                                                   @style = "width:100%;",
+                                                   data_msg_required = "Debe especificar el precio del producto.",
+                                                   data_msg_max = "El precio debe ser menor a 14 digitos.",
+                                                   data_msg_maxlength = "El precio debe ser menor a 14 digitos."
+                                               })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12 ">
+                                    <div class="row">
+                                        <label for="ProductTypeId" class="col-sm-4 col-12 control-label align-self-center">Tipo de Producto:</label>
+                                        <div class="col-sm-8 col-12">
+                                            @Html.DropDownListFor(model => model.ProductTypeId, new SelectList(tiposProducto, "Id", "Name", Model.ProductTypeId), new { @class = "form-control", @required = "", @style = "width:100%;" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12 ">
+                                    <div class="row">
+                                        <label class="col-sm-4 col-12 control-label align-self-center">IVA:</label>
+                                        <div class="col-sm-8 col-12">
+                                            @Html.DropDownListFor(model => model.IvaRateId, new SelectList(impuestosIVA, "Id", "Name", Model.IvaRateId), new { @class = "form-control", @required = "", data_msg_required = "Debe especificar un tipo de IVA del producto." })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12 ">
+                                    <div class="row">
+                                        <label class="col-sm-4 col-12 control-label align-self-center">ICE:</label>
+                                        <div class="col-sm-8 col-12">
+                                            @Html.DropDownListFor(model => model.IceRateId, new SelectList(impuestosICE, "Id", "Name", Model.IceRateId), new { @class = "form-control", @required = "", data_msg_required = "Debe especificar el tipo de impuesto ICE para el producto." })
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group col-12 ">
+
+                                    <div class="row">
+
+                                        <label class="col-sm-4 col-12 control-label align-self-center">Estado:</label>
+                                        <div class="col-sm-8 col-12">
+                                            @Html.DropDownListFor(model => model.Status, new SelectList(status, "Value", "Text", Model.Status), new {@class = "form-control", @required = "", data_msg_required = "Debe especificar el estado actual del producto." })
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group col-12 ">
+                                    <div class="row">
+                                        <label for="MainCode" class="col-sm-4 col-12 control-label">Detalles Adicionales:</label>
+                                        <div class="col-sm-4 col-6">
+                                            @Html.TextBoxFor(model => model.Name1, new { @class = "form-control", @placeholder = "Nombre detalle" })
+                                        </div>
+                                        <div class="col-sm-4 col-6">
+                                            @Html.TextBoxFor(model => model.Value1, new { @class = "form-control", @placeholder = "Valor del detalle" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12 ">
+                                    <div class="row">
+                                        <label for="MainCode" class="col-sm-4 col-12 control-label"></label>
+                                        <div class="col-sm-4 col-6">
+                                            @Html.TextBoxFor(model => model.Name2, new { @class = "form-control", @placeholder = "Nombre detalle" })
+                                        </div>
+                                        <div class="col-sm-4 col-6">
+                                            @Html.TextBoxFor(model => model.Value2, new { @class = "form-control", @placeholder = "Valor del detalle" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-12 ">
+                                    <div class="row">
+                                        <label for="MainCode" class="col-sm-4 col-12 control-label"></label>
+                                        <div class="col-sm-4 col-6">
+                                            @Html.TextBoxFor(model => model.Name3, new { @class = "form-control", @placeholder = "Nombre detalle" })
+                                        </div>
+                                        <div class="col-sm-4 col-6">
+                                            @Html.TextBoxFor(model => model.Value3, new { @class = "form-control", @placeholder = "Valor del detalle" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+                <button id="btnSave" type="button" class="btn btn-outline-brand text-dark" style="margin-right:5px"><i class="la la-save"></i> Guardar</button>
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> Cancelar</button>
+            </div>
+        </div>
+
+    </div>
+}
+
+
+@Scripts.Render("~/js/inputmask")
+
+<script>
+
+    $(document).ready(function () {
+
+        var $div = $("#myModal");
+
+        if ($div != null && typeof $div.modal != 'undefined') {
+            $div.on('shown.bs.modal', function () {
+                $('input[name="MainCode"]').trigger('focus')
+            });
+        }
+
+        $(".form-control").upperText();
+
+        $("#btnSave").on("click", function () {
+            
+
+            var $form = $('#productForm');
+            var formAction = $form.attr('action');
+            var formData = $form.serializeJSON();
+
+            if (!$form.valid()) {
+                toastr.warning("Debe rellenar el formulario con datos válidos!");
+                return false;
+            }
+
+            showLoader();
+
+            $.ajax({
+                url: formAction,
+                type: "POST",
+                data: formData,
+                error: function (data, o, e) {
+                    hideLoader();
+                    $div.modal('show');
+
+                    Swal.fire("Oops!", (data && data.message)
+                        ? data.message
+                        : "Hubo un error al guardar el documento!", "error");
+                },
+                success: function (data, o, e) {
+                    if (typeof data == 'string' && data.includes("kt-login")) {
+                        Swal.fire("Sesión Caducada", "Vuelva a Iniciar Sesión", "info");
+                        window.open(location.origin, "_blank")
+                        return false;
+                    } 
+
+                    hideLoader();
+                    if (data.id > 0) {
+
+                        $div.modal('hide');
+                        Swal.fire("Producto", data.message, "success");
+
+                    }
+                    else {
+
+                        $div.modal('show');
+                        Swal.fire("Oops!", data.message, "error");
+
+                    }
+                }
+            });
+
+            return;
+
+
+        });
+
+    });
+
+</script>
+

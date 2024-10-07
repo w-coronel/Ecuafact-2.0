@@ -1,0 +1,201 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend Web API", "Backend Web API", "{B9A102F0-131F-4CFC-AEFD-6B9A26E242D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend Web APP", "Frontend Web APP", "{6E0CAFE2-3716-49A7-8F1F-514519123D95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI", "Ecuafact.API\Ecuafact.WebAPI\Ecuafact.WebAPI.csproj", "{21B197F3-0BC1-4491-BBF7-A150ADF77821}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI.Dal", "Ecuafact.API\Ecuafact.WebAPI.Dal\Ecuafact.WebAPI.Dal.csproj", "{22FB0547-5A19-48F6-847E-3867DF2D2863}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI.Domain", "Ecuafact.API\Ecuafact.WebAPI.Domain\Ecuafact.WebAPI.Domain.csproj", "{D95D5173-950A-4FE1-B9E3-67FF84C553D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI.PayMe", "Ecuafact.API\Ecuafact.WebAPI.PayMe\Ecuafact.WebAPI.PayMe.csproj", "{5D9F8B15-991A-44A0-9F08-A2B75139B704}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.Web", "Ecuafact.Web\Ecuafact.Web\Ecuafact.Web.csproj", "{C4081C13-11A5-41F2-9CC0-D053974BC598}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.Web.Domain", "Ecuafact.Web\Ecuafact.Web.Domain\Ecuafact.Web.Domain.csproj", "{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.Web.MiddleCore", "Ecuafact.Web\Ecuafact.Web.MiddleCore\Ecuafact.Web.MiddleCore.csproj", "{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.Web.Reporting", "Ecuafact.Web\Ecuafact.Web.Reporting\Ecuafact.Web.Reporting.csproj", "{561061FD-A0AC-48E6-99F4-58084202C958}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration Web API", "Integration Web API", "{79E83E47-E3C7-4CDB-B42A-825AB6FD9DD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI.Integration", "Ecuafact.API\Ecuafact.WebAPI.Integration\Ecuafact.WebAPI.Integration.csproj", "{BE896B50-EB08-48EC-8449-8DFC172C94EC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8A95BEF1-A22E-42E8-A0D2-6143505398C3}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecuafact.WebAPI.Tests", "Ecuafact.API\Ecuafact.WebAPI.Tests\Ecuafact.WebAPI.Tests.csproj", "{17FB1467-A0C3-46C7-91E8-B8D0C46278E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Debug|x64.ActiveCfg = Debug|x64
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Debug|x64.Build.0 = Debug|x64
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Release|x64.ActiveCfg = Release|x64
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Release|x64.Build.0 = Release|x64
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Debug|x64.ActiveCfg = Debug|x64
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Debug|x64.Build.0 = Debug|x64
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Release|x64.ActiveCfg = Release|x64
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Release|x64.Build.0 = Release|x64
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Debug|x64.ActiveCfg = Debug|x64
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Debug|x64.Build.0 = Debug|x64
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Release|x64.ActiveCfg = Release|x64
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Release|x64.Build.0 = Release|x64
+		{5D9F8B15-991A-44A0-9F08-A2B75139B704}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D9F8B15-991A-44A0-9F08-A2B75139B704}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D9F8B15-991A-44A0-9F08-A2B75139B704}.Debug|x64.ActiveCfg = Debug|x64
+		{5D9F8B15-991A-44A0-9F08-A2B75139B704}.Debug|x64.Build.0 = Debug|x64
+		{5D9F8B15-991A-44A0-9F08-A2B75139B704}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D9F8B15-991A-44A0-9F08-A2B75139B704}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D9F8B15-991A-44A0-9F08-A2B75139B704}.Release|x64.ActiveCfg = Release|x64
+		{5D9F8B15-991A-44A0-9F08-A2B75139B704}.Release|x64.Build.0 = Release|x64
+		{C4081C13-11A5-41F2-9CC0-D053974BC598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4081C13-11A5-41F2-9CC0-D053974BC598}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4081C13-11A5-41F2-9CC0-D053974BC598}.Debug|x64.ActiveCfg = Development|x64
+		{C4081C13-11A5-41F2-9CC0-D053974BC598}.Debug|x64.Build.0 = Development|x64
+		{C4081C13-11A5-41F2-9CC0-D053974BC598}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4081C13-11A5-41F2-9CC0-D053974BC598}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4081C13-11A5-41F2-9CC0-D053974BC598}.Release|x64.ActiveCfg = Release|x64
+		{C4081C13-11A5-41F2-9CC0-D053974BC598}.Release|x64.Build.0 = Release|x64
+		{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}.Debug|x64.ActiveCfg = Development|x64
+		{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}.Debug|x64.Build.0 = Development|x64
+		{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}.Release|x64.ActiveCfg = Release|x64
+		{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}.Release|x64.Build.0 = Release|x64
+		{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}.Debug|x64.ActiveCfg = Development|x64
+		{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}.Debug|x64.Build.0 = Development|x64
+		{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}.Release|x64.ActiveCfg = Release|x64
+		{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}.Release|x64.Build.0 = Release|x64
+		{561061FD-A0AC-48E6-99F4-58084202C958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{561061FD-A0AC-48E6-99F4-58084202C958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{561061FD-A0AC-48E6-99F4-58084202C958}.Debug|x64.ActiveCfg = Development|x64
+		{561061FD-A0AC-48E6-99F4-58084202C958}.Debug|x64.Build.0 = Development|x64
+		{561061FD-A0AC-48E6-99F4-58084202C958}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{561061FD-A0AC-48E6-99F4-58084202C958}.Release|Any CPU.Build.0 = Release|Any CPU
+		{561061FD-A0AC-48E6-99F4-58084202C958}.Release|x64.ActiveCfg = Release|x64
+		{561061FD-A0AC-48E6-99F4-58084202C958}.Release|x64.Build.0 = Release|x64
+		{BE896B50-EB08-48EC-8449-8DFC172C94EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE896B50-EB08-48EC-8449-8DFC172C94EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE896B50-EB08-48EC-8449-8DFC172C94EC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BE896B50-EB08-48EC-8449-8DFC172C94EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE896B50-EB08-48EC-8449-8DFC172C94EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE896B50-EB08-48EC-8449-8DFC172C94EC}.Release|x64.ActiveCfg = Release|Any CPU
+		{17FB1467-A0C3-46C7-91E8-B8D0C46278E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17FB1467-A0C3-46C7-91E8-B8D0C46278E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17FB1467-A0C3-46C7-91E8-B8D0C46278E6}.Debug|x64.ActiveCfg = Debug|x64
+		{17FB1467-A0C3-46C7-91E8-B8D0C46278E6}.Debug|x64.Build.0 = Debug|x64
+		{17FB1467-A0C3-46C7-91E8-B8D0C46278E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17FB1467-A0C3-46C7-91E8-B8D0C46278E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17FB1467-A0C3-46C7-91E8-B8D0C46278E6}.Release|x64.ActiveCfg = Release|x64
+		{17FB1467-A0C3-46C7-91E8-B8D0C46278E6}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821} = {B9A102F0-131F-4CFC-AEFD-6B9A26E242D5}
+		{22FB0547-5A19-48F6-847E-3867DF2D2863} = {B9A102F0-131F-4CFC-AEFD-6B9A26E242D5}
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9} = {B9A102F0-131F-4CFC-AEFD-6B9A26E242D5}
+		{5D9F8B15-991A-44A0-9F08-A2B75139B704} = {B9A102F0-131F-4CFC-AEFD-6B9A26E242D5}
+		{C4081C13-11A5-41F2-9CC0-D053974BC598} = {6E0CAFE2-3716-49A7-8F1F-514519123D95}
+		{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C} = {6E0CAFE2-3716-49A7-8F1F-514519123D95}
+		{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5} = {6E0CAFE2-3716-49A7-8F1F-514519123D95}
+		{561061FD-A0AC-48E6-99F4-58084202C958} = {6E0CAFE2-3716-49A7-8F1F-514519123D95}
+		{BE896B50-EB08-48EC-8449-8DFC172C94EC} = {79E83E47-E3C7-4CDB-B42A-825AB6FD9DD9}
+		{17FB1467-A0C3-46C7-91E8-B8D0C46278E6} = {B9A102F0-131F-4CFC-AEFD-6B9A26E242D5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {35CB8843-ED2C-410C-883F-8688AA184A08}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 9
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://ecuanexus-it.visualstudio.com/
+		SccProjectUniqueName0 = Ecuafact.API\\Ecuafact.WebAPI.Dal\\Ecuafact.WebAPI.Dal.csproj
+		SccProjectTopLevelParentUniqueName0 = Ecuafact\u00202.0.sln
+		SccProjectName0 = Ecuafact.API/Ecuafact.WebAPI.Dal
+		SccAuxPath0 = https://ecuanexus-it.visualstudio.com
+		SccLocalPath0 = Ecuafact.API\\Ecuafact.WebAPI.Dal
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName1 = Ecuafact.API\\Ecuafact.WebAPI.Domain\\Ecuafact.WebAPI.Domain.csproj
+		SccProjectTopLevelParentUniqueName1 = Ecuafact\u00202.0.sln
+		SccProjectName1 = Ecuafact.API/Ecuafact.WebAPI.Domain
+		SccAuxPath1 = https://ecuanexus-it.visualstudio.com
+		SccLocalPath1 = Ecuafact.API\\Ecuafact.WebAPI.Domain
+		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName2 = Ecuafact.API\\Ecuafact.WebAPI.PayMe\\Ecuafact.WebAPI.PayMe.csproj
+		SccProjectTopLevelParentUniqueName2 = Ecuafact\u00202.0.sln
+		SccProjectName2 = Ecuafact.API/Ecuafact.WebAPI.PayMe
+		SccAuxPath2 = https://ecuanexus-it.visualstudio.com
+		SccLocalPath2 = Ecuafact.API\\Ecuafact.WebAPI.PayMe
+		SccProvider2 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName3 = Ecuafact.Web\\Ecuafact.Web.Domain\\Ecuafact.Web.Domain.csproj
+		SccProjectTopLevelParentUniqueName3 = Ecuafact\u00202.0.sln
+		SccProjectName3 = Ecuafact.Web/Ecuafact.Web.Domain
+		SccAuxPath3 = https://ecuanexus-it.visualstudio.com
+		SccLocalPath3 = Ecuafact.Web\\Ecuafact.Web.Domain
+		SccProvider3 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName4 = Ecuafact.Web\\Ecuafact.Web.MiddleCore\\Ecuafact.Web.MiddleCore.csproj
+		SccProjectTopLevelParentUniqueName4 = Ecuafact\u00202.0.sln
+		SccProjectName4 = Ecuafact.Web/Ecuafact.Web.MiddleCore
+		SccAuxPath4 = https://ecuanexus-it.visualstudio.com
+		SccLocalPath4 = Ecuafact.Web\\Ecuafact.Web.MiddleCore
+		SccProvider4 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName5 = Ecuafact.Web\\Ecuafact.Web.Reporting\\Ecuafact.Web.Reporting.csproj
+		SccProjectTopLevelParentUniqueName5 = Ecuafact\u00202.0.sln
+		SccProjectName5 = Ecuafact.Web/Ecuafact.Web.Reporting
+		SccAuxPath5 = https://ecuanexus-it.visualstudio.com
+		SccLocalPath5 = Ecuafact.Web\\Ecuafact.Web.Reporting
+		SccProvider5 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName6 = Ecuafact.API\\Ecuafact.WebAPI\\Ecuafact.WebAPI.csproj
+		SccProjectTopLevelParentUniqueName6 = Ecuafact\u00202.0.sln
+		SccProjectName6 = Ecuafact.API/Ecuafact.WebAPI
+		SccAuxPath6 = https://ecuanexus-it.visualstudio.com
+		SccLocalPath6 = Ecuafact.API\\Ecuafact.WebAPI
+		SccProvider6 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName7 = Ecuafact.Web\\Ecuafact.Web\\Ecuafact.Web.csproj
+		SccProjectTopLevelParentUniqueName7 = Ecuafact\u00202.0.sln
+		SccProjectName7 = Ecuafact.Web/Ecuafact.Web
+		SccAuxPath7 = https://ecuanexus-it.visualstudio.com
+		SccLocalPath7 = Ecuafact.Web\\Ecuafact.Web
+		SccProvider7 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName8 = Ecuafact.API\\Ecuafact.WebAPI.Tests\\Ecuafact.WebAPI.Tests.csproj
+		SccProjectTopLevelParentUniqueName8 = Ecuafact\u00202.0.sln
+		SccProjectName8 = Ecuafact.API/Ecuafact.WebAPI.Tests
+		SccAuxPath8 = https://ecuanexus-it.visualstudio.com
+		SccLocalPath8 = Ecuafact.API\\Ecuafact.WebAPI.Tests
+		SccProvider8 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,15 @@
+﻿.number {
+    margin: 0px !important;
+    text-align: center;
+}
+
+.nav-pills > li {
+    float: left;
+    width: 33% !important;
+    text-align: center !important;
+    align-items: center !important;
+}
+
+.steps > li > a {
+    text-align: center !important;
+}

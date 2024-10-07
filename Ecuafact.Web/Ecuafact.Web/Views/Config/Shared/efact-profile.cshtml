@@ -1,0 +1,42 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+
+<div class="kt-heading kt-heading--md">Facturaci&oacute;n Electr&oacute;nica </div>
+<div class="kt-form__section kt-form__section--first">
+    <div class="kt-wizard-v2__form">
+        <div class="row">
+            @if (SessionInfo.Issuer != null)
+            {
+            <div class="alert alert-primary alert-close alert-dismissible fade show" role="alert">
+                <div class="alert-icon"><i class="flaticon2-check-mark"></i></div>
+
+                <div class="alert-text">
+                    <h4 class="alert-heading">
+                        Su cuenta está habilitada para la emisi&oacute;n de Documentos Electr&oacute;nicos
+                    </h4>
+                    Ahora, todos tus documentos electr&oacute;nicos ser&aacute;n sincronizados autom&aacute;ticamente a trav&eacute;s de nuestros servicios.
+                </div>
+            </div>
+            }
+            else
+            {
+            <div class="alert alert-danger alert-close alert-dismissible fade show" role="alert">
+                <div class="alert-icon"><i class="flaticon-warning-sign"></i></div>
+                <div class="alert-text">
+                    <h4 class="alert-heading">
+                        Su cuenta no est&aacute; habilitada para la emisi&oacute;n de Documentos Electr&oacute;nicos
+                    </h4>
+                    Para poder sincronizar sus documentos electr&oacute;nicos es necesario que conecte su cuenta al SRI.
+                </div>
+            </div>
+            }
+        </div>
+
+
+        <div class="row">
+            <a href="~/Emisor/Configuracion" class="btn btn-dark btn-tall btn-pill btn-elevated actualizar-emisor"><i class="flaticon-rotate"></i>Actualizar Informaci&oacute;n</a>
+        </div>
+
+
+    </div>
+</div>
+ 

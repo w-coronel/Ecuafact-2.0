@@ -1,0 +1,194 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices
+@using (Html.BeginForm("ImportarDataAsync", "Comprobantes", FormMethod.Post, new { @id = "dataImport", @name = "dataImport", @enctype = "multipart/form-data" }))
+{
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="loaderV1"></div>
+
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="flaticon2-gift"></i>&nbsp;&nbsp;&nbsp;Importar Documentos</h4>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-content">
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-12 alert alert-info alert-close alert-dismissible fade show" role="alert">
+                            <div class="alert-icon"><i class="flaticon2-information"></i></div>
+                            <div class="alert-text">
+                                <h4 class="alert-heading">
+                                    Importación de Documentos recibidos
+                                </h4>
+                                <p class="text-justify">
+                                    Para continuar con el proceso, considere lo siguiente:<br />
+                                    * El formato del archivo debe ser .xml.<br />
+                                    * Solo puedes importar documentos que han sido emitidos a tu número de ruc.<br />
+                                    * El Xml debe estar autorizado y validado por el SRI.<br />
+                                </p>
+                                <br />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-5" style="padding-top: 10px">
+                            <div class="form-group" style="padding-bottom:20px;">
+                                <label title=""
+                                       data-toggle="kt-popover"
+                                       data-container="body"
+                                       data-placement="bottom"
+                                       data-html="true"
+                                       data-skin="dark"
+                                       data-content=">Subir el archivo en formato .csv <br />"
+                                       data-original-title='Subir el archivo en formato .xml'>
+                                    <span id="size_file_import" style="color: #9c9c9c"></span> &nbsp;
+                                    <i id="file_import"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="row">
+                                <button data-toggle="tooltip" title="Seleccionar archivo plano" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_select" type="button">
+                                    <i class="flaticon2-file-2"></i>&nbsp;Seleccionar Archivo
+                                </button>
+                                <input type="hidden" name="Name" id="FormatType" />
+                                <input type="file" style="display:none;" id="ImportDataFile" name="XmlRaw" accept=".xml" />
+                            </div>
+                            <div class="row" style="padding-top:10px;">
+                                <button data-toggle="tooltip" title="Importar archivo xml" class="btn btn-success btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_subir" type="button" style="display:none;">
+                                    <i class="flaticon2-arrow-up"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subir Archivo&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                @*<button id="btnSave" type="button" class="btn btn-outline-brand text-dark" style="margin-right:5px"><i class="la la-save"></i> Guardar</button>*@
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> Cancelar</button>
+            </div>
+        </div>
+
+    </div>
+}
+
+<script>
+
+    $(document).ready(function () {
+
+        var $div = $("#myModal");
+        $(".btn_select").on("click", function () {
+            $("#ImportDataFile").click();
+        });
+
+        $("#ImportDataFile").on("change", function () {
+            var ext = '';
+            if ($(this)[0].files.length > 0) {
+                var styleOK = "fa fa-check text-success kt-icon-lg";
+                var styleError = "fa fa-times text-danger kt-icon-lg";
+                var inputElement = $("#file_import");
+                var labelElement = $("#size_file_import");
+                var iSize = ($(this)[0].files[0].size / 1024);
+                var namefile = $(this)[0].files[0].name;
+                ext = namefile.split('.');
+                ext = ext[ext.length - 1];
+                var info = "Archivo: " + namefile + "</br>" + "Tamaño de archivo:";               
+                if (ext === "xml") {
+
+                    if (iSize / 1024 > 1) {
+                        iSize = (Math.round((iSize / 1024) * 100) / 100);
+                        if (iSize > 5) {
+                            labelElement.html('Tamaño de archivo: ' + iSize + "Mb");
+                            labelElement.attr('style', 'color: #FC5555');
+                            inputElement.css("border-color", "#FC5555")
+                            $(".btn_subir").hide();
+                            inputElement.removeClass(styleOK);
+                            inputElement.addClass(styleError);
+                            return false;
+                        } else {
+                            labelElement.html(info + ' ' + iSize + "Mb");
+                            labelElement.attr('style', 'color: #9c9c9c');                            
+                        }
+
+                    } else {
+                        iSize = (Math.round(iSize * 100) / 100)
+                        labelElement.html(info + ' ' + iSize + "kb");
+                        labelElement.attr('style', 'color: #9c9c9c');
+                    }
+                }
+                else {
+                    Swal.fire("Oops!", 'El archivo debe ser extension xml', "error");
+                    $(this).value = '';
+                    this.files[0].name = '';
+                    return false;
+                }
+
+                $(".btn_subir").show();
+                inputElement.removeClass(styleError);
+                inputElement.addClass(styleOK);
+                $("#FormatType").val(namefile);
+            }
+        });
+
+        var ondeleteData = function () {
+            var styleOK = "fa fa-check text-success kt-icon-lg";
+            var inputElement = $("#file_import");
+            var labelElement = $("#size_file_import");
+            $("#ImportDataFile").value = '';
+            $("#FormatType").val('');
+            $(".btn_subir").hide();
+            labelElement.html("");
+            inputElement.removeClass(styleOK);
+        };
+
+        $(".btn_subir").on("click", function () {
+            var $form = $('#dataImport');
+            var formAction = $form.attr('action');
+            var formData = new FormData($form[0]);
+            showLoader();
+            $.ajax({
+                url: formAction,
+                type: "post",
+                dataType: "html",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                error: function (_data, o, e) {
+                    hideLoader();
+                    $div.modal('show');
+                    ondeleteData();
+                    Swal.fire("Oops!", (_data && _data.message)
+                        ? data.message
+                        : "Hubo un error al importar los documentos!", "error");
+                },
+                success: function (_data, o, e) {                   
+                    if (typeof _data == 'string' && _data.includes("kt-login")) {
+                        Swal.fire("Sesión Caducada", "Vuelva a Iniciar Sesión", "info");
+                        window.open(location.origin, "_blank")
+                        return false;
+                    }
+                    _data = JSON.parse(_data)
+                    ondeleteData();
+                    hideLoader();
+
+                    if (_data.result) {
+                        $div.modal('hide');
+                        Swal.fire("Documentos", _data.message, "success");
+                    }
+                    else {
+                        $div.modal('show');
+                        Swal.fire("Oops!", _data.message, "error");
+                    }
+                }
+            });
+            return;
+        });
+    });
+
+</script>

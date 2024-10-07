@@ -1,0 +1,115 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Begin: life time stats -->
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                
+                    <div class="caption"  data-target="#issuerTab">
+                        <i class="fa fa-suitcase font-blue"></i>
+                        <span class="caption-subject font-blue bold uppercase">@Model.BussinesName</span><br />
+                        <span class="caption-helper">RUC: @Model.RUC<br /></span>
+                    </div>
+
+                    <div class="actions">
+                        <div class="btn-group">
+                            <a class="btn green btn-circle btn-sm" href="javascript:;" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                <i class="fa fa-gear"></i>
+                                <i class="fa fa-angle-down"></i>
+                            </a>
+                              
+                            <ul class="dropdown-menu pull-right">
+                                <li>
+                                    <a href="@Url.Action("", "Config")"><i class="fa fa-gear"></i> Configurar </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+               
+            </div>
+
+            <div class="portlet-body  " id="issuerTab">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="width:100%">
+                                    <b>
+                                        <small>
+                                            AMBIENTE:
+                                            @if (Model.EnvironmentType == 1)
+                                            {
+                                                <span>PRUEBAS</span>
+                                            }
+                                            else
+                                            {
+                                                <span>PRODUCCION</span>
+                                            }
+                                        </small> |
+                                        <small>
+                                            EMISION:
+                                            @if (Model.IssueType == 1)
+                                            {
+                                                <span>NORMAL</span>
+                                            }
+                                            else
+                                            {
+                                                <span>POR INDISPONIBILIDAD DEL SISTEMA</span>
+                                            }
+                                        </small>
+                                    </b>
+                                    <br />
+                                    <h4>
+                                        
+                                        <small>DIRECCION MATRIZ: @Model.MainAddress</small><br />
+                                        @if (Model.IsSpecialContributor)
+                                        {
+                                            <small>ES CONTRIBUYENTE ESPECIAL</small><br />
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(Model.ResolutionNumber))
+                                        {
+                                            <small>Resolucion No. @Model.ResolutionNumber</small><br />
+                                        }
+                                        <small>
+                                            OBLIGADO A LLEVAR CONTABILIDAD:
+                                            @if (Model.IsAccountingRequired)
+                                            {
+                                                <span>SI</span>
+                                            }
+                                            else
+                                            {
+                                                <span>NO</span>
+                                            }
+                                        </small>
+
+                                    </h4>
+                                </td>
+
+                                @{
+                                    var logo = string.Format("Logos/{0}_logo.jpg", Model.RUC);
+
+                                    if (!string.IsNullOrEmpty(Model.Logo))
+                                    {
+                                        logo = string.Format("Logos/{0}", Model.Logo);
+                                    }
+
+                                    if (File.Exists(Server.MapPath(logo)))
+                                    {
+                                        <td style="vertical-align:middle">
+                                            <img src="@Url.Content("~/" + logo)" style="width:auto; height:100px" />
+                                        </td>
+                                    }
+                                }
+
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

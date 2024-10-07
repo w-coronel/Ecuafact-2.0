@@ -1,0 +1,117 @@
+﻿@using Ecuafact.Web
+@using Ecuafact.Web.Domain.Entities.API
+@model LoginModel
+@{
+
+    Layout = "~/Views/Shared/_Auth.cshtml";
+    ViewBag.Title = "Inicio de Sesión";
+    var registroUrl = Url.Action("Registro");
+    var resetUrl = Url.Action("Reset");
+
+    if (Constants.Ecuanexus)
+    {
+        registroUrl = "https://app.ecuafact.com/auth/registro";
+        resetUrl = "https://app.ecuafact.com/auth/reset";
+    }
+}
+
+@section styles{
+    <style>
+        label.checkbox {
+            margin-left: 20px !important;
+        }
+    </style>
+}
+<div class="kt-login__form">
+    <div class="kt-login__title">
+        @if (Constants.Ecuanexus)
+        {
+            <img src="~/images/logo_blue_vertical.png" width="100" height="auto" />
+            <hr><br />
+        }
+        <h3>INICIAR SESI&Oacute;N</h3>
+    </div>
+    <form class="login-form" id="formLogin" method="post">
+        <div class="form-group">
+            <div class="kt-input-icon kt-input-icon--right">
+                <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                    <span>
+                        <i class="fa fa-user"></i>
+                    </span>
+                </span>
+                @Html.TextBoxFor(model => model.Username, new
+                {
+                    @class = "form-control form-control-pill placeholder-no-fix",
+                    @style = "padding-left: 33px;",
+               @required = true,
+                    @autocomplete = "not-username",
+               @placeholder = "No. Identificación",
+                    @id = "userid"
+                })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="kt-input-icon kt-input-icon--right">
+                <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                    <span>
+                        <i class="fa fa-lock"></i>
+                    </span>
+                </span>
+                @Html.PasswordFor(model => model.Password, new { @class = "form-control form-control-pill placeholder-no-fix", @style = "padding-left: 33px;", @required = true, @autocomplete = "not-pass", @placeholder = "Contraseña", @id = "userpass" })
+            </div>
+        </div>
+
+        <!--begin::Action-->
+
+
+        <div class="kt-login__actions">
+
+            <label class="kt-checkbox">
+                <input class="rememberMe" data-val-required="El campo Recordarme es obligatorio." type="checkbox"> Recordarme
+                <input id="RememberMe" name="RememberMe" type="hidden" value="false">
+                <span></span>
+            </label>
+
+            <a href="@resetUrl">¿Olvidaste tu contrase&ntilde;a?</a>
+
+        </div>
+
+        <div class="form-group">
+            <center>
+                <button type="button" id="loginButton" class="btn btn-dark btn-pill btn-elevate kt-login__btn-primary ">&nbsp;&nbsp;&nbsp;Iniciar Sesi&oacute;n&nbsp;&nbsp;&nbsp;</button>
+            </center>
+        </div>
+
+        <div class="form-group" style="margin-top:30px;">
+            <p>
+                Al usar este servicio, usted acepta nuestros
+                <a href="#" onclick="window.open('@Url.Content("~/docs/disclaimer.pdf")', '_privacy', 'fullscreen=yes'); return false;">Términos y Condiciones</a> de uso.
+            </p>
+        </div>
+        <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg kt-separator--portlet-fit"></div>
+        <div class="kt-login__account">
+            <center>
+
+                <p class="kt-login__account-msg">
+                    ¿No tienes una cuenta todavía ?
+                </p>
+
+                <button type="button" onclick="window.location.assign('@registroUrl');" target="_blank" class="kt-login__account-link kt-login__btn-primary btn btn-brand btn-pill btn-elevate" id="register-btn">
+                    &nbsp;&nbsp;&nbsp;Registrate aqu&iacute;&nbsp;&nbsp;&nbsp;
+                </button>
+            </center>
+        </div>
+        <!--end::Action-->
+
+
+    </form>
+    <!-- END LOGIN FORM -->
+</div>
+
+@section Scripts{
+    <script>
+    Login.LoginUrl = '@Url.Action("Authenticate")';
+    Login.InitLogin();
+    </script>
+}
+

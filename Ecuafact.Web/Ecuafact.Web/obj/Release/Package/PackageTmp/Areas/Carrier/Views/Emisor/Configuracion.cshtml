@@ -1,0 +1,191 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+@{
+    ViewBag.Title = "Configuración del Emisor";
+    this.PageOptions(option => option.DropZone = true);
+    var url = Model.Id > 0 ? "Configuracion" : "Nuevo";
+}
+
+@section styles {
+    <style type="text/css">
+        .dropzone-input {
+            width: 100% !important;
+        }
+    </style>
+
+    @Styles.Render("~/css/issuers")
+}
+<!--begin: Form Wizard Form-->
+<form method="post" class="issuer-config" enctype="multipart/form-data" action="@Url.Action(url, "Emisor")" id="issuer_form" novalidate="novalidate" style="width:100%">
+
+    <div class="kt-portlet">
+        <div class="kt-portlet__body kt-portlet__body--fit">
+            <div class="kt-grid  kt-wizard-v2 kt-wizard-v2--white" id="kt_wizard_v2" data-ktwizard-state="first">
+                <div class="kt-grid__item kt-wizard-v2__aside">
+
+                    <!--begin: Form Wizard Nav -->
+                    <div class="kt-wizard-v2__nav">
+
+                        <div class="form-group text-center">
+                            <h5>Logo de Empresa</h5>
+                            <div class="kt-avatar kt-avatar--outline" id="logo">
+                                <div class="kt-avatar__holder" data-toggle="kt-tooltip" data-original-title="La imagen configurada se mostrará en su PDF de los documentos emitidos." style="background-position: center;width: 200px;background-size: contain;background-image: url('@Url.Content(Server.GetLogoUrl(Model.Logo, Model.RUC))')"></div>
+
+                                <label class="kt-avatar__upload" data-toggle="kt-tooltip" title="" data-original-title="Cambiar Imagen">
+                                    <i class="fa fa-pen"></i>
+                                    <input type="file" id="profile-photo" name="LogoRaw" accept="image/jpeg, image/png, image/pjpeg, image/bmp">
+                                </label>
+
+                                <span class="kt-avatar__cancel" data-toggle="kt-tooltip" title="" data-original-title="Cancelar">
+                                    <i class="fa fa-times"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
+                            <!--doc: Replace A tag with SPAN tag to disable the step link click -->
+
+                            <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="current">
+                                <div class=" kt-wizard-v2__nav-body">
+                                    <div class="kt-wizard-v2__nav-icon">
+                                        <i class="flaticon2-group"></i>
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label">
+                                        <div class="kt-wizard-v2__nav-label-title">
+                                            Datos de la Cuenta
+                                            @{
+                                                var badge1 = 0;
+                                                badge1 += Convert.ToInt32(string.IsNullOrEmpty(Model.Phone));
+                                                badge1 += Convert.ToInt32(string.IsNullOrEmpty(Model.Email));
+                                                badge1 += Convert.ToInt32(string.IsNullOrEmpty(Model.MainAddress));
+                                            }
+
+                                            @if (badge1 > 0)
+                                            {
+                                                <span>&nbsp;&nbsp;&nbsp;</span> <span class="kt-badge kt-badge--danger">&nbsp; @badge1 &nbsp;</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="kt-wizard-v2__nav-item" data-ktwizard-type="step" data-ktwizard-state="pending">
+                                <div class=" kt-wizard-v2__nav-body">
+                                    <div class="kt-wizard-v2__nav-icon">
+                                        <i class="flaticon-map"></i>
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label">
+                                        <div class="kt-wizard-v2__nav-label-title">
+                                            Informaci&oacute;n Tributaria                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                        
+
+                            <div class="kt-wizard-v2__nav-item" href="#" data-ktwizard-type="step" data-ktwizard-state="pending">
+                                <div class="kt-wizard-v2__nav-body">
+                                    <div class="kt-wizard-v2__nav-icon">
+                                        <i class="flaticon-safe-shield-protection"></i>
+                                    </div>
+                                    <div class="kt-wizard-v2__nav-label">
+                                        <div class="kt-wizard-v2__nav-label-title">
+                                            Firma Electr&oacute;nica
+                                            @{
+                                                var badge3 = 0;
+                                                badge3 += Convert.ToInt32(string.IsNullOrEmpty(Model.Certificate));
+                                                //badge3 += Convert.ToInt32(string.IsNullOrEmpty(Model.CertificateIssuedTo));
+                                                badge3 += Convert.ToInt32(string.IsNullOrEmpty(Model.CertificateSubject));
+                                                badge3 += Convert.ToInt32(Model.CertificateExpirationDate == null);
+                                            }
+
+                                            @if (badge3 > 0)
+                                            {
+                                                <span>&nbsp;&nbsp;&nbsp;</span> <span class="kt-badge kt-badge--danger">&nbsp; @badge3 &nbsp;</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--end: Form Wizard Nav -->
+                    </div>
+                </div>
+
+                <div class="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper" style="width:100%">
+
+                    <div class="kt-form" style="width:100%">
+
+                        <!--begin: Form Wizard Step 1-->
+                        <div class="kt-wizard-v2__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
+                            @if (Model.Id > 0)
+                            {
+                                @Html.HiddenFor(model => model.Id)
+                            }
+
+                            @Html.HiddenFor(model => model.Currency)
+                            @Html.HiddenFor(model => model.EnvironmentType)
+                            @Html.HiddenFor(model => model.IssueType)
+
+                            @{ Html.RenderPartial("Shared/issuer-profile", Model); }
+
+                        </div>
+                        <!--end: Form Wizard Step 1-->
+                        <!--begin: Form Wizard Step 2-->
+                        <div class="kt-wizard-v2__content" data-ktwizard-type="step-content">
+
+                            @{ Html.RenderPartial("shared/ruc-info", Model); }
+
+                        </div>
+                        <!--end: Form Wizard Step 2-->                
+                        <!--begin: Form Wizard Step 3-->
+                        <div class="kt-wizard-v2__content" data-ktwizard-type="step-content">
+
+                            @{ Html.RenderPartial("Shared/esign-config", Model); }
+
+                        </div>
+                        <!--end: Form Wizard Step 3-->
+                        <!--begin: Form Actions -->
+                        <div class="kt-form__actions">
+                            <button type="button" class="btn btn-secondary btn-md btn-pill btn-elevate btn-elevate-air btn-tall btn-wide kt-font-bold kt-font-transform-u back-button" data-ktwizard-type="action-prev">
+                                <i class="flaticon2-back"></i> Anterior
+                            </button>
+
+                            <button type="submit" class="btn btn-primary btn-md btn-pill btn-elevate btn-elevate-air btn-tall  btn-wide kt-font-bold kt-font-transform-u finish-button" data-ktwizard-type="action-submit">
+                                <i class="flaticon2-check-mark text-light"></i> Finalizar
+                            </button>
+
+                            <button type="button" class="btn btn-brand btn-md btn-pill btn-tall kt-pull-right btn-elevate btn-elevate-air btn-wide kt-font-bold kt-font-transform-u next-button" data-ktwizard-type="action-next">
+                                Siguiente <i class="flaticon2-next"></i>
+                            </button>
+                        </div>
+                        <!--end: Form Actions -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+<!--end: Form Wizard Form-->
+@section toolbar{
+
+
+    <button type="button" class="btn btn-primary btn-md btn-pill   btn-tall  btn-wide kt-font-bold kt-font-transform-u finish-button save-button">
+        <i class="flaticon2-check-mark text-light"></i> Guardar
+    </button>
+}
+
+@section Scripts{
+
+    @Scripts.Render("~/js/issuer")
+<script>
+        $(document).ready(function () {
+            Emisor.urlRUCValidator = "@Url.Action("ValidarEmisor","Emisor")";
+            Emisor.urlConfiguration = "@Url.Action("Configuracion","Emisor")";
+            Emisor.urlCertValidator = '@Url.Action("ValidateCertificate", "Emisor")';
+            Emisor.urlPlans = "@Url.Action("TypeLicence", "Payment")";
+            Emisor.init();
+        });
+</script>
+
+}

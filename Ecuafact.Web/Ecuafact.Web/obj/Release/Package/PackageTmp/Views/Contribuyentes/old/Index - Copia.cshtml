@@ -1,0 +1,190 @@
+﻿@model IEnumerable<Ecuafact.Web.Domain.Entities.ContributorDto>
+@{
+    ViewBag.Title = "Consulta";
+    ViewBag.ParentTitle = "Contribuyentes";
+    ViewBag.Description = "Mantenimiento de Clientes, Proveedores y Transportistas";
+
+    this.PageOptions(m => {
+        m.DataTables = true;
+        m.EnablePage = true;
+
+    });
+
+}
+  
+    <div class="row">
+        <div class="col-md-10 col-lg-12">
+
+            <div class="portlet light bordered">
+
+                <div class="portlet-title">
+
+                    <div class="caption">
+                        <button type="button" id="btnNuevo" class="btn green btn-circle-right sbold hidden-print"> <i class='fa fa-plus'></i> Crear Nuevo Contribuyente </button>
+                    </div>
+                </div>
+                @using (Html.BeginForm("GetContributorsAsync", "Contribuyentes", FormMethod.Post, new { @id = "formConsultas" }))
+                {
+                <div class="portlet-body form" id="divConsultas">
+
+                    @{ Html.RenderPartial("_listaContribuyentesPartial", Model); }
+
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+ 
+ 
+
+
+@section Scripts {
+
+    <script>
+        var urlSearch = "@Url.Action("GetContributorsAsync")";
+        var tableSearch = "_contribuyentes";
+        
+        $("#btnNuevo").on("click", function () {
+            crearContribuyente();
+        });
+         
+         
+
+        function editarContribuyente(cliente_id) {
+            showLoader();
+
+            var urlAction = "@Url.Action("Editar", "Contribuyentes")/" + cliente_id;
+
+            $.get(urlAction, {}, function (data) {
+                if (data.includes("modal-dialog")) {
+
+                    $("#myModal").html(data);
+                    hideLoader();
+
+                    $("#myModal").fadeIn();
+                    $("#myModal").modal("show");
+
+                }
+                else {
+                    window.open(urlLogin, "_login")
+                }
+            });
+
+
+        }
+          
+
+        function eliminarContribuyente(id) {
+            selectedId = id;
+
+            var result = swal({
+                title: "Contribuyentes",
+                text: "¿Esta usted seguro de eliminar este registro?",
+                icon: "warning",
+                dangerMode: true,
+                buttons: true,
+                type: "warning",
+                showCancelButton: true,
+                showConfirmButton: true,
+                cancel: {
+                    text: "No",
+                    value: null,
+                    visible: false,
+                    className: "",
+                    closeModal: true,
+                },
+                confirm: {
+                    text: "Si",
+                    value: true,
+                    visible: true,
+                    className: "",
+                    closeModal: true
+                }
+            }, function (ok) {
+
+                if (!ok) {
+                    return;
+                }
+
+                // done function
+                var urlAction = '@Url.Action("EliminarAsync", "Contribuyentes")/' + selectedId;
+
+                $.ajax({
+                    url: urlAction,
+                    type: "post",
+                    async: true,
+                    cache: false,
+                    error: function (error) {
+                        console.error(error);
+
+                        hideLoader();
+                    },
+                    beforeSend: function () {
+                        showLoader();
+                    },
+                    success: function (result) {
+                        hideLoader();
+
+                    }
+                });
+
+            }, "warning");
+        }
+
+
+        var SearchPerform = function () {
+            var $grid = $("#divConsultas");
+
+            var $form = $('#formConsultas'); 
+
+            if ($form.validate().valid()) {
+                //showLoader();
+
+                App.blockUI({
+                    target: $grid,
+                    boxed: !0,
+                    message: "Cargando..."
+                });
+
+                $.ajax({
+                    url: urlSearch,
+                    type: 'POST',
+                    data: {},
+                    success: function (dataReceived) {
+                        if (dataReceived) {
+                            if (dataReceived.includes(tableSearch)) {
+                                $grid.fadeOut("fast");
+                                $grid.empty().html(dataReceived);
+                                $grid.fadeIn("slow");
+                            }
+                            else {
+                                window.open(urlLogin, "_login")
+                            }
+                        }
+                        else {
+                            swal("Error", "No se pudo realizar la consulta", "error")
+                        }
+                    },
+                    error: function (result, doc, meta) {
+                        debugger;
+                        swal("Error", "No se pudo realizar la consulta", "error")
+                    }
+                }).always(function () {
+                    App.unblockUI($grid);
+                });
+
+            }
+        };
+     
+    </script>
+
+    @if (Session[SessionInfo.CONTRIBUYENTES_SESSION]==null)
+    {
+        <script>
+            SearchPerform();
+        </script>
+    }
+
+
+
+}

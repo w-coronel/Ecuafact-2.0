@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" />
+  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D95D5173-950A-4FE1-B9E3-67FF84C553D9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ecuafact.WebAPI.Domain</RootNamespace>
+    <AssemblyName>Ecuafact.WebAPI.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BarcodeLib">
+      <HintPath>..\..\..\BarcodeLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cryptography\AsymmetricCryptography.cs" />
+    <Compile Include="Cryptography\CloudCryptography.cs" />
+    <Compile Include="Cryptography\CloudCryptographyResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CloudCryptographyResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Cryptography\MD5Hash.cs" />
+    <Compile Include="Cryptography\SymmetricCryptography.cs" />
+    <Compile Include="Entities\AdditionalField.cs" />
+    <Compile Include="Entities\App\AdditionalInfo.cs" />
+    <Compile Include="Entities\App\ApiV3DocumentosData.cs" />
+    <Compile Include="Entities\App\DetailTaxInfo.cs" />
+    <Compile Include="Entities\App\DocumentInfoDetail.cs" />
+    <Compile Include="Entities\App\DocumentInfo.cs" />
+    <Compile Include="Entities\App\PaymentInfo.cs" />
+    <Compile Include="Entities\App\SupplierDocument.cs" />
+    <Compile Include="Entities\App\TipoSustento.cs" />
+    <Compile Include="Entities\Ats\Ats.cs" />
+    <Compile Include="Entities\Ats\AtsReport.cs" />
+    <Compile Include="Entities\Ats\AtsCompras.cs" />
+    <Compile Include="Entities\Ats\AtsVentas.cs" />
+    <Compile Include="Entities\Ats\VwAtsCompra.cs" />
+    <Compile Include="Entities\Ats\VwAtsSale.cs" />
+    <Compile Include="Entities\Beneficiary.cs" />
+    <Compile Include="Entities\DebitNoteDetail.cs" />
+    <Compile Include="Entities\DebitNoteInfo.cs" />
+    <Compile Include="Entities\ECommerce.cs" />
+    <Compile Include="Entities\Establishments.cs" />
+    <Compile Include="Entities\MediaCampaigns.cs" />
+    <Compile Include="Entities\ObjectQueryModel.cs" />
+    <Compile Include="Entities\Subscription.cs" />
+    <Compile Include="Entities\SettlementInfo.cs" />
+    <Compile Include="Entities\DocumentEnums.cs" />
+    <Compile Include="Entities\CreditNoteInfo.cs" />
+    <Compile Include="Entities\DashboardInfo.cs" />
+    <Compile Include="Entities\DocumentDetail.cs" />
+    <Compile Include="Entities\DocumentSequential.cs" />
+    <Compile Include="Entities\DocumentStatusEnum.cs" />
+    <Compile Include="Entities\DocumentStatusInfo.cs" />
+    <Compile Include="Entities\EcuafactEnumAttribute.cs" />
+    <Compile Include="Entities\ElectronicSign.cs" />
+    <Compile Include="Entities\Engine\CampoAdicional.cs" />
+    <Compile Include="Entities\Engine\Detalle.cs" />
+    <Compile Include="Entities\Engine\Documento.cs" />
+    <Compile Include="Entities\Engine\Emisor.cs" />
+    <Compile Include="Entities\Engine\FormaPago.cs" />
+    <Compile Include="Entities\Engine\Impuesto.cs" />
+    <Compile Include="Entities\Engine\InfoFactura.cs" />
+    <Compile Include="Entities\Engine\LogProceso.cs" />
+    <Compile Include="Entities\Engine\TotalImpuesto.cs" />
+    <Compile Include="Entities\EnumExtensions.cs" />
+    <Compile Include="Entities\InvoiceInfo.cs" />
+    <Compile Include="Entities\Payment.cs" />
+    <Compile Include="Entities\PurchaseLog.cs" />
+    <Compile Include="Entities\SRI\Establishment.cs" />
+    <Compile Include="Entities\SRI\InfoRUC.cs" />
+    <Compile Include="Entities\SRI\SRIContrib.cs" />
+    <Compile Include="Entities\Vendor.cs" />
+    <Compile Include="Entities\ReferredUser.cs" />
+    <Compile Include="Entities\PurchaseOrder.cs" />
+    <Compile Include="Entities\PurchasePayment.cs" />
+    <Compile Include="Entities\PurchaseReport.cs" />
+    <Compile Include="Entities\ReferralGuideDetail.cs" />
+    <Compile Include="Entities\ReferralGuideInfo.cs" />
+    <Compile Include="Entities\RequestSession.cs" />
+    <Compile Include="Entities\Catalogs.cs" />
+    <Compile Include="Entities\Contributor.cs" />
+    <Compile Include="Entities\RetentionDetail.cs" />
+    <Compile Include="Entities\RetentionInfo.cs" />
+    <Compile Include="Entities\RetentionRate.cs" />
+    <Compile Include="Entities\RetentionTax.cs" />
+    <Compile Include="Entities\SalesReport.cs" />
+    <Compile Include="Entities\Subscriber.cs" />
+    <Compile Include="Entities\TaxType.cs" />
+    <Compile Include="Entities\UserPermissions.cs" />
+    <Compile Include="Entities\VPOS2\OperationQueryRequest.cs" />
+    <Compile Include="Entities\VPOS2\OperationQueryResponse.cs" />
+    <Compile Include="Entities\VPOS2\OperationResultEnum.cs" />
+    <Compile Include="Extensions\ResponseModelExtensions.cs" />
+    <Compile Include="Extensions\SystemExtensions.cs" />
+    <Compile Include="Pagination\Pagination.cs" />
+    <Compile Include="Pagination\PaginationList.cs" />
+    <Compile Include="Pagination\SearchFilterDocumentReceived.cs" />
+    <Compile Include="Properties\Constants.cs" />
+    <Compile Include="Reporting\CreditNoteReport.cs" />
+    <Compile Include="Reporting\DebitNoteReport.cs" />
+    <Compile Include="Reporting\InvoicePosReport.cs" />
+    <Compile Include="Reporting\InvoiceReport.cs" />
+    <Compile Include="Reporting\PurchaseSettlementReport.cs" />
+    <Compile Include="Reporting\ReferralGuideReport.cs" />
+    <Compile Include="Reporting\ReportBase.cs" />
+    <Compile Include="Reporting\ReportResult.cs" />
+    <Compile Include="Reporting\ReportSales.cs" />
+    <Compile Include="Reporting\RetentionReport.cs" />
+    <Compile Include="Repository\IDocumentReceivedRepository.cs" />
+    <Compile Include="Repository\IDocumentRepository.cs" />
+    <Compile Include="Repository\IEntityRepository.cs" />
+    <Compile Include="Entities\Document.cs" />
+    <Compile Include="Entities\Issuer.cs" />
+    <Compile Include="Entities\Product.cs" />
+    <Compile Include="Entities\Tax.cs" />
+    <Compile Include="Entities\TotalTax.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IAgreementService.cs" />
+    <Compile Include="Services\IAppService.cs" />
+    <Compile Include="Services\IAtsService.cs" />
+    <Compile Include="Services\ICatalogsService.cs" />
+    <Compile Include="Services\IContributorsService.cs" />
+    <Compile Include="Services\IDocumentsService.cs" />
+    <Compile Include="Services\IEngineService.cs" />
+    <Compile Include="Services\ISubscriptionService.cs" />
+    <Compile Include="Services\IIssuersService.cs" />
+    <Compile Include="Services\IPaymentService.cs" />
+    <Compile Include="Services\IProductsService.cs" />
+    <Compile Include="Services\IPurchaseOrderService.cs" />
+    <Compile Include="Services\IRequestSessionsService.cs" />
+    <Compile Include="Services\IReportService.cs" />
+    <Compile Include="Services\IStatisticsService.cs" />
+    <Compile Include="Services\ITaxesService.cs" />
+    <Compile Include="Services\IUserService.cs" />
+    <Compile Include="Services\OperationResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Cryptography\CloudPublicKey.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Cryptography\CloudCryptographyResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CloudCryptographyResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="EPPlusFree">
+      <Version>4.5.3.8</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms">
+      <Version>150.1404.0</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" />
+  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" />
+</Project>

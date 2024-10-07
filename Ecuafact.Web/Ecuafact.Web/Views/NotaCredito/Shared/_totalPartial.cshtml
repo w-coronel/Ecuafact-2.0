@@ -1,0 +1,110 @@
+﻿<style>
+    .control-total {
+        border: 0px;
+        text-align: right;
+        background: transparent !important;
+    }
+
+        .control-total:disabled, .control-total[readonly] {
+            border: 0px;
+            text-align: right;
+            background: transparent !important;
+        }
+
+    .table-total th, .table-total td {
+        vertical-align: middle;
+        border-top: none;
+        padding: 0;
+    }
+
+    .table-total table {
+        text-align: right;
+        vertical-align: middle;
+        background-color: transparent
+    }
+
+    .table-total .control-label label {
+        margin: 0px;
+    }
+</style>
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <table class="table table-advance table-hover table-scrollable-borderless table-total" 
+           style="vertical-align:middle;background-color:transparent">
+        <tbody>
+
+            <tr>
+                <td><label class="control-label">Subtotal Base 0%:</label></td>
+                <td>
+                    <input name="documento_subtotal_0" id="documento_subtotal_0" disabled
+                           type="text" placeholder="" class="control-total form-control" value="$0.00">
+                </td>
+            </tr>
+
+            <tr>
+                <td><label class="control-label">Subtotal Base IVA:</label></td>
+                <td>
+                    <input name="documento_subtotal_12" id="documento_subtotal_12" disabled
+                           type="text" placeholder="" class="control-total form-control" value="$0.00">
+                </td>
+            </tr>
+
+            <tr>
+                <td><label class="control-label">Subtotal no sujeto:</label></td>
+                <td>
+                    <input name="documento_subtotal_no_iva" id="documento_subtotal_no_iva" disabled
+                           type="text" placeholder="" class="control-total form-control" value="$0.00">
+                </td>
+            </tr>
+
+            <tr>
+                <td><label class="control-label">Subtotal Exento:</label></td>
+                <td>
+                    <input name="documento_subtotal_exento_iva" id="documento_subtotal_exento_iva" disabled
+                           type="text" placeholder="" class="control-total form-control" value="$0.00">
+                </td>
+            </tr>
+
+            <tr>
+                <td><label class="control-label">Total descuento:</label></td>
+                <td>
+                    <input name="documento_total_descuento" id="documento_total_descuento" disabled
+                           type="text" placeholder="" class="control-total form-control" value="$0.00">
+                </td>
+            </tr>
+            <tr>
+                <td><label class="control-label" id="etiqueta_iva">IVA :</label></td>
+                <td>
+                    <input name="documento_iva" id="documento_iva" disabled
+                           type="text" placeholder="" class="control-total form-control" value="$0.00">
+                </td>
+            </tr>
+
+            <tr class="bg-lighten-4">
+                <td><label class="control-label blue" id="etiqueta_propina">Propina</label></td>
+                <td>
+                    <input name="documento_valor_propina" onchange="actualizarTotales()"
+                           id="documento_valor_propina" placeholder="" class="control-total form-control text-info" value="$0.00">
+                </td>
+            </tr>
+
+            <tr style="border-top:3px;border-top-style:double; margin-bottom:30px;">
+                <td class="bold b"><label class="control-label kt-font-bold" id="etiqueta_total">TOTAL A PAGAR</label></td>
+                <td class="bold text-right">
+                    <input name="documento_valor_total" id="documento_valor_total" disabled
+                           type="text" placeholder="" class="control-total kt-font-bold  form-control bold" value="$0.00">
+                </td>
+            </tr>
+
+            <tr class="bg-grey bg-lighten-4">
+                <td><label class="control-label" id="etiqueta_valor_modificado">Valor Modificado</label></td>
+                <td>
+                    <input name="documento_valor_modificado" id="documento_valor_modificado" onchange="actualizarValorModificado()"
+                           type="text" placeholder="" class="control-total form-control pink" disabled value="$0.00">
+                </td>
+            </tr>
+            
+        </tbody>
+    </table>
+    
+</div>

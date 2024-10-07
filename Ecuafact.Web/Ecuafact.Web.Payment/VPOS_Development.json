@@ -1,0 +1,15 @@
+{
+  "RootDirectory": "D:\\Proyectos\\EcuaNexus\\ECUAFACT_2019\\Ecuafact.Web\\Ecuafact.Web\\VPOS",
+
+  "UrlVPOS": "https://integracion.alignetsac.com/VPOS/MM/transactionStart20.do",
+  "IdCommerce": "7580",
+  "IdAcquirer": "8",
+  "TerminalCode": "000001",
+  "VectorInit": "94DE49FE0A97D2FD",
+  // <!--AFAB31FD38D8953F-->
+
+  "LlaveCifradoVPOSPublic": "ALIGNET.TESTING.NOPHP.CRYPTO.PUBLIC.txt",
+  "LlaveFirmaVPOSPublic": "ALIGNET.TESTING.NOPHP.SIGNATURE.PUBLIC.txt",
+  "LlaveCifradoComPrivate": "Testing\\LLAVEPRIVADA_CIFRADO_RSA.txt",
+  "LlaveFirmaComPrivate": "Testing\\LLAVEPRIVADA_FIRMA_RSA.txt"
+}

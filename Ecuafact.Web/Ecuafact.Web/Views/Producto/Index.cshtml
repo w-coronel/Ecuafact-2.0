@@ -1,0 +1,132 @@
+﻿@model IEnumerable<Ecuafact.Web.Domain.Entities.ProductDto>
+@using Ecuafact.Web.Domain.Entities;
+@using System.Globalization;
+@using Ecuafact.Web.MiddleCore.ApplicationServices;
+
+@{
+    ViewBag.Title = "Productos";
+
+    this.PageOptions(model =>
+    {
+        model.DataTables = true;
+        model.Select2 = true;
+    });
+}
+
+
+    <div class="kt-portlet">
+
+        <div class="kt-portlet__head">
+
+            <div class="kt-portlet__head-toolbar">
+                <button type="button" id="btnNuevo" class="btn btn-pill btn-outline-info btn-light">
+                    <i class='fa fa-gift'></i> Crear Producto <i class='fa fa-plus'></i>
+                </button>
+            </div>
+            <div class="kt-portlet__head-toolbar">
+                <a title="Descargar productos" data-toggle='tooltip' class="btn btn-success btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_export" href="@Url.Action("Descargar")">
+                    &nbsp; <i class="fa fa-file-excel "></i>  Descargar
+                </a>
+                <button type="button" id="btnImport" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_import">
+                    Importar Productos <i class='fa fa-bars'></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="kt-portlet__body">
+            @{ Html.RenderPartial("_datatableProductosPartial", Model); }
+        </div>
+
+    </div>
+          
+
+
+<div id="myModal" class="modal fade" aria-hidden="true">
+    <div class="col-xs-12" style="text-align:center;"><img src="~/Images/ripple_white.gif" /></div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+        var selectedId = 0;
+
+        function editarProducto  (id){
+            showLoader();
+
+            $.get("@Url.Action("Editar", "Producto")", { id: id }, function (data) {
+                $("#myModal").html(data);
+                hideLoader();
+
+                $("#myModal").fadeIn();
+                $("#myModal").modal("show");
+            });
+        }
+
+
+        function importProduct() {
+            showLoader();
+
+            $.get("@Url.Action("Importar", "Producto")", {}, function (data) {
+                $("#myModal").html(data);
+                hideLoader();
+
+                $("#myModal").fadeIn();
+                $("#myModal").modal("show");
+            });
+        }
+
+
+        $("#myModal").on('hide.bs.modal', function () {
+            location.reload();
+        });
+
+        $(".btn_import").on("click", function () {
+            importProduct();
+        });
+
+        var eliminarProducto = function (id) {
+            var urlAction = '@Url.Action("EliminarAsync")/' + id;
+
+            Swal.fire({
+                title: 'Productos',
+                text: "¿Esta usted seguro de eliminar este registro?",
+                icon: 'info',
+                type: 'warning',
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Eliminar'
+
+            }).then(function (result) {
+                if (result.value) {
+                    // done function
+                    showLoader();
+
+                    $.ajax({
+                        url: urlAction,
+                        type: "post",
+                        async: true,
+                        cache: false,
+                        error: function (error) {
+                            console.log(error);
+                            toastr.error("No se pudo eliminar el registro!");
+                        },
+                        success: function (result) {
+                            toastr.success("Registro eliminado correctamente!");
+                            // refresh page
+                            location.reload();
+                        }
+                    }).always(function () {
+                        hideLoader();
+                    });
+                }
+            });
+
+        }
+
+
+        $("#btnNuevo").on("click", function () {
+            crearProducto();
+        });
+    </script>
+}

@@ -1,0 +1,61 @@
+﻿<div class="col-xs-12">
+
+    <div class="panel panel-info">
+
+        <div class="panel-heading">
+
+            <h4 style="margin-bottom:15px">Informacion Adicional</h4>
+
+            <label class="control-label bold white text-dark" style="width:100%;text-align:left;" id="etiqueta_MOTIVO"><b>OBSERVACIONES:</b></label>
+            <textarea name="motivo" id="motivo" placeholder="Ingrese aqui el Motivo o la explicacion de la Nota de Credito"
+                      type="text" wrap="soft" rows="4" class="form-control"
+                      style="width:100%;border:none none solid none;  resize:vertical" value="" required></textarea>
+
+
+        </div>
+        <div class="panel-body">
+            <table id="adicional-items" class="col-md-12 table table-responsive table-adicional table-hover table-striped table-condensed cf">
+                <thead class="kt-datatable__head">
+                    <tr class="kt-datatable__row">
+                        <th><b>Detalle</b></th>
+                        <th width="38"></th>
+
+                    </tr>
+                </thead>
+                <tbody class="kt-datatable__body"></tbody>
+                <tfoot>
+                    <tr>
+                        <td align="left" colspan="3">
+                            <div class="col-xs-12" align="left">
+                                <button id="addDetalleButton" name="addDetalleButton" type='button' class='add-row btn btn-outline text-light' style="background-color:#0742A8" onclick="agregarAditional()"> Agregar <i class='fa fa-plus'></i></button>
+                            </div>
+                        </td>
+
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<datalist id="list-references">
+    <option>E-Mail</option>
+    <option>Direccion</option>
+    <option>Contacto</option>
+    <option>Telefono</option>
+    <option>Chofer</option>
+    <option>Entregado por</option>
+    <option>Solicitante</option>
+    <option>Documento</option>
+    <option>Referencia</option>
+    <option>Recibido por</option>
+    <option>Destinatario</option>
+    <option>Destino</option>
+    <option>Estado</option>
+</datalist>
+
+
+<script type="text/javascript">
+    // Declaracion de variables usados en los calculos
+    
+</script>

@@ -1,0 +1,28 @@
+﻿@using Ecuafact.Web.MiddleCore.NexusApiServices
+@using System.Collections
+@model DeductiblesReportResponse
+@{ 
+
+    object[] graphData = new object[] { new { label = "Sin Clasificar", value = 0, color= "#9e9e9e" } };
+
+    if (Model != null && Model.deductibles !=null)
+    {
+        graphData = Model.deductibles.Select(m => new { label = m.name, value = m.total, color = Request.GetColorDeductibles(m.id) }).ToArray();
+    }
+}
+<style>
+    #graficoDeducibles {
+      width: 100%;
+      height: 500px;
+      font-size: 10px;
+    }
+</style>
+
+<div id="graficoDeducibles" class="row"></div> 
+
+<script>
+    $(document).ready(function () {
+            var data = @Html.Raw(Json.Encode(graphData));
+            Gastos.generatePieChart(data, "graficoDeducibles");
+        });
+</script>

@@ -1,0 +1,272 @@
+﻿@using System.Web.Mvc.Html
+@using Ecuafact.Web.Domain.Entities;
+
+@model ObjectQueryModel<SalesReportResponse>
+
+@{
+    ViewBag.Title = "Ventas";
+    ViewBag.ParentTitle = "Informes";
+    var columns = new SalesReportModel();
+
+    this.PageOptions(model => {
+        model.DataTables = true;
+        model.DateRangeTool = true;
+    });
+}
+ 
+<div class="row">
+    <div class="col-md-12 col-lg-12">
+        <div class="portlet light bordered">
+            
+            <div class="portlet-body form">
+ 
+                @using (Html.BeginForm("Ventas", "Reportes", FormMethod.Post, new { id = "formConsultas", @class = "", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+
+
+                    <div class="form-body" style="padding: 5px;">
+                        <div class="row">
+
+                            <div class="col-xs-12 col-md-5 col-sm-5 col-lg-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.From, new { @class = "control-label" })
+                                    <div class="input-group date date-picker">
+                                        @Html.TextBoxFor(model => model.From, new { @class = "form-control", @readonly = true })
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.From)
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-md-5 col-sm-5 col-lg-4">
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.To, new { @class = "control-label" })
+                                    <div class="input-group date date-picker">
+                                        @Html.TextBoxFor(model => model.To, new { @class = "form-control", @readonly = true })
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.To)
+                                </div>
+
+                            </div>
+
+                            <div class="col-xs-12 col-md-5 col-sm-5 col-lg-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.SearchTerm, new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.SearchTerm, new { @class = "form-control", maxlength = 100 })
+                                    @Html.ValidationMessageFor(model => model.SearchTerm)
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <div class="control-label">&nbsp;</div>
+                            <div style="padding: 6px 12px; height: 34px;">
+                                <button type="submit" onclick="onSubmitQuery()" class="btn btn-danger"><i class="fa fa-search"></i>   Buscar</button>
+
+                            </div>
+                        </div>
+ 
+                    </div>
+
+                }
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12 col-lg-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body form">
+                <div style="text-align:right">
+                    @if (Model != null && Model.Data != null && Model.Data.Entity != null)
+                    {
+                        <a href="@Url.Action("Excel", "Reportes")/Ventas" class="btn green-jungle"><i class="fa fa-file-excel-o"></i>   Descargar Excel</a>
+                    }
+                </div>
+                <br />
+
+                <table class="table table-striped table-responsive table-bordered table-hover table-checkable order-column responsive dt-responsive" style="width:100%"  id="_ventas">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>@Html.DisplayNameFor(model => columns.DocumentType)</th>
+                            <th>@Html.DisplayNameFor(model => columns.DocumentNumber)</th>
+                            <th>@Html.DisplayNameFor(model => columns.IssuedOn)</th>
+                            <th>@Html.DisplayNameFor(model => columns.ContributorRUC)</th>
+                            <th>@Html.DisplayNameFor(model => columns.ContributorName)</th>
+                            <th>@Html.DisplayNameFor(model => columns.Base0)</th>
+                            <th>@Html.DisplayNameFor(model => columns.Base12)</th>
+                            <th>@Html.DisplayNameFor(model => columns.IVA)</th>
+                            <th>@Html.DisplayNameFor(model => columns.Total)</th>
+                            <th>@Html.DisplayNameFor(model => columns.AuthorizationNumber)</th>
+                            <th>@Html.DisplayNameFor(model => columns.AuthorizationDate)</th>
+                     
+                            <th>@Html.DisplayNameFor(model => columns.RetentionIssuedOn)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionNumber)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionAuthorizationNumber)</th>
+
+                            <th>@Html.DisplayNameFor(model => columns.Retention104TaxCode)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionTaxBase)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionTaxRate)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionTaxValue)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionVatCode)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionVatBase)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionVatRate)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionVatValue)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionISDCode)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionISDBase)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionISDRate)</th>
+                            <th>@Html.DisplayNameFor(model => columns.RetentionISDValue)</th>
+
+
+                            <th>@Html.DisplayNameFor(model => columns.Description)</th>
+                            <th>@Html.DisplayNameFor(model => columns.Notes)</th>
+                            <th>@Html.DisplayNameFor(model => columns.Payment)</th>
+
+                        </tr>
+                    </thead>
+
+                    
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+ 
+
+
+@section Scripts {
+ 
+    @{ 
+        var listaDocumentos = new List<SalesReportModel>();
+
+        if (Model.Data != null && Model.Data.Entity != null && Model.Data.Entity.Count > 0)
+        {
+            listaDocumentos = Model.Data.Entity;
+        }
+    }
+
+
+    <script type="text/javascript">
+
+        var documentos = @Html.Raw(Json.Encode(listaDocumentos));
+
+
+        for (var i = 0; i < documentos.length; i++) {
+            var doc = documentos[i];
+            
+            doc.IssuedOn = dateFromJson(doc.IssuedOn);
+            doc.RetentionIssuedOn = dateFromJson(doc.RetentionIssuedOn);            
+        }
+
+
+        $('.bs-select').selectpicker({
+            iconBase: 'fa',
+            tickIcon: 'fa-check'
+        });
+
+        $('.date-picker').datepicker({
+            rtl: App.isRTL(),
+            format: "dd/mm/yyyy",
+            autoclose: true
+        });
+
+     
+
+        function onSubmitQuery() {
+            $(".loaderV1").fadeIn();
+        }
+
+
+    
+        function formatDateColumn(data, type, row) {
+            if (data && data.toLocaleDateString) {
+                return data.toLocaleDateString();
+            }
+
+            return data;
+        }
+
+        function formatPercentageColumn(data, type, row) {
+            
+            return (data ? data: 0) + " %";
+            
+            return data;
+        }
+
+        var formatMoneyColumn =  $.fn.dataTable.render.number( ',', '.', 2, '$' );
+
+
+        var table = $('#_ventas').dataTable(
+            {
+                "destroy": "true",
+                "data": documentos,
+                "language": {
+                    "url": "@Url.Content("~/scripts/dt_spanish.json")"
+                },
+                "order": [[1, "desc"]],
+                "columns": [
+                    {
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    { data: 'DocumentType' },
+                    { data: 'DocumentNumber' },
+                    { data: 'IssuedOn', render: formatDateColumn },
+                    { data: 'ContributorRUC' },
+                    { data: 'ContributorName' },
+                    { data: 'Base0', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                    { data: 'Base12', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                    { data: 'IVA', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                    { data: 'Total', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                    { data: 'AuthorizationNumber' },
+                    { data: 'AuthorizationDate' },
+                    { data: 'Status' },
+
+                    { data: 'RetentionIssuedOn', render: formatDateColumn },
+                    { data: 'RetentionNumber' },
+                    { data: 'RetentionAuthorizationNumber' },
+
+                    { data: 'Retention104TaxCode' },
+                    { data: 'RetentionTaxBase', render: formatMoneyColumn },
+                    { data: 'RetentionTaxRate', render: formatPercentageColumn },
+                    { data: 'RetentionTaxValue', render: formatMoneyColumn },
+
+                    { data: 'RetentionVatCode' },
+                    { data: 'RetentionVatBase', render: formatMoneyColumn },
+                    { data: 'RetentionVatRate', render: formatPercentageColumn },
+                    { data: 'RetentionVatValue', render: formatMoneyColumn },
+
+                    { data: 'RetentionISDCode' },
+                    { data: 'RetentionISDBase', render: formatMoneyColumn },
+                    { data: 'RetentionISDRate', render: formatPercentageColumn },
+                    { data: 'RetentionISDValue', render: formatMoneyColumn },
+
+                    { data: 'Description' },
+                    { data: 'Notes' },
+                    { data: 'Payment' }
+                  ]
+            });
+
+     </script>
+}

@@ -1,0 +1,61 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web
+@model  PaymentRequestModel
+@{
+    ViewBag.Title = "Información del Pago";
+    var habBotton = (Model != null && Model.carrierCode == "00");
+}
+
+
+<div class="jumbotron text-center">
+
+
+    @if (Model != null && Model.carrierCode == "00")
+    {
+
+        <span class="transaction-ok"><i class="fa fa-check text-success"></i></span>   
+        <h6 class="display-3">Muchas Gracias!</h6>
+        <p class="lead"><strong>Su pago se realizó con éxito</strong></p>
+        <p>Número orden: <b>@Model.purchaseOperationNumber</b></p>
+        <p>Estado: <b>APROBADA</b></p>
+        <p>Número transacción: <b>@Model.transactionId</b></p>
+        <p>Código Autorizacción: <b>@Model.authorizationCode</b></p>
+        <p>Fecha y hora: <b>@Model.paymentDate</b></p>
+        <p>Valor: <b>@(Convert.ToDecimal(Model.purchaseAmount)/100)</b></p>
+
+    }
+    else
+    {
+
+        <span class="transaction-error"><i class="fa fa-times text-warning"></i></span>
+        <h6 class="display-3">Rechazada transaccíon</h6>
+        <p class="lead"><strong>Error al procesar la transaccíon de su pago</strong></p>
+        <p>Número orden: <b>@Model.purchaseOperationNumber</b>.</p>
+        <p>Estado: <b>RECHAZADA</b></p>
+        <p>@Model.currentStatus</p>
+        <p>Número transacción: <b>@Model.transactionId</b></p>
+        <p>Fecha y hora: <b>@($"{Model.paymentDate:yyyy-MM-dd}")</b></p>
+    }
+
+    <hr>
+    <p>
+        Tienes problemas? <a href="//soporte.ecuafact.com">Contáctanos</a>
+    </p>
+    <p></p>
+    <p class="lead">
+        <a class="btn btn-primary btn-sm btn-volver" href="@ViewBag.url" role="button">@ViewBag.content</a>
+    </p>
+    @if(habBotton)
+    { 
+        <p class="lead">
+            <a class="btn btn-primary btn-sm btn-volver" href="@Url.Content("~/FirmaElectronica/Nuevo")" role="button">Solicitar Firma Electrónica</a>
+        </p>
+    }
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $(".btn-volver").click(function () { showLoader(); });
+        });
+    </script>
+}

@@ -1,0 +1,80 @@
+﻿@using Ecuafact.Web.Domain.Entities.API
+@{
+    ViewBag.Title = "Emisores Autorizados";
+    ViewBag.ParentTitle = "Configuracion";
+    
+    this.GetOption(p =>   p.DataTables = true );
+
+}
+<div class="kt-portlet">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-toolbar">
+            <div class="kt-portlet__head-actions" style="margin-left:20px">
+                <a id="btnNuevo" href="@Url.Action("Nuevo")" class="btn btn-warning btn-pill btn-sm" title="Crear un nuevo Emisor"><i class='fa fa-plus-circle'></i>   Nuevo <i class='fa fa-plus'></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="kt-portlet__body">
+        <table class="table table-striped table-bordered table-hover table-checkable order-column kt-datatable__table" id="listaEmisores">
+            <thead class="kt-datatable__head">
+                <tr>
+                    <th></th>
+                    <th style="width:150px;"> RUC </th>
+                    <th> Razon Social </th>
+                    <th> Nombre Comercial </th>
+                    <th> E-mail </th>
+                </tr>
+
+            </thead>
+
+            <tbody class="kt-datatable__body">
+
+                @foreach (var item in SessionInfo.IssuerList)
+                {
+                    <tr>
+                        <td class="text-center">
+                            <img alt="photo" src="@Url.Content(Server.GetLogoFile(item.RUC))" class="img-thumbnail" style="border:0px; max-width: 50px; max-height:50px;">
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Configuracion", new { ruc = item.RUC })">
+                                @Html.DisplayFor(model => item.RUC)
+                            </a>
+                        </td>
+
+                        <td> @Html.DisplayFor(model => item.BusinessName) </td>
+                        <td> @Html.DisplayFor(model => item.Name) </td>
+                        <td> @Html.DisplayFor(model => item.Email) </td>
+
+                    </tr>
+
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+
+    <script>
+
+        $('#listaEmisores').DataTable({
+            "language": {
+                "url": "@Url.Content("~/scripts/dt_spanish.json")"
+            },
+            dom: 'BRfrtip',
+            buttons: {
+                buttons: [
+                    { extend: 'excel', className: 'btn btn-success btn-elevate btn-pill', text:' <i class="la la-file-excel-o "></i> ' },
+                    { extend: 'pdf', className: 'btn btn-danger btn-elevate btn-pill', text:'  <i class="la la-file-pdf-o "></i> ' },
+                    { extend: 'print', className: 'btn btn-brand btn-elevate btn-pill', text:' <i class="flaticon2-printer"></i> ' }
+                ]
+            }
+        } );
+
+    </script>
+}

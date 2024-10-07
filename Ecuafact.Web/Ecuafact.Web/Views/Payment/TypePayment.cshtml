@@ -1,0 +1,90 @@
+﻿@model int?
+@{
+    ViewBag.Title = "Opciones de pago";    
+}
+
+<div class="row justify-content-center">
+    <div class="kt-portlet col-md-11">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h4 class="kt-portlet__head-title">
+                    Estimado Cliente, desea realizar el pago a trav&eacute;s de:
+                </h4>
+                <div class="kt-portlet__head-toolbar">
+                </div>
+            </div>
+        </div>
+
+        <div class="kt-portlet__body">
+
+            <div class="kt-widget-buttons">
+
+                <div class="kt-widget-buttons__visual kt-widget16__visual--chart kt-portlet-fit--top kt-portlet-fit--sides" style="">
+                    <div class="kt-widget-buttons__chart">
+                    </div>
+                </div>
+
+                <div class="kt-widget-buttons__stats">
+                    <div class="kt-widget-buttons__items text-center">
+                        <div class="kt-widget-buttons__item" style="background: #eee9f5;">
+                            <a class="mode-payment" href="@Url.Action("CheckOut", "Payment", new { PurchaseOrderId = Model})">
+                                <div class="kt-widget-buttons__subtitle">
+                                    <strong>PAGO EN L&Iacute;NEA CON TARJETA</strong>
+                                </div>
+                                <span class="kt-widget-buttons__icon">
+                                    <img class="rounded" src="~/images/meotodopago/tarjetas2.png" width="100">
+                                </span>
+                                <div class="kt-widget-buttons__subtitle desc">
+                                    CR&Eacute;DITO
+                                </div>
+                                <span class="kt-widget-buttons__icon">
+                                    <img class="circle" src="~/images/meotodopago/tipotarjeta.png" width="250">
+                                </span>
+                            </a>
+
+
+                        </div>
+
+                        <div class="kt-widget-buttons__item " style="background: #eee9f5; ">
+                            <a class="mode-payment" href="@Url.Action("BankTransfer", "Payment", new { PurchaseOrderId = Model})">
+                                <div class="kt-widget-buttons__subtitle">
+                                    <strong>TRANSFERENCIA BANCARIA</strong>
+                                </div>
+                                <span class="kt-widget-buttons__icon">
+                                    <img class="rounded" src="~/images/meotodopago/transferenciabancaria2.png" width="150">
+                                </span>
+                                <div class="kt-widget-buttons__subtitle desc">
+                                    DEP&Oacute;SITO/TRANSFERENCIA
+                                </div>
+                                <span class="kt-widget-buttons__icon">
+                                    <img class="circle" src="~/images/meotodopago/pacifico.svg" width="180">
+                                </span>
+                                <br />
+                                <span class="kt-widget-buttons__icon">
+                                    <img class="circle" src="~/images/meotodopago/bancoPichincha.png" width="180">
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br /> <br />
+    </div>
+</div>
+
+@section Scripts{
+   
+
+    <script>
+    $(document).ready(function () {
+        $(".mode-payment").click(function () { showLoader();});
+    });
+    </script>
+
+}
+
+
+
+
+

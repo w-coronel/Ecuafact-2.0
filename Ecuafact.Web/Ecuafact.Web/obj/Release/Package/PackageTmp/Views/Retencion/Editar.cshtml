@@ -1,0 +1,1127 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using System.Text
+@using Ecuafact.Web.MiddleCore.ApplicationServices
+@model RetentionRequestModel
+@{
+    if (Model.Id > 0)
+    {
+        ViewBag.Title = "Modificar Retención";
+    }
+    else
+    {
+        ViewBag.Title = "Crear Retención";
+    }
+
+    ViewBag.ParentTitle = "Emitidos";
+
+    this.PageOptions(options =>
+    {
+        options.Select2 = true;
+        options.DataTables = true;
+        options.DatePicker = true;
+
+    });
+
+    var customers = new List<ContributorDto>();
+
+    if (Model.ContributorId > 0)
+    {
+        customers.Add(Model.ToContributor());
+    }
+
+    var customerList = customers.Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.Identification, x.BussinesName), Value = x.Id.ToString() }).ToList();
+
+    Model.DocumentTypeCode = "07"; // RETENCIÓN
+    Model.Currency = "DOLAR";
+
+    var token = SessionInfo.ApplicationToken;
+    var tiposIdentificacion = ServicioCatalogos.ObtenerTiposIdentificacion(token);
+    var tiposIdentificacionSujeto = ServicioCatalogos.ObtenerTipoSujetoSustento(token);
+    var tipos = ServicioCatalogos.ObtenerTiposImpuesto(token);
+    var impuestos = ServicioImpuestos.ObtenerImpuestos(token);
+    var sustento = ServicioCatalogos.ObtenerTiposSustento(token);
+    Model.FiscalPeriod = Model.FiscalPeriod ?? DateTime.Now.ToString("MM/yyyy");
+    var documnentTypes = SessionInfo.Catalog.DocumentTypes.Where(dt => dt.SriCode != "06" && dt.SriCode != "07" && dt.SriCode != "04");
+
+    var impuestoList = new List<SelectListItem>();
+    var sustentoList = new List<SelectListItem>();
+    var identificacionSujeto = new List<SelectListItem>();
+
+    sustentoList = sustento.Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.SriCode, x.Name), Value = x.SriCode }).ToList();
+    identificacionSujeto = tiposIdentificacionSujeto.Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.SriCode, x.Name), Value = x.SriCode }).ToList();
+
+    StringBuilder html = new StringBuilder();
+
+    tipos.ForEach(t =>
+    {
+
+        var group = new SelectListGroup() { Name = string.Format("{0}. {1}", t.SriCode, t.Name) };
+        html.AppendFormat("<optgroup label=\"{0}. {1}\">", t.SriCode, t.Name);
+        impuestos.Where(p => p.TaxTypeId == t.Id).ToList().ForEach(p =>
+        {
+            html.AppendFormat("<option value=\"{0}\" custom-code=\"{1}\" custom-name=\"{2}\" custom-type=\"{3}\" >{1} {2}</option>", p.Id, p.SriCode, p.Name, t.SriCode);
+            impuestoList.Add(new SelectListItem()
+            {
+                Text = string.Format("{0} {1}", p.SriCode, p.Name),
+                Value = p.Id.ToString(),
+                Group = group
+            });
+
+        });
+        html.Append("</optgroup>");
+    });
+
+    var listaImpuestos = html.ToString();
+
+    var issuePoint = new List<SelectListItem>();
+    var establishment = new List<SelectListItem>();
+    var parteRel = new List<SelectListItem>{
+        new SelectListItem { Value="SI", Text="SI" },
+        new SelectListItem{ Value="NO", Text="NO" }
+    };
+
+    if (string.IsNullOrWhiteSpace(Model.RelatedParty))
+    {
+        Model.RelatedParty = "NO";
+    }
+
+    if (SessionInfo.UserRole == Ecuafact.Web.Models.SecuritySessionRole.Cooperative)
+    {
+        SessionInfo.Issuer.Establishments.ForEach(s =>
+        {
+            var temp = s.IssuePoint.Where(d => d.CarrierRUC == SessionInfo.LoginInfo.UserInfo.Username)?.FirstOrDefault() ?? null;
+            if (temp != null)
+            {
+                var _establishment = SessionInfo.Issuer.Establishments.Where(e => e.Id == temp.EstablishmentsId);
+                establishment = _establishment.Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.Code, x.Address), Value = x.Code }).ToList();
+                Model.EstablishmentCode = _establishment.FirstOrDefault().Code;
+                Model.EstablishmentAddress = _establishment.FirstOrDefault().Address;
+                issuePoint = new List<SelectListItem> { new SelectListItem { Text = $"{temp.CarrierRUC}-{temp.Name}", Value = temp.Code } };
+
+                Model.AdditionalFields = new List<AdditionalFieldModel> {
+                    new AdditionalFieldModel {LineNumber =1, Name="RUC TRANSPORTISTA", Value = temp.CarrierRUC },
+                    new AdditionalFieldModel {LineNumber =2, Name="NOMBRE TRANSPORTISTA", Value = temp.Name },
+                                                         };
+            }
+        });
+    }
+    else
+    {
+        establishment = SessionInfo.Issuer.Establishments?.Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.Code, x.Address), Value = x.Code }).ToList();
+        if (Model.Id > 0)
+        {
+            issuePoint = SessionInfo.Issuer.Establishments?.Where(s => s.Code == Model.EstablishmentCode)?.FirstOrDefault()?.IssuePoint?.Select(x => new SelectListItem { Text = x.Code, Value = x.Code })?.ToList();
+        }
+        if (establishment?.Count == 1)
+        {
+            Model.EstablishmentCode = establishment.First().Value;
+            Model.EstablishmentAddress = SessionInfo.Issuer.Establishments?.First().Address;
+            issuePoint = SessionInfo.Issuer.Establishments?.Where(s => s.Code == Model.EstablishmentCode)?.FirstOrDefault()?.IssuePoint?.Select(x => new SelectListItem { Text = x.Code, Value = x.Code }).ToList();
+        }
+    }
+
+    var payments = SessionInfo.Catalog.PaymentMethod.Select(x => new SelectListItem { Text = x.Name, Value = x.SriCode.ToString() }).ToList();
+
+    var habilitarPayment = (Model.ReferenceDocumentId == -1 && Model.ReferenceDocumentPayments?.Count() > 0) ? "" : "style=display:none";
+
+    var _headSujetoRetenido = (Model.Id > 0 && Model.IdentificationType.Equals("08"));
+
+}
+
+@section styles{
+    @Styles.Render("~/css/invoice")
+}
+
+
+@using (Html.BeginForm("SaveRetentionAsync", "Retencion", FormMethod.Post, new { @class = "Retention-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.DocumentTypeCode)
+    @Html.HiddenFor(model => model.Currency)
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.EstablishmentAddress)
+    @Html.HiddenFor(model => model.ReferenceDocumentAmount)
+    @Html.HiddenFor(model => model.ReferenceDocumentId)
+
+    <div class="kt-invoice-1">
+        <div class="kt-invoice__head" style="background-image: url(@Url.Content("~/assets/media/bg/300.jpg"));">
+            <div class="kt-invoice__container">
+                <div class="kt-invoice__brand">
+                    <div class="kt-invoice__item">
+                        <h1 class="kt-invoice__title">
+                            RETENCIÓN
+                            @if (!string.IsNullOrEmpty(Model.DocumentNumber))
+                            {
+                                <small>No. @Model.DocumentNumber</small>
+                            }
+                        </h1>
+
+                    </div>
+                </div>
+                <div class="kt-invoice__items">
+
+                    <div class="kt-invoice__item col-sm-12">
+                        <div class="row">
+                            <div class="col-md-9 col-sm-12 col-xs-12">
+
+                                <label class="kt-invoice__subtitle">
+                                    Establecimiento:
+                                </label>
+                                <div class="kt-input-icon kt-input-icon--right">
+                                    @Html.DropDownListFor(model => model.EstablishmentCode, new SelectList(establishment, "Value", "Text", Model.EstablishmentCode), "Seleccione establecimiento", new
+                                    {
+                                        @class = "form-control select-establishment",
+                                        @aria_describedby = "addon-customer_select",
+                                        @style = "width:100%"
+                                    })
+                                    @Html.ValidationMessageFor(model => model.EstablishmentCode, "")
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <label class="kt-invoice__subtitle">
+                                    Punto de Emisión:
+                                </label>
+                                <div class="kt-input-icon kt-input-icon--right">
+                                    @Html.DropDownListFor(model => model.IssuePointCode, new SelectList(issuePoint, "Value", "Text", Model.IssuePointCode), new { @class = "bs-dropdown circle-right input-sm input-inline form-control  filter-control select-issuePointCode" })
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kt-invoice__items">
+
+                    <div class="kt-invoice__item col-sm-10">
+                        <div class="row">
+                            <div class="col-11">
+
+                                <label class="kt-invoice__subtitle">
+                                    Cliente:
+                                </label>
+                                <div class="kt-input-icon kt-input-icon--right">
+                                    @Html.DropDownListFor(model => model.ContributorId, new SelectList(customerList, "Value", "Text", Model.ContributorId), new
+                                    {
+                                        @class = "form-control",
+                                        @aria_describedby = "addon-customer_select",
+                                        @style = "width:100%"
+                                    })
+                                    @Html.ValidationMessageFor(model => model.ContributorId, "")
+                                </div>
+
+                                @Html.HiddenFor(model => model.IdentificationType)
+                                @Html.HiddenFor(model => model.Identification)
+                                @Html.HiddenFor(model => model.ContributorName)
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-invoice__item col-sm-2">
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="kt-invoice__subtitle">Fecha Emisión</label>
+                                <div class="kt-input-icon kt-input-icon--right " style=" max-width:150px;">
+                                    @Html.TextBoxFor(model => model.IssuedOn, new
+                                    {
+                                        @class = "form-control input-readonly datepicker",
+                                        @style = "max-width:100%;",
+                                        @placeholder = "Fecha",
+                                        @required = "",
+                                        @data_date_end_date = "0d",
+                                        @aria_describedby = "addon-fecha_documento",
+                                        @readonly = "readonly"
+                                    })
+                                    @Html.ValidationMessageFor(model => model.IssuedOn, "")
+                                    <span id="addon-fecha_documento" class="kt-input-icon__icon kt-input-icon__icon--right">
+                                        <span> <i class="fa fa-calendar-alt"></i></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kt-invoice__items">
+                    <div class="kt-invoice__item col-sm-10">
+                        <div class="row">
+                            <div class="col-11">
+                                <div class="kt-invoice__item">
+                                    <table class="border-0">
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-right">
+                                                    <label class="kt-invoice__subtitle">
+                                                        Direcci&oacute;n:
+                                                    </label>
+                                                </td>
+                                                <td colspan="3" style="width:90%">
+                                                    @Html.TextBoxFor(model => model.Address, new { @class = "kt-invoice__control form-control", @required = "" })
+                                                    @Html.ValidationMessageFor(model => model.Address, "")
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-right">
+                                                    <label class="kt-invoice__subtitle"> E-mail: </label>
+                                                </td>
+                                                <td style="width:40%">
+                                                    @Html.TextBoxFor(model => model.EmailAddresses, new { @type = "email", @class = "kt-invoice__control  form-control" })
+                                                    @Html.ValidationMessageFor(model => model.EmailAddresses, "")
+                                                </td>
+                                                <td class="text-right">
+                                                    <label class="kt-invoice__subtitle"> Tel&eacute;fono: </label>
+                                                </td>
+                                                <td style="width:40%">
+                                                    @Html.TextBoxFor(model => model.Phone, new { @type = "tel", @class = "kt-invoice__control  form-control" })
+                                                    @Html.ValidationMessageFor(model => model.Phone, "")
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="kt-invoice__item col-sm-2">
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="kt-invoice__subtitle">Periodo Fiscal</label>
+                                <div class="kt-input-icon kt-input-icon--right " style=" max-width:150px;">
+                                    @Html.TextBoxFor(model => model.FiscalPeriod, new
+                                    {
+                                        @class = "form-control input-readonly",
+                                        @style = "max-width:100%;",
+                                        @placeholder = "Periodo fiscal",
+                                        @required = "",
+                                        @data_date_end_date = "0d",
+                                        @aria_describedby = "addon-Fiscal_Period",
+                                        @readonly = ""
+                                    })
+                                    @Html.ValidationMessageFor(model => model.FiscalPeriod, "")
+                                    <span id="addon-Fiscal_Period" class="kt-input-icon__icon kt-input-icon__icon--right">
+                                        <span> <i class="fa fa-calendar-alt"></i></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kt-invoice__items">
+                    <div class="kt-invoice__item col-sm-12" @(Model.Id > 0 ? "" : "style='display:none'") id="headDocument" name="headDocument">
+                        <div class="row">
+                            <div class="col-md-12 normalform">
+                                <div class="row">
+                                    <div class="col-md-10 col-sm-12">
+                                        @*<div class="col-md-12">*@
+                                        @*<h5> Documento Sustento </h5>*@
+                                        <label class="kt-invoice__subtitle">
+                                            Documento Sustento Recibido:
+                                        </label>
+                                        <select style="width:100%;" class="js-documentSelector" id="inputDocumentId">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 col-sm-12">
+                                        <label class="kt-invoice__subtitle">
+                                            Seleccione opción
+                                        </label>
+
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-brand" data-toggle="tooltip" title="Seleccione la opcion de ingreso manual del documento ó importar documento sustento en formato XML">
+                                                <i class="la la-check"></i>
+                                                <span class="kt-hidden-mobile">Opciones</span>
+                                            </button>
+                                            <button type="button" class="btn btn-brand dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-58px, 38px, 0px);">
+                                                <ul class="kt-nav">
+                                                    <li class="kt-nav__item">
+                                                        <a href="#" class="kt-nav__link btn-document-manual">
+                                                            <i class="kt-nav__link-icon flaticon2-edit"></i>
+                                                            <span class="kt-nav__link-text">Ingreso manual</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="kt-nav__item">
+                                                        <a href="#" class="kt-nav__link btn-document-support">
+                                                            <i class="kt-nav__link-icon flaticon2-document"></i>
+                                                            <span class="kt-nav__link-text">Importar XML sustento</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        @*<div class="btn-group">
+                                        <a href="#" title="Importar documento sustento en formato XML" data-toggle="tooltip" data-theme="dark" class="btn btn-brand btn-hover-success btn-document-support" aria-expanded="false">
+                                            Seleccionar XML <i class="flaticon2-document"></i>
+                                        </a>
+                                    </div>*@
+                                    </div>
+                                </div>
+                                <hr />
+
+                                @*</div>*@
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6" id="detailDocument" name="detailDocument">
+                                            <table style="width:100%;">
+                                                <tr>
+                                                    <td style="vertical-align:middle; width:50%; text-align:right;">Tipo de Comprobante: &nbsp;</td>
+                                                    <td style="text-align:right;">
+                                                        @Html.DropDownListFor(model => model.ReferenceDocumentCode,
+                                                            new SelectList(documnentTypes, "SriCode", "Name", Model.ReferenceDocumentCode),
+                                                                new
+                                                                     {
+                                                                    @id = "ref_tipo_comprobante",
+                                                                    @class = "form-control m-b",
+                                                                    @style = "width:100%;",
+                                                                    @required = ""
+                                                                })
+
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align:middle; width:50%; text-align:right;">Número de Comprobante: &nbsp;</td>
+                                                    <td style="text-align:right">
+                                                        @Html.EditorFor(model => model.ReferenceDocumentNumber,
+                                                            new
+                                                            {
+                                                                htmlAttributes = new
+                                                                {
+                                                                    @id = "ref_numero_comprobante",
+                                                                    @class = "form-control",
+                                                                    @placeholder = "000-000-000000000",
+                                                                    @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                    @required = "",
+                                                                    @maxlength = "17",
+                                                                    @readonly = ""
+                                                                    //@onchange = "docNumberChanged()"
+                                                                }
+                                                            })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align:middle;  width:50%; text-align:right;">Fecha del Documento: &nbsp;</td>
+                                                    <td style="text-align:right;">
+                                                        @Html.EditorFor(model => model.ReferenceDocumentDate,
+                                                        new
+                                                        {
+                                                            htmlAttributes = new
+                                                            {
+                                                                @id = "ref_fecha_documento",
+                                                                @class = "form-control input-readonly",
+                                                                @placeholder = "Fecha del Documento",
+                                                                @style = "border:none none solid none;background-color:white; text-align:right;",
+                                                                @required = "",
+                                                                @readonly = ""
+                                                            }
+                                                        })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align:middle; width:50%; text-align:right;">Número Autorización: &nbsp;</td>
+                                                    <td style="text-align:right">
+                                                        @Html.EditorFor(model => model.ReferenceDocumentAuth,
+                                                            new
+                                                            {
+                                                                htmlAttributes = new
+                                                                {
+                                                                    @type = "number",
+                                                                    @id = "ref_autorizacion_comprobante",
+                                                                    @class = "form-control",
+                                                                    @placeholder = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                                                                    @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                    @maxlength = 49,
+                                                                    @required = "",
+                                                                    @readonly = ""
+                                                                    //@onchange = "refautorizacionChanged()"
+                                                                }
+                                                            })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align:middle;  width:50%; text-align:right;">Total del Documento: &nbsp;</td>
+                                                    <td style="text-align:right;">
+                                                        @Html.EditorFor(model => model.ReferenceDocumentTotal,
+                                                             new
+                                                             {
+                                                                 htmlAttributes = new
+                                                                 {
+                                                                     @id = "ref_total_comprobante",
+                                                                     @class = "form-control ref-total-comprobante",
+                                                                     @placeholder = "Valor del Comprobante",
+                                                                     @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                     @required = "",
+                                                                     @readonly = ""
+                                                                     //@onchange = "actualizarTotales()"
+                                                                 }
+                                                             })
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table style="width:100%;">
+                                                <tr>
+                                                    <td style="vertical-align:middle;  width:50%; text-align:right;">Subtotal Base Iva: &nbsp;</td>
+                                                    <td style="text-align:right;">
+                                                        @Html.EditorFor(model => model.ReferenceDocumentSubtotalVat,
+                                                             new
+                                                             {
+                                                                 htmlAttributes = new
+                                                                 {
+                                                                     @id = "ref_base12_comprobante",
+                                                                     @class = "form-control ref-base12-comprobante",
+                                                                     @placeholder = "Subtotal base Iva%",
+                                                                     @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                     @required = "",
+                                                                     @readonly = ""
+                                                                     //@onchange = "actualizarTotales()"
+                                                                 }
+                                                             })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align:middle;  width:50%; text-align:right;">Subtotal Base 0%: &nbsp;</td>
+                                                    <td style="text-align:right;">
+                                                        @Html.EditorFor(model => model.ReferenceDocumentSubtotalVatZero,
+                                                             new
+                                                             {
+                                                                 htmlAttributes = new
+                                                                 {
+                                                                     @id = "ref_base0_comprobante",
+                                                                     @class = "form-control ref-base0-comprobante",
+                                                                     @placeholder = "Subtotal base 0%",
+                                                                     @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                     @required = "",
+                                                                     @readonly = ""
+                                                                     //@onchange = "actualizarTotales()"
+                                                                 }
+                                                             })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align:middle;  width:50%; text-align:right;">Subtotal no sujeto: &nbsp;</td>
+                                                    <td style="text-align:right;">
+                                                        @Html.EditorFor(model => model.ReferenceDocumentSubtotalNotSubject,
+                                                           new
+                                                           {
+                                                               htmlAttributes = new
+                                                               {
+                                                                   @id = "ref_nosubjeto_comprobante",
+                                                                   @class = "form-control ref-nosubjeto-comprobante",
+                                                                   @placeholder = "Subtotal no subjeto",
+                                                                   @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                   @required = "",
+                                                                   @readonly = ""
+                                                                   //@onchange = "actualizarTotales()"
+                                                               }
+                                                           })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align:middle;  width:50%; text-align:right;">Subtotal Exento: &nbsp;</td>
+                                                    <td style="text-align:right;">
+                                                        @Html.EditorFor(model => model.ReferenceDocumentSubtotalExempt,
+                                                           new
+                                                           {
+                                                               htmlAttributes = new
+                                                               {
+                                                                   @id = "ref_exempt_comprobante",
+                                                                   @class = "form-control ref-exempt-comprobante",
+                                                                   @placeholder = "Subtotal Exento",
+                                                                   @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                   @required = "",
+                                                                   @readonly = ""
+                                                                   //@onchange = "actualizarTotales()"
+                                                               }
+                                                           })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align:middle;  width:50%; text-align:right;">IVA del Documento: &nbsp;</td>
+                                                    <td style="text-align:right;">
+                                                        @Html.EditorFor(model => model.ReferenceDocumentVat,
+                                                             new
+                                                             {
+                                                                 htmlAttributes = new
+                                                                 {
+                                                                     @id = "ref_iva_comprobante",
+                                                                     @class = "form-control ref-iva-comprobante",
+                                                                     @placeholder = "IVA del Documento",
+                                                                     @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                     @required = "",
+                                                                     @readonly = ""
+                                                                     //@onchange = "actualizarTotales()"
+                                                                 }
+                                                             })
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kt-invoice__items">
+                    <div class="kt-invoice__item col-md-12" @(Model.Id > 0 ? "" : "style='display:none'") id="headSustento">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-10">
+                                <label class="kt-invoice__subtitle">
+                                    Tipo de Sustento del Comprobante:
+                                </label>
+                                <div class="kt-input-icon kt-input-icon--right">
+                                    @Html.DropDownListFor(model => model.SupportCode, new SelectList(sustentoList, "Value", "Text", Model.SupportCode), "Seleccione Tipo de Sustento", new
+                                    {
+                                        @class = "form-control",
+                                        @aria_describedby = "addon-customer_select",
+                                        @style = "width:100%"
+                                    })
+                                    @Html.ValidationMessageFor(model => model.SupportCode, "")
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-10">
+                                <label class="kt-invoice__subtitle">Registro Contable</label>
+                                <div class="kt-input-icon kt-input-icon--right " style=" max-width:auto">
+                                    @Html.TextBoxFor(model => model.AccountingRegistrationDate, new
+                                    {
+                                        @class = "form-control input-readonly datepicker",
+                                        @style = "max-width:100%;",
+                                        @placeholder = "Fecha",
+                                        @required = "",
+                                        @data_date_end_date = "0d",
+                                        @aria_describedby = "addon-fecha_contable",
+                                        @readonly = "readonly"
+                                    })
+                                    @Html.ValidationMessageFor(model => model.AccountingRegistrationDate, "")
+                                    <span id="addon-fecha_contable" class="kt-input-icon__icon kt-input-icon__icon--right">
+                                        <span> <i class="fa fa-calendar-alt"></i></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-10">
+                                <label class="kt-invoice__subtitle">Parte Relacionada</label>
+                                <div class="kt-input-icon kt-input-icon--right ">
+                                    @Html.DropDownListFor(model => model.RelatedParty, new SelectList(parteRel, "Value", "Text", Model.RelatedParty), new
+                                     {
+                                         @class = "form-control",
+                                         @aria_describedby = "addon-customer_select",
+                                         @style = "width:100%"
+                                     })
+                                    @Html.ValidationMessageFor(model => model.RelatedParty, "")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kt-invoice__items">
+                    <div class="kt-invoice__item col-md-12" @(_headSujetoRetenido ? "" : "style=display:none") id="headSujetoRetenido">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-10">
+                                
+                            </div>
+                            <div class="col-md-4 col-sm-10">
+                                <label class="kt-invoice__subtitle">Tipo Sujeto Retenido:</label>
+                                <div class="kt-input-icon kt-input-icon--right " style=" max-width:auto">
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        @Html.DropDownListFor(model => model.RetentionObjectType, new SelectList(identificacionSujeto, "Value", "Text", Model.RetentionObjectType), "Seleccione Tipo Sujeto Retenido", new
+                                        {
+                                            @class = "form-control",
+                                            @aria_describedby = "addon-customer_select",
+                                            @style = "width:100%"
+                                        })
+                                        @Html.ValidationMessageFor(model => model.RetentionObjectType, "")
+                                    </div>
+                                </div>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Detalle de los productos *@
+        <div class="row" name="productosPage">
+
+            <div class="col-12">
+
+                <div class="kt-container table-responsive bg-white" style="width:auto">
+
+                    <table class="product-items col-md-12 table table-producto table-hover table-striped table-condensed kt-datatable__table cf">
+
+                        <thead class="cf card-title kt-datatable__head">
+                            <tr class="kt-datatable__row">
+                                <th>
+                                    <div class="row">
+                                        <div class="col-md-10 col-sm-8 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-md-8 col-sm-12 col-xs-12" data-title="Descripción" style="padding-bottom:5px">Descripción</div>
+                                                <div class="col-md-2 col-sm-6 col-xs-12" data-title="Base Imponible" style="padding-bottom:5px">Total</div>
+                                                <div class="col-md-2 col-sm-6 col-xs-12" data-title="Porcentaje" style="padding-bottom:5px">Porcentaje</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2 col-sm-4 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12 col-xs-12 numeric center" data-title="Total" style="text-align:center;padding-bottom:5px">Total</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model.Details != null)
+                            {
+                                for (int i = 0; i < Model.Details.Count; i++)
+                                {
+                                    if (Model.Details[i].RetentionTaxId == 0)
+                                    {
+                                        Model.Details[i].RetentionTaxId = impuestos.Where(d => d.SriCode == Model.Details[i].RetentionTaxCode).FirstOrDefault().Id;
+                                    }
+
+                                    var taxes = impuestos.Where(s => s.Id == Model.Details[i].RetentionTaxId).First().RetentionRate
+                                        .Select(x => new SelectListItem { Text = string.Format("{0} %", x.RateValue.ToDecimalString()), Value = x.RateValue.ToDecimalString() }).ToList();
+
+                                    <tr id="item@(i)" class="product-item">
+                                        <td data-title="Product" style="width:100%">
+                                            <div class="row">
+                                                <div class="col-md-10 col-sm-8 col-xs-12">
+                                                    <div class="row">
+                                                        @Html.Hidden("Details.Index", i)
+                                                        @Html.HiddenFor(model => Model.Details[i].TaxTypeCode, new { @class = "item-taxTypeCode" })
+                                                        @Html.HiddenFor(model => Model.Details[i].RetentionTaxCode, new { @class = "item-retentiontaxcode" })
+
+                                                        <div class="col-md-8 col-sm-12 col-xs-12" data-title="Descripción" style="padding-bottom:5px">
+                                                            @Html.DropDownListFor(model => Model.Details[i].RetentionTaxId, new SelectList(impuestoList, "Value", "Text", Model.Details[i].RetentionTaxId), new { @class = "form-control", @style = "width:100%;" })
+                                                        </div>
+
+                                                        <div class="col-md-2 col-sm-6 col-xs-12" data-title="Base Imponible" style="padding-bottom:5px">
+                                                            @Html.TextBoxFor(model => model.Details[i].TaxBase, new { @class = "form-control item-taxbase", @style = "text-align:right; ", @type = "number", @value = "0.000000", @min = "0.000001", @placeholder = "Base Imponible" })
+                                                        </div>
+
+                                                        <div class="col-md-2 col-sm-6 col-xs-12" data-title="Porcentaje" style="padding-bottom:5px">
+                                                            @Html.DropDownListFor(model => Model.Details[i].TaxRate, new SelectList(taxes, "Value", "Text", Model.Details[i].TaxRate), new { @class = "form-control item-taxrate", @style = "text-align:right;width:100%;" })
+                                                            @Html.HiddenFor(model => Model.Details[i].TaxTypeCode, new { @class = "item-taxtypecode" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-2 col-sm-4 col-xs-12" style="padding-bottom:5px">
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12 numeric text-center" data-title="Total">
+                                                            <h4 style="margin-top: 10px;font-weight:300;">$&nbsp;<span data-field="Details[@(i)].TaxValue">@Model.Details[i].TaxValue.ToDecimalString()</span></h4>
+                                                            @Html.HiddenFor(model => Model.Details[i].TaxValue, new { @class = "invoice-subtotal item-taxvalue" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td data-title="">
+                                            <button title="Eliminar Registro" type="button" class="delete-item btn " style="width:auto;float:none;">
+                                                <span class="la la-trash-o "></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+
+                        </tbody>
+
+                        <tfoot>
+                            <tr style="background-color:gainsboro">
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-10 col-sm-8 col-xs-12" align="left">
+                                            <div class="row">
+                                                <div class="col-md-8 col-sm-12 col-xs-12">
+                                                    <button type='button' class='add-detail btn btn-brand'> Agregar <i class='fa fa-plus'></i></button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2 col-sm-4 col-xs-12" style="padding-bottom:5px">
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12 col-xs-12 numeric text-center" data-title="Total">
+                                                    <h4>$&nbsp;<span data-field="FiscalAmount"> @Model.FiscalAmount.ToDecimalString()</span></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-title="">
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+
+                <div class="kt-container table-responsive bg-white" style="width:auto">
+                    <div class="row">
+                        <div class="col-12 col-md-7 col-lg-8">
+                            <div class="kt-portlet__body">
+
+                                <div class="accordion accordion-solid accordion-toggle-plus" id="accordionAdditionals">
+                                    <div class="card">
+                                        <div class="card-header" id="reasontHeading">
+                                            <div class="card-title collapsed" data-toggle="collapse" data-target="#reasonCollapse" aria-expanded="false" aria-controls="reasonCollapse">
+                                                <i class="flaticon2-contract"></i> Motivo
+                                            </div>
+                                        </div>
+                                        <div id="reasonCollapse" aria-labelledby="reasontHeading" data-parent="#accordionAdditionals" style="">
+
+                                            <div class="card-body">
+                                                <label class="control-label bold white text-dark" style="width:100%;text-align:left;" id="etiqueta_MOTIVO"><b>OBSERVACIONES:</b></label>
+                                                <textarea name="Reason" id="Reason" placeholder="Ingrese aqui el Motivo o la explicacion de la Retención"
+                                                          type="text" wrap="soft" rows="4" class="form-control"
+                                                          style="width:100%;border:none none solid none;  resize:vertical" value="" required>@Model.Reason</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card" id="accordionPayment" @habilitarPayment>
+                                        <div class="card-header" id="paymentHeading">
+                                            <div class="card-title collapsed" data-toggle="collapse" data-target="#paymentCollapse" aria-expanded="false" aria-controls="paymentCollapse">
+                                                <i class="flaticon-price-tag"></i> Forma de Pago del Documento Sustento
+                                            </div>
+                                        </div>
+                                        <div id="paymentCollapse" class="collapse" aria-labelledby="paymentHeading" data-parent="#accordionAdditionals" style="">
+
+                                            <div class="card-body">
+                                                <table class="table table-payment table-hover table-striped table-condensed kt-datatable__table">
+                                                    <tbody id="payment-items" class="kt-datatable__body">
+                                                        @if (Model.ReferenceDocumentPayments != null && Model.ReferenceDocumentId == -1)
+                                                        {
+                                                            for (int i = 0; i < Model.ReferenceDocumentPayments.Count; i++)
+                                                            {
+                                                                <input name="ReferenceDocumentPayments.Index" value="@i" type="hidden" />
+                                                                @Html.HiddenFor(model => Model.ReferenceDocumentPayments[i].TimeUnit, new { @class = "payment-timeunit" })
+                                                                @Html.HiddenFor(model => Model.ReferenceDocumentPayments[i].Term, new { @class = "payment-term" })
+                                                                <tr id="payment@(i)" class="payment-item">
+                                                                    <td data-title="Detalle">
+                                                                        <div class="row">
+                                                                            <div data-title="FormaPago" class="col-lg-8 col-md-12 col-sm-8 col-xs-12 bold" style="padding-bottom:10px">
+                                                                                @Html.DropDownListFor(model => Model.ReferenceDocumentPayments[i].PaymentMethodCode, new SelectList(payments, "Value", "Text", Model.ReferenceDocumentPayments[i].PaymentMethodCode), new { @class = "col-md-12 col-sm-12 col-xs-12 js-paymentSelector form-control", @style = "width:100%;" })
+                                                                            </div>
+                                                                            <div data-title="Valor" class="col-lg-4 col-md-12 col-sm-4 col-xs-12 numeric" style="text-align:right;">
+                                                                                @Html.TextBoxFor(model => Model.ReferenceDocumentPayments[i].Total, new { @class = "form-control payment-total", @style = "text-align:right ;", @placeholder = "Valor Pagado" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button title="Eliminar Registro" type="button" class="delete-item btn" style="width:auto;float:none;">
+                                                                            <span class="la la-trash-o"></span>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+
+                                                    </tbody>
+
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td align="left" colspan="2">
+                                                                <div class="col-xs-12" align="left">
+                                                                    <button type='button' class='btn btn-brand add-payment'> Agregar <i class='fa fa-plus'></i></button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tfoot>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header" id="infoHeading">
+                                            <div class="card-title collapsed" data-toggle="collapse" data-target="#infoCollapse" aria-expanded="false" aria-controls="infoCollapse">
+                                                <i class="flaticon2-layers-1"></i> Informaci&oacute;n Adicional
+                                            </div>
+                                        </div>
+                                        <div id="infoCollapse" class="collapse" aria-labelledby="infoHeading" data-parent="#accordionAdditionals" style="">
+                                            <div class="card-body">
+
+                                                <table id="adicional-items" class="table kt-datatable__table table-adicional table-hover table-striped table-condensed cf">
+                                                    <tbody>
+                                                        @if (Model.AdditionalFields != null)
+                                                        {
+                                                            for (var i = 0; i < Model.AdditionalFields.Count; i++)
+                                                            {
+                                                                var fieldname = Model.AdditionalFields[i].Name?.ToUpper();
+                                                                var hidden = "";
+                                                                if (fieldname == "DIRECCION" || fieldname == "TELEFONO" || fieldname == "EMAIL")
+                                                                {
+                                                                    hidden = "hidden";
+                                                                }
+                                                                else if (fieldname == TextoInfoAdicionalEnum.IsGeneralRegime.GetDisplayValue().ToUpper() ||
+                                                                  fieldname == TextoInfoAdicionalEnum.IsSkilledCraftsman.GetDisplayValue().ToUpper() ||
+                                                                  fieldname == TextoInfoAdicionalEnum.IsSimplifiedCompaniesRegime.GetDisplayValue().ToUpper())
+                                                                {
+                                                                    hidden = "hidden";
+                                                                }
+                                                                <tr class="additional-item" @hidden>
+                                                                    <td>
+                                                                        @Html.Hidden("AdditionalFields.Index", i)
+                                                                        @Html.HiddenFor(model => Model.AdditionalFields[i].LineNumber)
+                                                                        <div class="row">
+                                                                            <div data-title="Detalle" class="col-lg-6 col-md-12 col-sm-6 col-xs-12 bold" style="padding-bottom:5px">
+                                                                                @Html.TextBoxFor(model => Model.AdditionalFields[i].Name, new { @id = string.Format("adname{0}", i), @class = "form-control additional-name bold", @style = "text-align:left; width:100%;", @placeholder = "Nombre", @list = "list-references" })
+                                                                            </div>
+                                                                            <div data-title="Valor" class="col-lg-6 col-md-12 col-sm-6 col-xs-12">
+                                                                                @Html.TextBoxFor(model => Model.AdditionalFields[i].Value, new { @id = string.Format("addet{0}", i), @class = "form-control additional-value", @style = "text-align:left; ", @placeholder = "Detalle" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button title="Eliminar Registro" type="button" class="delete-item btn" style="float: none;width:auto;">
+                                                                            <span class="la la-trash-o"></span>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td align="left" colspan="3">
+                                                                <div class="row">
+                                                                    <div class="col-12" align="left">
+                                                                        <button type='button' class='btn btn-brand add-additional'> Agregar <i class='fa fa-plus'></i></button>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+
+                                                <datalist id="list-references">
+
+                                                    <option>ORDEN DE COMPRA</option>
+                                                    <option>REFERENCIA</option>
+                                                    <option>VENDEDOR</option>
+                                                    <option>CONTACTO</option>
+                                                    <option>CHOFER</option>
+                                                    <option>ENTREGADO POR</option>
+                                                    <option>SOLICITANTE</option>
+                                                    <option>RECIBIDO POR</option>
+                                                    <option>UBICACION</option>
+                                                    <option>DESTINO</option>
+                                                    <option>DESTINATARIO</option>
+                                                    <option>DEDUCIBLE</option>
+
+                                                </datalist>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row col-12">
+                                    @Html.ValidationSummary("", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-5 col-lg-4">
+                            <div class="kt-invoice__total align-content-center align-items-center justify-content-center align-self-center">
+                                <table class="table table-advance table-hover table-scrollable-borderless table-total">
+                                    <tbody>
+                                        <tr style="border-top:3px;border-top-style:groove; margin-bottom:30px;">
+                                            <td class="bold bg"><label class="control-label kt-font-bold" id="etiqueta_total">Total</label></td>
+                                            <td>$</td>
+                                            <td class="bold text-right">
+                                                <label data-field="FiscalAmount">$ @Model.FiscalAmount.ToDecimalString()</label>
+                                                @Html.HiddenFor(model => model.FiscalAmount, new { @class = "invoice-subtotal" })
+                                            </td>
+                                        </tr>
+                                        <tr style="border-top:3px;border-top-style:double; margin-bottom:30px;">
+                                            <td class="bold bg"><h4 class="control-label kt-font-bold" id="etiqueta_total">SALDO DEL DOCUMENTO SUSTENTO</h4></td>
+                                            <td>$</td>
+                                            <td class="bold text-right">
+                                                <h4 data-field="Balance">$ @Model.Balance.ToDecimalString()</h4>
+                                                @Html.HiddenFor(model => model.Balance, new { @class = "invoice-subtotal" })
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Total impuestos del documento sustento-->
+        <div class="row">
+            <div class="totalTaxes-items">
+                @if (Model?.ReferenceDocumentTotalTax?.Count > 0)
+                {
+                    var item = 0;
+                    Model.ReferenceDocumentTotalTax.ForEach(d =>
+                    {
+                        @Html.Hidden("ReferenceDocumentTotalTax.Index", item);
+                        @Html.HiddenFor(model => model.ReferenceDocumentTotalTax[item].TaxCode, new { @class = "totalTax-taxCode" });
+                        @Html.HiddenFor(model => model.ReferenceDocumentTotalTax[item].PercentageTaxCode, new { @class = "totalTax-percentageTaxCode" });
+                        @Html.HiddenFor(model => model.ReferenceDocumentTotalTax[item].TaxRate, new { @class = "totalTax-TaxRate" });
+                        @Html.HiddenFor(model => model.ReferenceDocumentTotalTax[item].TaxableBase, new { @class = "totalTax-TaxableBase" });
+                        @Html.HiddenFor(model => model.ReferenceDocumentTotalTax[item].TaxValue, new { @class = "totalTax-TaxValue" });
+                        item++;
+                    });
+                }
+            </div>
+        </div>
+        <!--Metodos de pago del documento sustento-->
+        <div class="row">
+            <div class="payment-type-items">
+                @if (Model?.ReferenceDocumentPayments?.Count > 0)
+                {
+                    var item = 0;
+                    Model.ReferenceDocumentPayments.ForEach(d =>
+                    {
+                        @Html.Hidden("ReferenceDocumentPayments.Index", item);
+                        @Html.HiddenFor(model => model.ReferenceDocumentPayments[item].PaymentMethodCode, new { @class = "payment-PaymentMethodCode" });
+                        @Html.HiddenFor(model => model.ReferenceDocumentPayments[item].Term, new { @class = "payment-Term" });
+                        @Html.HiddenFor(model => model.ReferenceDocumentPayments[item].TimeUnit, new { @class = "payment-TimeUnit" });
+                        @Html.HiddenFor(model => model.ReferenceDocumentPayments[item].Total, new { @class = "payment-Total" });
+                    });
+                }
+            </div>
+        </div>
+    </div>
+
+
+}
+<!--Modal para obtener el xml del documneto recibido-->
+<div class="modal fade" tabindex="-1" id="modal_docSupport" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Documento Sustento</h3>
+
+                <!--begin::Close-->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+                <!--end::Close-->
+            </div>
+            <div class="modal-body">
+                <h4 class="alert-heading">
+                    Importar documento sustento
+                </h4>
+                <p class="text-justify">
+                    Debe selecionar  archivo del doucmento sustento en formato XML<br />
+                </p>
+                <div class="row text-right">
+                    <div class="col-md-12 col-12 col-sm-12">
+                        <button data-toggle="tooltip" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air select-documnet-Support" type="button">
+                            <i class="flaticon2-file-2"></i>&nbsp;Seleccionar Documento
+                        </button>
+                        <input type="file" style="display:none;" class="file-document-xml" accept=".xml" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10 col-sm-12" style="padding-top: 10px">
+                        <div class="form-group" style="padding-bottom:20px;">
+                            <label title=""
+                                   data-toggle="kt-popover"
+                                   data-container="body"
+                                   data-placement="bottom"
+                                   data-html="true"
+                                   data-skin="dark"
+                                   data-content=">Subir el archivo en formato .xml <br />"
+                                   data-original-title='Subir el archivo en formato .xml'>
+                                <span id="size_file_import" style="color: #9c9c9c"></span> &nbsp;
+                                <i id="file_import"></i>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-right">
+                    <div class="col-md-12 col-sm-12">
+                        <button data-toggle="tooltip" title="Importar documento sustento" class="btn btn-success btn-bold btn-pill btn-sm btn-elevate btn-elevate-air subir-documnet-support" type="button" style="display:none;">
+                            <i class="flaticon2-arrow-up"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Procesar Archivo&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/js/retention")
+
+<script>
+    $(document).ready(function () {
+        Retention.contributorsUrl = '@Url.Content("~/contribuyentes/SearchContribAsync")';
+        Retention.documentUrl = '@Url.Content("~/Retencion/GetDocumentById")';
+        Retention.docSupportXmlUrl = '@Url.Content("~/Retencion/ValidateDocumentSupportXml")';
+        Retention.documentbyIdUrl = '@Url.Content("~/Retencion/GetDocumentReceivedById")';
+        Retention.loginUrl = '@Url.Content("~/auth")';
+        Retention.listaImpuestos = @Html.Raw(Json.Encode(listaImpuestos));
+        Retention.tiposIdentificacion = @Html.Raw(Json.Encode(tiposIdentificacion));
+        Retention.tiposIdentificacionSujeto = @Html.Raw(Json.Encode(tiposIdentificacionSujeto));
+        Retention.tipos = @Html.Raw(Json.Encode(tipos));
+        Retention.impuestos = @Html.Raw(Json.Encode(impuestos));
+        Retention.establishments = @Html.Raw(Json.Encode(SessionInfo.Issuer.Establishments));
+        Retention.taxes = @Html.Raw(Json.Encode(SessionInfo.Catalog.IVARates));
+        Retention.paymentTypes = @Html.Raw(Json.Encode(SessionInfo.Catalog.PaymentMethod));
+        Retention.init();
+    });
+</script>
+}
+
+@section Toolbar{
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-brand btn-invoice-save">
+            <i class="la la-check"></i>
+            <span class="kt-hidden-mobile">Guardar</span>
+        </button>
+        <button type="button" class="btn btn-brand dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-58px, 38px, 0px);">
+            <ul class="kt-nav">
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link btn-invoice-save" id="btnGuardar">
+                        <i class="kt-nav__link-icon flaticon2-shield"></i>
+                        <span class="kt-nav__link-text">Guardar borrador</span>
+                    </a>
+                </li>
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link btn-invoice-issue">
+                        <i class="kt-nav__link-icon flaticon2-paper-plane"></i>
+                        <span class="kt-nav__link-text">Enviar al SRI</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+
+
+

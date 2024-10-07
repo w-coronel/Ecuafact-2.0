@@ -1,0 +1,798 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web.Controllers;
+@using Ecuafact.Web.MiddleCore.NexusApiServices;
+@using System.Collections;
+
+@model DashboardInfo
+@{
+    var carrier = false;
+    var permmission = SessionInfo.UserRole == Ecuafact.Web.Models.SecuritySessionRole.Cooperative;
+    if (permmission)
+    {
+        carrier = SessionInfo.UserSession?.Issuer?.IsCooperativeCarrier ?? false;
+    }
+
+    var _cantidad = "0";
+    var _emitidos = 0;
+    var _saldo = "0";
+    var _cantidadDoc = 0;
+    var _emitidoDoc = 0;
+    var _saldoDoc = 0;
+    var percentDocValue = 0.00;
+    var percentDoc = "0.00%";
+    var _colorDocmsg = "blue";
+    var _colorDoc = "kt-bg-brand";
+    var msgDoc = "";
+    var verprogress = false;
+    var verFechaExp = false;
+    var verFechaFirma = false;
+    if (!string.IsNullOrWhiteSpace(SessionInfo.UserSession?.Subscription?.AmountDocument))
+    {
+        _cantidad = SessionInfo.UserSession.Subscription.AmountDocument.Contains("0000000000") ? "Ilimitado" : SessionInfo.UserSession.Subscription.AmountDocument ?? "0";
+        _emitidos = SessionInfo.UserSession.Subscription.IssuedDocument ?? 0;
+        _saldo = SessionInfo.UserSession.Subscription.AmountDocument.Contains("0000000000") ? "Ilimitado" : $"{SessionInfo.UserSession.Subscription.BalanceDocument ?? 0}";
+
+        _cantidadDoc = SessionInfo.UserSession.Subscription.AmountDocument.Contains("0000000000") ? 0 : Convert.ToInt32(SessionInfo.UserSession.Subscription.AmountDocument);
+        _emitidoDoc = Convert.ToInt32(SessionInfo.UserSession.Subscription.IssuedDocument);
+        _saldoDoc = SessionInfo.UserSession.Subscription.AmountDocument.Contains("0000000000") ? 0 : Convert.ToInt32(SessionInfo.UserSession.Subscription.BalanceDocument);
+        if (_cantidadDoc > 0 && _saldoDoc > 0)
+        {
+            percentDocValue = (_emitidoDoc * 100) / _cantidadDoc; //_emitidoDoc * (100 / _cantidadDoc);
+            percentDoc = string.Format("{0:0.00}%", percentDocValue);
+        }
+        if (percentDocValue >= 95)
+        {
+            _colorDocmsg = "red";
+            _colorDoc = "kt-bg-danger";
+            msgDoc = $"Documentos restan de";
+        }
+        else if (percentDocValue >= 0 && percentDocValue < 95)
+        {
+            msgDoc = $"Documentos emitidos de";
+        }
+        verprogress = !SessionInfo.UserSession.Subscription.AmountDocument.Contains("0000000000");
+
+    }
+    if(SessionInfo.UserSession?.Subscription != null)
+    {
+        verFechaExp = true;
+    }
+    if (SessionInfo.UserSession?.Issuer.CertificateExpirationDate != null)
+    {
+        verFechaFirma = true;
+    }
+    var userAvatar = Server.GetLogoFile(SessionInfo.UserSession.IssuerRUC);
+
+    var tienePlan = SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.Activa ? $"Tu plan activado es {SessionInfo.UserSession?.Subscription?.LicenceType?.Name}" : " No tiene activo un plan.";
+    var planIcono = SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.Activa ? "flaticon2-correct kt-font-success" : "flaticon2-warning kt-font-danger";
+   
+
+
+}
+<!-- BEGIN DASHBOARD STATS -->
+
+<div class="row">
+
+    <div class="col-lg-3 col-xl-3 order-lg-1 order-xl-1">
+        <!--begin:: Widgets/Activity-->
+
+        <div class="kt-portlet kt-portlet--fit kt-portlet--head-lg kt-portlet--head-overlay kt-portlet--height-fluid">
+            <div class="kt-portlet__head kt-portlet__head--noborder kt-portlet__space-x">
+                <div class="kt-portlet__head-label">
+                    <h3 class="kt-portlet__head-title">
+                    </h3>
+                </div>
+
+                <div class="kt-portlet__head-toolbar">
+                </div>
+            </div>
+
+            <div class="kt-portlet__body kt-portlet__body--fit">
+                <div class="kt-widget-buttons">
+                    <div class="kt-widget-buttons__visual kt-widget16__visual--chart kt-portlet-fit--top kt-portlet-fit--sides" style="">
+                        <div class="kt-widget-buttons__chart">
+
+                        </div>
+                    </div>
+
+                    <div class="kt-widget-buttons__stats">
+                        <!--begin:: Widgets/Applications/User/Profile3-->
+                        <div class="kt-portlet__body">
+                            <div class="kt-widget kt-widget--user-profile-3">
+                                <div class="kt-widget__top">
+                                    <div class="kt-widget__media kt-hidden-">
+                                        @if (string.IsNullOrEmpty(userAvatar) || userAvatar.Contains("no_logo"))
+                                        {
+                                            <img alt="Pic" class="kt-widget__img kt-hidden-" src="~/usuario/avatar" />
+                                        }
+                                        else
+                                        {
+                                            <img class="kt-widget__img kt-hidden-" src="@Url.Content(Server.GetLogoUrl(SessionInfo.Issuer.Logo, SessionInfo.Issuer.RUC))" alt="image" />
+                                        }
+                                    </div>
+                                </div> 
+                                <br />
+                                <div class="kt-widget__content">
+                                    <div class="kt-widget__head">
+                                        <span class="kt-widget__username"><i class="flaticon2-map kt-font-primary"></i>&nbsp;&nbsp;@SessionInfo.Issuer.RUC</span>
+                                    </div>
+                                    <div class="kt-widget__head">
+                                        <span class="kt-widget__username"><i class="flaticon2-user kt-font-primary"></i>&nbsp;&nbsp;@SessionInfo.Issuer.BussinesName</span>
+                                    </div>
+                                    <div class="kt-widget__head">
+                                        <span class="kt-widget__username"><i class="flaticon2-new-email kt-font-primary"></i>&nbsp;&nbsp;@SessionInfo.Issuer.Email</span>
+                                    </div>
+                                    <div class="kt-widget__head">
+                                        <span class="kt-widget__username"><i class="flaticon2-phone kt-font-primary"></i>&nbsp;&nbsp;@SessionInfo.Issuer.Phone</span>
+                                    </div>
+                                </div>
+                                <div class="kt-widget__bottom">
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__icon">
+                                            <i class="@planIcono"></i>
+                                        </div>
+                                        <div class="kt-widget__details">
+                                            <span class="kt-widget__title">@tienePlan</span>
+                                        </div>
+                                    </div>
+                                    @if (verFechaExp)
+                                    {
+                                        <div class="kt-widget__item">
+                                            <div class="kt-widget__icon">
+                                                <i class="flaticon-stopwatch  kt-font-instagram"></i>
+                                            </div>
+                                            <div class="kt-widget__details">
+                                                <span class="kt-widget__title">@($"Fecha de expiración del plan: {SessionInfo.UserSession?.Subscription.SubscriptionExpirationDate:dd/MM/yyyy}")</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__icon">
+                                            <i class="flaticon-pie-chart kt-font-facebook"></i>
+                                        </div>
+                                        <div class="kt-widget__details">
+                                            <span class="kt-widget__title">Cantidad Documentos del Plan</span>
+                                            <span class="kt-widget__value">@_cantidad</span>
+                                        </div>
+                                    </div>
+                                    @if (verFechaFirma)
+                                    {
+                                        <div class="kt-widget__item">
+                                            <div class="kt-widget__icon">
+                                                <i class="flaticon2-writing  kt-font-instagram"></i>
+                                            </div>
+                                            <div class="kt-widget__details">
+                                                <span class="kt-widget__title">@($"Caducidad de tu Firma Electrónica: {SessionInfo.UserSession?.Issuer?.CertificateExpirationDate:dd/MM/yyyy}")</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__icon">
+                                            <i class="flaticon-file-2 kt-font-primary"></i>
+                                        </div>
+                                        <div class="kt-widget__details">
+                                            <span class="kt-widget__title">Documentos Emitidos</span>
+                                            <span class="kt-widget__value">@_emitidos</span>
+                                        </div>
+                                    </div>
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__icon">
+                                            <i class="flaticon2-files-and-folders kt-font-brand"></i>
+                                        </div>
+                                        <div class="kt-widget__details">
+                                            <span class="kt-widget__title">Saldo de Documentos</span>
+                                            <span class="kt-widget__value">@_saldo</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (verprogress)
+                                {
+                                    <hr />
+                                    <div class="kt-widget24 kt-widget24--solid">
+                                        <div class="kt-widget24__details">
+                                            <div class="kt-widget24__info">
+                                                <span class="kt-widget24__desc">
+                                                    <span>@string.Format("{0:0}", _emitidoDoc) &nbsp;</span>
+                                                    <span class="text-center" style="color:@_colorDocmsg;">@msgDoc &nbsp;</span>
+                                                    <span>@string.Format("{0:0}", _cantidadDoc)</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="progress progress--sm">
+                                            <div class="progress-bar @_colorDoc" role="progressbar" style="width:@(percentDoc);" aria-valuenow="@(percentDocValue)" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="kt-widget24__action">
+                                            <span class="kt-widget24__change">
+                                                <strong> @percentDoc &nbsp;&nbsp;</strong>
+                                            </span>
+                                            <span class="kt-widget24__number">
+                                                <strong>Documentos Emitidos por el Plan @(SessionInfo.UserSession?.Subscription?.LicenceType?.Name?? "")</strong>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+
+                        <!--end:: Widgets/Applications/User/Profile3-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end:: Widgets/Activity-->
+    </div>
+
+    <div class="col-lg-5 col-xl-5 order-lg-1 order-xl-1">
+
+        <!--begin:: Widgets/Activity-->
+
+        <div class="kt-portlet kt-portlet--fit kt-portlet--head-lg kt-portlet--head-overlay kt-portlet--height-fluid">
+
+            <div class="kt-portlet__head kt-portlet__head--noborder kt-portlet__space-x">
+
+                <div class="kt-portlet__head-label">
+
+                    <h3 class="kt-portlet__head-title">
+                    </h3>
+
+                </div>
+
+                <div class="kt-portlet__head-toolbar">
+
+                </div>
+
+            </div>
+
+            <div class="kt-portlet__body kt-portlet__body--fit">
+
+                <div class="kt-widget-buttons">
+
+                    <div class="kt-widget-buttons__visual kt-widget16__visual--chart kt-portlet-fit--top kt-portlet-fit--sides" style="">
+
+
+                        <div class="kt-widget-buttons__chart">
+
+
+                        </div>
+
+                    </div>
+
+                    <div class="kt-widget-buttons__stats">
+                        <div class="kt-widget-buttons__items">
+
+                            <div class="kt-widget-buttons__item" style="background:#eee9f5;">
+
+                                <a href="@(carrier? "#" :Url.Action("Recibidos", "Comprobantes"))">
+
+                                    <span class="kt-widget-buttons__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon kt-svg-icon--warning">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <rect x="0" y="0" width="24" height="24"></rect>
+                                                <path d="M12.7037037,14 L15.6666667,10 L13.4444444,10 L13.4444444,6 L9,12 L11.2222222,12 L11.2222222,14 L6,14 C5.44771525,14 5,13.5522847 5,13 L5,3 C5,2.44771525 5.44771525,2 6,2 L18,2 C18.5522847,2 19,2.44771525 19,3 L19,13 C19,13.5522847 18.5522847,14 18,14 L12.7037037,14 Z" fill="#000000" opacity="0.3"></path>
+                                                <path d="M9.80428954,10.9142091 L9,12 L11.2222222,12 L11.2222222,16 L15.6666667,10 L15.4615385,10 L20.2072547,6.57253826 C20.4311176,6.4108595 20.7436609,6.46126971 20.9053396,6.68513259 C20.9668779,6.77033951 21,6.87277228 21,6.97787787 L21,17 C21,18.1045695 20.1045695,19 19,19 L5,19 C3.8954305,19 3,18.1045695 3,17 L3,6.97787787 C3,6.70173549 3.22385763,6.47787787 3.5,6.47787787 C3.60510559,6.47787787 3.70753836,6.51099993 3.79274528,6.57253826 L9.80428954,10.9142091 Z" fill="#000000"></path>
+                                            </g>
+                                        </svg>
+                                    </span>
+
+                                    <div class="kt-widget-buttons__subtitle desc">
+                                        Comprobantes Recibidos
+                                    </div>
+
+                                    <div class="kt-widget-buttons__desc">
+                                        <span class="number counter" data-value="@SessionInfo.DocumentsReceived.Count()"> @SessionInfo.DocumentsReceived.Count()</span> Documentos
+                                    </div>
+
+                                </a>
+
+                            </div>
+
+                            <div class="kt-widget-buttons__item" style="background:#ffe397;">
+
+                                <a href="@Url.Action("Borradores", "Comprobantes")">
+
+                                    <span class="kt-widget-buttons__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon kt-svg-icon--danger">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <rect x="0" y="0" width="24" height="24"></rect>
+                                                <path d="M3,16 L5,16 C5.55228475,16 6,15.5522847 6,15 C6,14.4477153 5.55228475,14 5,14 L3,14 L3,12 L5,12 C5.55228475,12 6,11.5522847 6,11 C6,10.4477153 5.55228475,10 5,10 L3,10 L3,8 L5,8 C5.55228475,8 6,7.55228475 6,7 C6,6.44771525 5.55228475,6 5,6 L3,6 L3,4 C3,3.44771525 3.44771525,3 4,3 L10,3 C10.5522847,3 11,3.44771525 11,4 L11,19 C11,19.5522847 10.5522847,20 10,20 L4,20 C3.44771525,20 3,19.5522847 3,19 L3,16 Z" fill="#000000" opacity="0.3"></path>
+                                                <path d="M16,3 L19,3 C20.1045695,3 21,3.8954305 21,5 L21,15.2485298 C21,15.7329761 20.8241635,16.200956 20.5051534,16.565539 L17.8762883,19.5699562 C17.6944473,19.7777745 17.378566,19.7988332 17.1707477,19.6169922 C17.1540423,19.602375 17.1383289,19.5866616 17.1237117,19.5699562 L14.4948466,16.565539 C14.1758365,16.200956 14,15.7329761 14,15.2485298 L14,5 C14,3.8954305 14.8954305,3 16,3 Z" fill="#000000"></path>
+                                            </g>
+                                        </svg>
+                                    </span>
+
+                                    <span class="kt-widget-buttons__subtitle desc">
+                                        Borradores
+                                    </span>
+
+                                    <span class="kt-widget-buttons__desc">
+                                        <span class="number counter" data-value="@Model.DraftsCount"> @Model.DraftsCount</span> Documentos
+                                    </span>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kt-widget-buttons__items">
+                            <div class="kt-widget-buttons__item" style="background:#feffde;">
+                                <a href="@Url.Action("Index", "Factura")">
+                                    <span class="kt-widget-buttons__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon kt-svg-icon--brand">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <rect x="0" y="0" width="24" height="24"></rect>
+                                                <path d="M5,3 L6,3 C6.55228475,3 7,3.44771525 7,4 L7,20 C7,20.5522847 6.55228475,21 6,21 L5,21 C4.44771525,21 4,20.5522847 4,20 L4,4 C4,3.44771525 4.44771525,3 5,3 Z M10,3 L11,3 C11.5522847,3 12,3.44771525 12,4 L12,20 C12,20.5522847 11.5522847,21 11,21 L10,21 C9.44771525,21 9,20.5522847 9,20 L9,4 C9,3.44771525 9.44771525,3 10,3 Z" fill="#000000"></path>
+                                                <rect fill="#000000" opacity="0.3" transform="translate(17.825568, 11.945519) rotate(-19.000000) translate(-17.825568, -11.945519) " x="16.3255682" y="2.94551858" width="3" height="18" rx="1"></rect>
+                                            </g>
+                                        </svg>
+                                    </span>
+                                    <div class="kt-widget-buttons__subtitle desc">
+                                        Facturas
+                                    </div>
+                                    <div class="kt-widget-buttons__desc">
+                                        <span class="number counter" data-value="@Model.InvoicesCount"> @Model.InvoicesCount</span> Emitidas
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="kt-widget-buttons__item" style="background:#ffecc5;">
+                                <a href="@Url.Action("Index", "Liquidacion")">
+                                    <span class="kt-widget-buttons__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon kt-svg-icon--success">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <rect x="0" y="0" width="24" height="24"></rect>
+                                                <path d="M5,3 L6,3 C6.55228475,3 7,3.44771525 7,4 L7,20 C7,20.5522847 6.55228475,21 6,21 L5,21 C4.44771525,21 4,20.5522847 4,20 L4,4 C4,3.44771525 4.44771525,3 5,3 Z M10,3 L11,3 C11.5522847,3 12,3.44771525 12,4 L12,20 C12,20.5522847 11.5522847,21 11,21 L10,21 C9.44771525,21 9,20.5522847 9,20 L9,4 C9,3.44771525 9.44771525,3 10,3 Z" fill="#000000"></path>
+                                                <rect fill="#000000" opacity="0.3" transform="translate(17.825568, 11.945519) rotate(-19.000000) translate(-17.825568, -11.945519) " x="16.3255682" y="2.94551858" width="3" height="18" rx="1"></rect>
+                                            </g>
+                                        </svg>
+                                    </span>
+                                    <div class="kt-widget-buttons__subtitle desc">
+                                        Liquidaci&oacute;n de compras
+                                    </div>
+                                    <div class="kt-widget-buttons__desc">
+                                        <span class="number counter" data-value="@Model.SettlementsCount"> @Model.SettlementsCount</span> Emitidas
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+
+                        <div class="kt-widget-buttons__items">
+
+                            <div class="kt-widget-buttons__item" style="background: #c9d5de; ">
+
+                                <a href="@Url.Action("Index", "NotaDebito")">
+                                    <span class="kt-widget-buttons__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon kt-svg-icon--primary">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <polygon points="0 0 24 0 24 24 0 24"></polygon>
+                                                <path d="M12.9336061,16.072447 L19.36,10.9564761 L19.5181585,10.8312381 C20.1676248,10.3169571 20.2772143,9.3735535 19.7629333,8.72408713 C19.6917232,8.63415859 19.6104327,8.55269514 19.5206557,8.48129411 L12.9336854,3.24257445 C12.3871201,2.80788259 11.6128799,2.80788259 11.0663146,3.24257445 L4.47482784,8.48488609 C3.82645598,9.00054628 3.71887192,9.94418071 4.23453211,10.5925526 C4.30500305,10.6811601 4.38527899,10.7615046 4.47382636,10.8320511 L4.63,10.9564761 L11.0659024,16.0730648 C11.6126744,16.5077525 12.3871218,16.5074963 12.9336061,16.072447 Z" fill="#000000" fill-rule="nonzero"></path>
+                                                <path d="M11.0563554,18.6706981 L5.33593024,14.122919 C4.94553994,13.8125559 4.37746707,13.8774308 4.06710397,14.2678211 C4.06471678,14.2708238 4.06234874,14.2738418 4.06,14.2768747 L4.06,14.2768747 C3.75257288,14.6738539 3.82516916,15.244888 4.22214834,15.5523151 C4.22358765,15.5534297 4.2250303,15.55454 4.22647627,15.555646 L11.0872776,20.8031356 C11.6250734,21.2144692 12.371757,21.2145375 12.909628,20.8033023 L19.7677785,15.559828 C20.1693192,15.2528257 20.2459576,14.6784381 19.9389553,14.2768974 C19.9376429,14.2751809 19.9363245,14.2734691 19.935,14.2717619 L19.935,14.2717619 C19.6266937,13.8743807 19.0546209,13.8021712 18.6572397,14.1104775 C18.654352,14.112718 18.6514778,14.1149757 18.6486172,14.1172508 L12.9235044,18.6705218 C12.377022,19.1051477 11.6029199,19.1052208 11.0563554,18.6706981 Z" fill="#000000" opacity="0.3"></path>
+                                            </g>
+                                        </svg>
+                                    </span>
+                                    <div class="kt-widget-buttons__subtitle desc">
+                                        Notas de D&eacute;bito
+                                    </div>
+                                    <div class="kt-widget-buttons__desc">
+                                        <span class="number counter" data-value="@Model.DebitsCount"> @Model.DebitsCount</span> Emitidas
+                                    </div>
+
+                                </a>
+
+                            </div>
+
+                            <div class="kt-widget-buttons__item" style="background: #82cbff;">
+
+                                <a href="@Url.Action("Index", "NotaCredito")">
+                                    <span class="kt-widget-buttons__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon kt-svg-icon--dark">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <polygon points="0 0 24 0 24 24 0 24"></polygon>
+                                                <path d="M12.9336061,16.072447 L19.36,10.9564761 L19.5181585,10.8312381 C20.1676248,10.3169571 20.2772143,9.3735535 19.7629333,8.72408713 C19.6917232,8.63415859 19.6104327,8.55269514 19.5206557,8.48129411 L12.9336854,3.24257445 C12.3871201,2.80788259 11.6128799,2.80788259 11.0663146,3.24257445 L4.47482784,8.48488609 C3.82645598,9.00054628 3.71887192,9.94418071 4.23453211,10.5925526 C4.30500305,10.6811601 4.38527899,10.7615046 4.47382636,10.8320511 L4.63,10.9564761 L11.0659024,16.0730648 C11.6126744,16.5077525 12.3871218,16.5074963 12.9336061,16.072447 Z" fill="#000000" fill-rule="nonzero"></path>
+                                                <path d="M11.0563554,18.6706981 L5.33593024,14.122919 C4.94553994,13.8125559 4.37746707,13.8774308 4.06710397,14.2678211 C4.06471678,14.2708238 4.06234874,14.2738418 4.06,14.2768747 L4.06,14.2768747 C3.75257288,14.6738539 3.82516916,15.244888 4.22214834,15.5523151 C4.22358765,15.5534297 4.2250303,15.55454 4.22647627,15.555646 L11.0872776,20.8031356 C11.6250734,21.2144692 12.371757,21.2145375 12.909628,20.8033023 L19.7677785,15.559828 C20.1693192,15.2528257 20.2459576,14.6784381 19.9389553,14.2768974 C19.9376429,14.2751809 19.9363245,14.2734691 19.935,14.2717619 L19.935,14.2717619 C19.6266937,13.8743807 19.0546209,13.8021712 18.6572397,14.1104775 C18.654352,14.112718 18.6514778,14.1149757 18.6486172,14.1172508 L12.9235044,18.6705218 C12.377022,19.1051477 11.6029199,19.1052208 11.0563554,18.6706981 Z" fill="#000000" opacity="0.3"></path>
+                                            </g>
+                                        </svg>
+                                    </span>
+                                    <div class="kt-widget-buttons__subtitle desc">
+                                        Notas de Cr&eacute;dito
+                                    </div>
+                                    <div class="kt-widget-buttons__desc">
+                                        <span class="number counter" data-value="@Model.CreditsCount"> @Model.CreditsCount</span> Emitidas
+                                    </div>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kt-widget-buttons__items">
+
+                            <div class="kt-widget-buttons__item" style="background:#eaffdb;">
+
+                                <a href="@Url.Action("Index", "Retencion")">
+
+                                    <span class="kt-widget-buttons__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <rect x="0" y="0" width="24" height="24" />
+                                                <path d="M14.8571499,13 C14.9499122,12.7223297 15,12.4263059 15,12.1190476 L15,6.88095238 C15,5.28984632 13.6568542,4 12,4 L11.7272727,4 C10.2210416,4 9,5.17258756 9,6.61904762 L10.0909091,6.61904762 C10.0909091,5.75117158 10.823534,5.04761905 11.7272727,5.04761905 L12,5.04761905 C13.0543618,5.04761905 13.9090909,5.86843034 13.9090909,6.88095238 L13.9090909,12.1190476 C13.9090909,12.4383379 13.8240964,12.7385644 13.6746497,13 L10.3253503,13 C10.1759036,12.7385644 10.0909091,12.4383379 10.0909091,12.1190476 L10.0909091,9.5 C10.0909091,9.06606198 10.4572216,8.71428571 10.9090909,8.71428571 C11.3609602,8.71428571 11.7272727,9.06606198 11.7272727,9.5 L11.7272727,11.3333333 L12.8181818,11.3333333 L12.8181818,9.5 C12.8181818,8.48747796 11.9634527,7.66666667 10.9090909,7.66666667 C9.85472911,7.66666667 9,8.48747796 9,9.5 L9,12.1190476 C9,12.4263059 9.0500878,12.7223297 9.14285008,13 L6,13 C5.44771525,13 5,12.5522847 5,12 L5,3 C5,2.44771525 5.44771525,2 6,2 L18,2 C18.5522847,2 19,2.44771525 19,3 L19,12 C19,12.5522847 18.5522847,13 18,13 L14.8571499,13 Z" fill="#000000" opacity="0.3" />
+                                                <path d="M9,10.3333333 L9,12.1190476 C9,13.7101537 10.3431458,15 12,15 C13.6568542,15 15,13.7101537 15,12.1190476 L15,10.3333333 L20.2072547,6.57253826 C20.4311176,6.4108595 20.7436609,6.46126971 20.9053396,6.68513259 C20.9668779,6.77033951 21,6.87277228 21,6.97787787 L21,17 C21,18.1045695 20.1045695,19 19,19 L5,19 C3.8954305,19 3,18.1045695 3,17 L3,6.97787787 C3,6.70173549 3.22385763,6.47787787 3.5,6.47787787 C3.60510559,6.47787787 3.70753836,6.51099993 3.79274528,6.57253826 L9,10.3333333 Z M10.0909091,11.1212121 L12,12.5 L13.9090909,11.1212121 L13.9090909,12.1190476 C13.9090909,13.1315697 13.0543618,13.952381 12,13.952381 C10.9456382,13.952381 10.0909091,13.1315697 10.0909091,12.1190476 L10.0909091,11.1212121 Z" fill="#000000" />
+                                            </g>
+                                        </svg>
+                                    </span>
+
+                                    <div class="kt-widget-buttons__subtitle desc">
+                                        Retenciones
+                                    </div>
+
+                                    <div class="kt-widget-buttons__desc">
+                                        <span class="number counter" data-value="@Model.RetentionsCount"> @Model.RetentionsCount</span> Emitidas
+                                    </div>
+
+                                </a>
+
+                            </div>
+
+                            <div class="kt-widget-buttons__item" style="background:#dbf4ff;">
+
+                                <a href="@Url.Action("Index", "GuiaRemision")">
+
+                                    <span class="kt-widget-buttons__icon">
+                                        <?xml version="1.0" encoding="iso-8859-1" ?>
+                                        <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                             viewBox="0 0 511.999 511.999" style="enable-background:new 0 0 511.999 511.999;" xml:space="preserve">
+                                        <path style="fill:#5D9CEC;" d="M414.5,192.081h-32.234l-6.531,74.996h38.762c22.979,0,33.343,11.906,44.314,24.513
+	                                                c10.399,11.947,22.185,25.488,44.486,25.488h6.854l0.61-6.8c0.754-8.779,1.238-16.171,1.238-20.697
+	                                                C512,235.819,468.262,192.081,414.5,192.081z" />
+
+
+
+
+
+
+
+                                        <path style="fill:#4A89DC;" d="M414.5,192.081h-30.003c53.762,0,97.5,43.738,97.5,97.5c0,4.526-0.484,11.918-1.238,20.697
+	                            l-0.097,1.082c6.211,3.471,13.551,5.718,22.635,5.718h6.854l0.61-6.8c0.754-8.779,1.238-16.171,1.238-20.697
+	                            C512,235.819,468.262,192.081,414.5,192.081z" />
+
+
+
+
+
+
+
+                                        <path style="fill:#ED5565;" d="M392.004,79.846c-0.001-0.101-0.01-0.2-0.016-0.301c-0.007-0.151-0.012-0.303-0.029-0.451
+	                            c-0.012-0.107-0.031-0.211-0.048-0.317c-0.022-0.141-0.04-0.281-0.069-0.419c-0.023-0.106-0.055-0.21-0.082-0.314
+	                            c-0.034-0.133-0.065-0.267-0.107-0.396c-0.035-0.11-0.079-0.216-0.119-0.324c-0.044-0.119-0.085-0.239-0.135-0.355
+	                            c-0.052-0.122-0.114-0.238-0.173-0.356c-0.047-0.097-0.091-0.196-0.143-0.29c-0.078-0.144-0.167-0.281-0.255-0.419
+	                            c-0.04-0.063-0.075-0.127-0.117-0.188c-0.114-0.169-0.239-0.331-0.367-0.49c-0.021-0.025-0.038-0.053-0.06-0.078
+	                            c-0.602-0.729-1.341-1.342-2.181-1.802c-0.011-0.006-0.02-0.013-0.03-0.019c-0.174-0.094-0.353-0.177-0.535-0.257
+	                            c-0.045-0.021-0.088-0.044-0.133-0.063c-0.148-0.062-0.302-0.113-0.455-0.166c-0.084-0.029-0.166-0.063-0.251-0.089
+	                            c-0.124-0.037-0.253-0.065-0.38-0.098c-0.117-0.029-0.234-0.063-0.355-0.086c-0.113-0.022-0.23-0.035-0.346-0.053
+	                            c-0.135-0.021-0.268-0.043-0.406-0.057c-0.02-0.002-0.038-0.006-0.058-0.008c-0.125-0.011-0.248-0.009-0.371-0.014
+	                            c-0.093-0.003-0.184-0.014-0.277-0.014h-0.102c-0.007,0-0.015,0-0.023,0H277.998H231.01h-120c-0.004,0-0.007,0-0.011,0
+	                            c-3.523,0-6.579,2.479-7.318,5.917c-0.005,0.025-0.014,0.05-0.019,0.074c-0.038,0.188-0.063,0.379-0.088,0.57
+	                            c-0.007,0.061-0.02,0.119-0.026,0.18c-0.001,0.012-0.004,0.023-0.005,0.035L81.296,308.801c-0.001,0.007-0.001,0.013-0.002,0.02
+	                            l-0.073,0.757l0.036,0.019c0.011,4.133,3.363,7.48,7.499,7.48h275.746c0.004,0,0.007,0.001,0.011,0.001
+	                            c0.251,0,0.5-0.015,0.746-0.039c0.046-0.004,0.091-0.014,0.137-0.02c0.196-0.023,0.391-0.051,0.583-0.089
+	                            c0.083-0.017,0.164-0.04,0.246-0.06c0.15-0.035,0.3-0.07,0.446-0.114c0.1-0.03,0.195-0.066,0.292-0.101
+	                            c0.126-0.044,0.252-0.087,0.374-0.137c0.104-0.043,0.206-0.091,0.308-0.139c0.111-0.051,0.222-0.102,0.329-0.158
+	                            c0.103-0.054,0.202-0.112,0.303-0.17c0.103-0.061,0.205-0.121,0.305-0.186c0.097-0.063,0.189-0.128,0.282-0.195
+	                            c0.099-0.07,0.195-0.142,0.291-0.217c0.086-0.068,0.171-0.14,0.255-0.213c0.095-0.082,0.188-0.166,0.278-0.253
+	                            c0.076-0.073,0.152-0.148,0.226-0.225c0.09-0.094,0.177-0.19,0.263-0.289c0.067-0.078,0.133-0.156,0.197-0.236
+	                            c0.083-0.105,0.162-0.213,0.24-0.322c0.059-0.081,0.116-0.163,0.172-0.247c0.073-0.113,0.143-0.229,0.21-0.347
+	                            c0.051-0.089,0.103-0.176,0.149-0.267c0.063-0.117,0.117-0.238,0.174-0.359c0.044-0.097,0.089-0.192,0.129-0.291
+	                            c0.049-0.118,0.09-0.239,0.133-0.36c0.037-0.107,0.076-0.215,0.109-0.324c0.033-0.115,0.06-0.234,0.09-0.353
+	                            c0.029-0.119,0.061-0.237,0.084-0.358c0.023-0.117,0.037-0.238,0.055-0.357c0.017-0.124,0.039-0.246,0.051-0.372
+	                            c0.002-0.018,0.006-0.035,0.007-0.053l19.99-229.521c0.002-0.02,0.003-0.039,0.005-0.059l0.007-0.076
+	                            c0.006-0.066,0.003-0.129,0.007-0.193c0.01-0.152,0.023-0.303,0.023-0.457C392.008,79.896,392.004,79.871,392.004,79.846z" />
+
+
+
+
+
+
+
+                                        <path style="fill:#DA4453;" d="M392.004,79.846c-0.001-0.101-0.01-0.2-0.016-0.301c-0.007-0.151-0.012-0.303-0.029-0.451
+	                            c-0.012-0.107-0.031-0.211-0.048-0.317c-0.022-0.141-0.04-0.281-0.069-0.419c-0.023-0.106-0.055-0.21-0.082-0.314
+	                            c-0.034-0.133-0.065-0.267-0.107-0.396c-0.035-0.11-0.079-0.216-0.119-0.324c-0.044-0.119-0.085-0.239-0.135-0.355
+	                            c-0.052-0.122-0.114-0.238-0.173-0.356c-0.047-0.097-0.091-0.196-0.143-0.29c-0.078-0.144-0.167-0.281-0.255-0.419
+	                            c-0.04-0.063-0.075-0.127-0.117-0.188c-0.114-0.169-0.239-0.331-0.367-0.49c-0.021-0.025-0.038-0.053-0.06-0.078
+	                            c-0.602-0.729-1.341-1.342-2.181-1.802c-0.011-0.006-0.02-0.013-0.03-0.019c-0.174-0.094-0.353-0.177-0.535-0.257
+	                            c-0.045-0.021-0.088-0.044-0.133-0.063c-0.148-0.062-0.302-0.113-0.455-0.166c-0.084-0.029-0.166-0.063-0.251-0.089
+	                            c-0.124-0.037-0.253-0.065-0.38-0.098c-0.117-0.029-0.234-0.063-0.355-0.086c-0.113-0.022-0.23-0.035-0.346-0.053
+	                            c-0.135-0.021-0.268-0.043-0.406-0.057c-0.02-0.002-0.038-0.006-0.058-0.008c-0.125-0.011-0.248-0.009-0.371-0.014
+	                            c-0.093-0.003-0.184-0.014-0.277-0.014h-0.102c-0.007,0-0.015,0-0.023,0h-29.879c0.094,0,0.185,0.011,0.277,0.014
+	                            c0.123,0.005,0.246,0.003,0.371,0.014c0.02,0.002,0.038,0.006,0.058,0.008c0.138,0.014,0.271,0.036,0.406,0.057
+	                            c0.115,0.018,0.232,0.03,0.346,0.053c0.12,0.023,0.237,0.057,0.355,0.086c0.127,0.032,0.256,0.061,0.38,0.098
+	                            c0.085,0.026,0.167,0.06,0.251,0.089c0.153,0.053,0.307,0.104,0.455,0.166c0.045,0.02,0.088,0.043,0.133,0.063
+	                            c0.182,0.08,0.361,0.163,0.535,0.257c0.01,0.006,0.02,0.013,0.03,0.019c0.84,0.46,1.579,1.073,2.181,1.802
+	                            c0.022,0.025,0.039,0.053,0.06,0.078c0.128,0.159,0.253,0.321,0.367,0.49c0.042,0.062,0.077,0.126,0.117,0.188
+	                            c0.088,0.138,0.177,0.275,0.255,0.419c0.052,0.094,0.096,0.193,0.143,0.29c0.059,0.118,0.121,0.234,0.173,0.356
+	                            c0.05,0.116,0.091,0.236,0.135,0.355c0.04,0.108,0.084,0.214,0.119,0.324c0.041,0.13,0.072,0.264,0.106,0.396
+	                            c0.027,0.104,0.059,0.208,0.082,0.314c0.029,0.138,0.048,0.278,0.069,0.419c0.017,0.105,0.036,0.21,0.048,0.317
+	                            c0.018,0.148,0.022,0.3,0.029,0.451c0.006,0.101,0.015,0.2,0.016,0.301c0,0.025,0.004,0.051,0.004,0.076
+	                            c0,0.154-0.014,0.305-0.023,0.457c-0.004,0.064-0.001,0.128-0.007,0.193l-0.007,0.076c-0.002,0.02-0.003,0.039-0.005,0.059
+	                            l-19.99,229.521c-0.001,0.018-0.005,0.035-0.007,0.053c-0.012,0.126-0.033,0.248-0.051,0.372c-0.018,0.119-0.031,0.24-0.055,0.357
+	                            c-0.023,0.121-0.055,0.239-0.084,0.358c-0.029,0.118-0.057,0.237-0.09,0.353c-0.033,0.109-0.072,0.217-0.109,0.324
+	                            c-0.043,0.121-0.084,0.242-0.133,0.36c-0.04,0.099-0.085,0.194-0.129,0.291c-0.057,0.121-0.111,0.242-0.174,0.359
+	                            c-0.047,0.091-0.099,0.178-0.149,0.267c-0.067,0.117-0.137,0.233-0.21,0.347c-0.056,0.084-0.113,0.166-0.172,0.247
+	                            c-0.078,0.109-0.157,0.218-0.24,0.322c-0.064,0.08-0.13,0.158-0.197,0.236c-0.086,0.099-0.173,0.195-0.263,0.289
+	                            c-0.073,0.077-0.149,0.151-0.226,0.225c-0.091,0.087-0.184,0.171-0.278,0.253c-0.084,0.073-0.169,0.145-0.255,0.213
+	                            c-0.096,0.075-0.192,0.146-0.291,0.217c-0.093,0.067-0.186,0.133-0.282,0.195c-0.1,0.064-0.202,0.125-0.305,0.186
+	                            c-0.1,0.058-0.2,0.116-0.303,0.17c-0.107,0.057-0.218,0.107-0.329,0.158c-0.102,0.048-0.203,0.096-0.308,0.139
+	                            c-0.122,0.05-0.248,0.093-0.374,0.137c-0.097,0.034-0.192,0.07-0.292,0.101c-0.146,0.044-0.296,0.079-0.446,0.114
+	                            c-0.082,0.02-0.163,0.043-0.246,0.06c-0.192,0.038-0.387,0.065-0.583,0.089c-0.046,0.006-0.091,0.016-0.137,0.02
+	                            c-0.243,0.024-0.488,0.038-0.736,0.038H364.5c0.004,0,0.007,0.001,0.011,0.001c0.251,0,0.5-0.015,0.746-0.039
+	                            c0.046-0.004,0.091-0.014,0.137-0.02c0.196-0.023,0.391-0.051,0.583-0.089c0.083-0.017,0.164-0.04,0.246-0.06
+	                            c0.15-0.035,0.3-0.07,0.446-0.114c0.1-0.03,0.195-0.066,0.292-0.101c0.126-0.044,0.252-0.087,0.374-0.137
+	                            c0.104-0.043,0.206-0.091,0.308-0.139c0.111-0.051,0.222-0.102,0.329-0.158c0.103-0.054,0.202-0.112,0.303-0.17
+	                            c0.103-0.061,0.205-0.121,0.305-0.186c0.097-0.063,0.189-0.128,0.282-0.195c0.099-0.07,0.195-0.142,0.291-0.217
+	                            c0.086-0.068,0.171-0.14,0.255-0.213c0.095-0.082,0.188-0.166,0.278-0.253c0.076-0.073,0.152-0.148,0.226-0.225
+	                            c0.09-0.094,0.177-0.19,0.263-0.289c0.067-0.078,0.133-0.156,0.197-0.236c0.083-0.105,0.162-0.213,0.24-0.322
+	                            c0.059-0.081,0.116-0.163,0.172-0.247c0.073-0.113,0.143-0.229,0.21-0.347c0.051-0.089,0.103-0.176,0.149-0.267
+	                            c0.063-0.117,0.117-0.238,0.174-0.359c0.044-0.097,0.089-0.192,0.129-0.291c0.049-0.118,0.09-0.239,0.133-0.36
+	                            c0.037-0.107,0.076-0.215,0.109-0.324c0.033-0.115,0.06-0.234,0.09-0.353c0.029-0.119,0.061-0.237,0.084-0.358
+	                            c0.023-0.117,0.037-0.238,0.055-0.357c0.017-0.124,0.039-0.246,0.051-0.372c0.002-0.018,0.006-0.035,0.007-0.053l19.99-229.521
+	                            c0.002-0.02,0.003-0.039,0.005-0.059l0.007-0.076c0.006-0.066,0.003-0.129,0.007-0.193c0.01-0.152,0.023-0.303,0.023-0.457
+	                            C392.008,79.896,392.004,79.871,392.004,79.846z" />
+
+
+
+
+
+
+
+                                        <path style="fill:#CCD1D9;" d="M414.496,267.077c2.455,0,4.759,0.144,6.942,0.402l6.485-74.47c-4.391-0.607-8.87-0.929-13.424-0.929
+	                            h-1.553l-6.531,74.996h8.081V267.077z" />
+
+
+
+
+
+
+
+<g>
+                                        <path style="fill:#E6E9ED;" d="M150.998,257.078H61.002c-4.143,0-7.5-3.357-7.5-7.5c0-4.142,3.357-7.5,7.5-7.5h89.996
+		c4.143,0,7.5,3.358,7.5,7.5C158.498,253.721,155.141,257.078,150.998,257.078z" />
+
+
+
+
+
+
+
+                                        <path style="fill:#E6E9ED;" d="M71,207.081H34.334c-4.143,0-7.5-3.357-7.5-7.5c0-4.142,3.357-7.5,7.5-7.5H71
+		c4.143,0,7.5,3.358,7.5,7.5C78.5,203.724,75.143,207.081,71,207.081z" />
+
+
+
+
+
+
+
+                                        <path style="fill:#E6E9ED;" d="M191.01,147.083H7.5c-4.143,0-7.5-3.357-7.5-7.5c0-4.142,3.357-7.5,7.5-7.5h183.51
+		c4.143,0,7.5,3.358,7.5,7.5C198.51,143.726,195.152,147.083,191.01,147.083z" />
+
+
+
+
+
+
+
+</g>
+<g>
+                                        <path style="fill:#CCD1D9;" d="M510.754,310.367l-0.588,6.542c0.21-2.243,0.406-4.429,0.588-6.533c0,0.002-0.001,0.003-0.001,0.005
+		C510.754,310.376,510.754,310.371,510.754,310.367z" />
+
+
+
+
+
+
+
+                                        <path style="fill:#CCD1D9;" d="M503.297,317.078c-22.302,0-34.088-13.541-44.486-25.488
+		c-10.972-12.606-21.335-24.513-44.314-24.513h-38.762l-3.759,43.15c-0.001,0.018-0.005,0.035-0.007,0.053
+		c-0.012,0.126-0.033,0.248-0.051,0.372c-0.018,0.119-0.031,0.24-0.055,0.357c-0.023,0.121-0.055,0.239-0.084,0.358
+		c-0.029,0.118-0.057,0.237-0.09,0.353c-0.033,0.109-0.072,0.217-0.109,0.324c-0.043,0.121-0.084,0.242-0.133,0.36
+		c-0.04,0.099-0.085,0.194-0.129,0.291c-0.057,0.121-0.111,0.242-0.174,0.359c-0.047,0.091-0.099,0.178-0.149,0.267
+		c-0.067,0.117-0.137,0.233-0.21,0.347c-0.056,0.084-0.113,0.166-0.172,0.247c-0.078,0.109-0.157,0.218-0.24,0.322
+		c-0.064,0.08-0.13,0.158-0.197,0.236c-0.086,0.099-0.173,0.195-0.263,0.289c-0.073,0.077-0.149,0.151-0.226,0.225
+		c-0.091,0.087-0.184,0.171-0.278,0.253c-0.084,0.073-0.169,0.145-0.255,0.213c-0.096,0.075-0.192,0.146-0.291,0.217
+		c-0.093,0.067-0.186,0.133-0.282,0.195c-0.1,0.064-0.202,0.125-0.305,0.186c-0.101,0.058-0.2,0.116-0.303,0.17
+		c-0.107,0.057-0.218,0.107-0.329,0.158c-0.102,0.048-0.203,0.096-0.308,0.139c-0.122,0.05-0.248,0.093-0.374,0.137
+		c-0.097,0.034-0.192,0.07-0.292,0.101c-0.146,0.044-0.296,0.079-0.446,0.114c-0.082,0.02-0.163,0.043-0.246,0.06
+		c-0.192,0.038-0.387,0.065-0.583,0.089c-0.046,0.006-0.091,0.016-0.137,0.02c-0.246,0.024-0.495,0.039-0.746,0.039
+		c-0.004,0-0.007-0.001-0.011-0.001H88.756c-4.136,0-7.488-3.348-7.499-7.48l-0.036-0.019l-7.676,79.224
+		c-0.001,0.009-0.002,0.018-0.003,0.027l-0.003,0.028c-0.01,0.104-0.009,0.207-0.015,0.311c-0.007,0.138-0.021,0.273-0.021,0.413
+		c0,0.007,0.001,0.013,0.001,0.018c0,0.193,0.014,0.383,0.028,0.573c0.006,0.06,0.004,0.123,0.011,0.183
+		c0.02,0.195,0.053,0.385,0.088,0.575c0.01,0.056,0.015,0.112,0.026,0.168c0.029,0.144,0.07,0.283,0.108,0.424
+		c0.026,0.099,0.047,0.2,0.077,0.297c0.009,0.027,0.021,0.054,0.029,0.081c0.363,1.115,0.979,2.117,1.783,2.936
+		c0.015,0.015,0.027,0.031,0.042,0.046c0.08,0.08,0.167,0.151,0.251,0.229c0.517,0.474,1.101,0.876,1.74,1.19
+		c0.133,0.066,0.264,0.135,0.4,0.193c0.041,0.018,0.085,0.029,0.127,0.046c0.188,0.075,0.377,0.147,0.572,0.208
+		c0.018,0.005,0.035,0.008,0.053,0.014c0.222,0.066,0.446,0.125,0.675,0.171c0.03,0.006,0.061,0.008,0.09,0.014
+		c0.218,0.041,0.437,0.075,0.66,0.098c0.005,0.001,0.009,0.001,0.014,0.002c0.246,0.024,0.49,0.036,0.732,0.036
+		c0.003,0,0.007-0.001,0.011-0.001h28.727H121.4h333.096h11.834h28.16c0.005,0,0.011,0.001,0.016,0.001
+		c0.25,0,0.496-0.015,0.74-0.039c0.044-0.004,0.086-0.013,0.13-0.018c0.195-0.023,0.389-0.051,0.579-0.089
+		c0.082-0.017,0.161-0.038,0.242-0.057c0.148-0.034,0.295-0.069,0.44-0.113c0.098-0.028,0.193-0.063,0.289-0.096
+		c0.123-0.042,0.246-0.086,0.367-0.135c0.104-0.041,0.203-0.086,0.304-0.132c0.11-0.051,0.22-0.102,0.327-0.158
+		c0.102-0.051,0.2-0.105,0.298-0.162c0.103-0.059,0.205-0.121,0.306-0.186c0.094-0.061,0.188-0.121,0.278-0.186
+		c0.102-0.07,0.199-0.146,0.298-0.222c0.082-0.065,0.165-0.129,0.245-0.197c0.103-0.087,0.2-0.179,0.298-0.271
+		c0.068-0.064,0.139-0.129,0.205-0.197c0.105-0.105,0.203-0.218,0.302-0.331c0.053-0.061,0.108-0.12,0.159-0.183
+		c0.109-0.133,0.21-0.272,0.309-0.414c0.034-0.049,0.072-0.095,0.105-0.145c0.122-0.182,0.237-0.371,0.343-0.564
+		c0.008-0.012,0.016-0.023,0.022-0.036c0.113-0.208,0.217-0.421,0.309-0.642c0.026-0.063,0.046-0.127,0.071-0.19
+		c0.061-0.155,0.121-0.31,0.172-0.471c0.033-0.104,0.057-0.21,0.086-0.315c0.033-0.125,0.068-0.249,0.096-0.377
+		c0.025-0.113,0.041-0.228,0.061-0.344c0.017-0.102,0.039-0.2,0.052-0.303c0.296-2.367,5.388-43.216,8.21-73.433L503.297,317.078
+		L503.297,317.078z" />
+
+
+
+
+
+
+
+</g>
+<g>
+                                        <path style="fill:#AAB2BC;" d="M503.297,317.078c-9.061,0-16.385-2.234-22.586-5.689c-2.822,30.216-8.478,76.755-8.773,79.122
+		c-0.013,0.103-0.035,0.201-0.052,0.303c-0.02,0.115-0.035,0.23-0.061,0.344c-0.027,0.128-0.063,0.252-0.096,0.377
+		c-0.029,0.105-0.053,0.212-0.086,0.315c-0.051,0.161-0.111,0.315-0.172,0.471c-0.025,0.063-0.045,0.128-0.071,0.19
+		c-0.093,0.221-0.196,0.434-0.31,0.642c-0.006,0.013-0.014,0.024-0.021,0.036c-0.105,0.193-0.221,0.383-0.343,0.564
+		c-0.033,0.05-0.071,0.096-0.105,0.145c-0.1,0.142-0.2,0.281-0.31,0.414c-0.051,0.063-0.106,0.122-0.159,0.183
+		c-0.099,0.113-0.197,0.226-0.302,0.331c-0.066,0.068-0.137,0.133-0.205,0.197c-0.098,0.092-0.195,0.184-0.298,0.271
+		c-0.08,0.068-0.163,0.132-0.245,0.197c-0.099,0.076-0.196,0.151-0.298,0.222c-0.091,0.064-0.185,0.125-0.278,0.186
+		c-0.101,0.064-0.202,0.127-0.306,0.186c-0.098,0.057-0.196,0.111-0.298,0.162c-0.108,0.057-0.217,0.107-0.327,0.158
+		c-0.101,0.046-0.2,0.091-0.304,0.132c-0.121,0.049-0.244,0.093-0.367,0.135c-0.096,0.033-0.191,0.067-0.289,0.096
+		c-0.145,0.044-0.292,0.079-0.439,0.113c-0.081,0.019-0.16,0.04-0.242,0.057c-0.19,0.038-0.384,0.066-0.579,0.089
+		c-0.044,0.005-0.086,0.014-0.13,0.018c-0.238,0.023-0.477,0.037-0.722,0.038h1.809h28.16c0.005,0,0.011,0.001,0.016,0.001
+		c0.25,0,0.496-0.015,0.74-0.039c0.044-0.004,0.086-0.013,0.13-0.018c0.195-0.023,0.389-0.051,0.579-0.089
+		c0.082-0.017,0.161-0.038,0.242-0.057c0.148-0.034,0.295-0.069,0.44-0.113c0.098-0.028,0.193-0.063,0.289-0.096
+		c0.123-0.042,0.246-0.086,0.367-0.135c0.104-0.041,0.203-0.086,0.304-0.132c0.11-0.051,0.22-0.102,0.327-0.158
+		c0.102-0.051,0.2-0.105,0.298-0.162c0.103-0.059,0.205-0.121,0.306-0.186c0.094-0.061,0.188-0.121,0.278-0.186
+		c0.102-0.07,0.199-0.146,0.298-0.222c0.082-0.065,0.165-0.129,0.245-0.197c0.103-0.087,0.2-0.179,0.298-0.271
+		c0.068-0.064,0.139-0.129,0.205-0.197c0.105-0.105,0.203-0.218,0.302-0.331c0.053-0.061,0.108-0.12,0.159-0.183
+		c0.109-0.133,0.21-0.272,0.309-0.414c0.034-0.049,0.072-0.095,0.105-0.145c0.122-0.182,0.237-0.371,0.343-0.564
+		c0.008-0.012,0.016-0.023,0.022-0.036c0.113-0.208,0.217-0.421,0.309-0.642c0.026-0.063,0.046-0.127,0.071-0.19
+		c0.061-0.155,0.121-0.31,0.172-0.471c0.033-0.104,0.057-0.21,0.086-0.315c0.033-0.125,0.068-0.249,0.096-0.377
+		c0.025-0.113,0.041-0.228,0.061-0.344c0.017-0.102,0.039-0.2,0.052-0.303c0.296-2.367,5.388-43.216,8.21-73.433H503.297z" />
+
+
+
+
+
+
+
+                                        <path style="fill:#AAB2BC;" d="M480.711,311.389L480.711,311.389L480.711,311.389z" />
+
+
+
+
+
+
+
+</g>
+<path style="fill:#656D78;" d="M171.007,439.578c-27.57,0-49.999-22.43-49.999-50c0-27.569,22.429-50,49.999-50
+	c27.571,0,50.001,22.431,50.001,50C221.008,417.148,198.578,439.578,171.007,439.578z" />
+
+
+
+
+
+
+
+<path style="fill:#CCD1D9;" d="M171.007,409.578c-11.028,0-20-8.972-20-20s8.972-20,20-20s20,8.972,20,20
+	C191.007,400.605,182.035,409.578,171.007,409.578z" />
+
+
+
+
+
+
+
+<path style="fill:#656D78;" d="M404.498,439.578c-27.57,0-49.999-22.43-49.999-50c0-27.569,22.429-50,49.999-50
+	c27.571,0,50.001,22.431,50.001,50C454.499,417.148,432.069,439.578,404.498,439.578z" />
+
+
+
+
+
+
+
+<path style="fill:#CCD1D9;" d="M404.498,409.578c-11.028,0-20-8.972-20-20s8.972-20,20-20s20,8.972,20,20
+	C424.498,400.605,415.526,409.578,404.498,409.578z" />
+
+
+
+
+
+
+
+<g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>
+</svg>
+
+                                    </span>
+
+                                    <span class="kt-widget-buttons__subtitle desc">
+                                        Guias de Remisi&oacute;n
+                                    </span>
+
+                                    <span class="kt-widget-buttons__desc">
+                                        <span class="number counter" data-value="@Model.ReferralsCount"> @Model.ReferralsCount</span> Emitidas
+                                    </span>
+
+                                </a>
+
+                            </div>
+
+
+
+
+
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!--end:: Widgets/Activity-->
+
+    </div>
+
+
+    <div class="col-lg-4 col-xl-4 order-lg-1 order-xl-1">
+
+        <!--begin::Portlet-->
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <span class="kt-portlet__head-icon kt-hidden">
+                        <i class="la la-gear"></i>
+                    </span>
+                    <h3 class="kt-portlet__head-title">
+                        <span class="caption-subject bold uppercase font-dark">PRESUPUESTO </span>
+                        <span class="caption-helper">@DateTime.Now.ToString("MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("es-ES")).ToUpper()</span>
+                    </h3>
+                </div>
+            </div>
+            <div class="kt-portlet__body">
+                <div class="budget-details scroller" data-always-visible="1" data-rail-visible="1" data-rail-color="red" data-handle-color="green">
+
+                    @{ Html.RenderPartial("_DetalleDeducibles", new DeductiblesReportResponse
+                        {
+                            deductibles = new List<DeductibleSum>()
+                        });
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        <!--end::Portlet-->
+
+    </div>
+
+
+
+</div>
+<!-- END DASHBOARD STATS -->
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+
+        $(".budget-details").load("@Html.Raw(Url.Action("GetBudgetDetailsAsync", "Presupuesto", new { year = DateTime.Now.Year, month = DateTime.Now.Month }))");
+
+    });
+</script>

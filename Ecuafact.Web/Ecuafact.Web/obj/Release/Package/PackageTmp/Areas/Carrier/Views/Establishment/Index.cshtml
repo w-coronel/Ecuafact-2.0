@@ -1,0 +1,121 @@
+﻿
+@model IEnumerable<Ecuafact.Web.Domain.Entities.Establishments>
+@using Ecuafact.Web.Domain.Entities;
+@using System.Globalization;
+@using Ecuafact.Web.MiddleCore.ApplicationServices;
+
+@{
+    ViewBag.Title = "Establecimientos";
+
+  
+
+    this.PageOptions(model =>
+    {
+        model.DataTables = true;
+        model.Select2 = true;
+    });
+}
+
+
+<div class="kt-portlet">
+
+    <div class="kt-portlet__head">
+
+        <div class="kt-portlet__head-toolbar">
+            <button type="button" id="btnNuevo" class="btn btn-pill btn-outline-info btn-light">
+                <i class='fa fa-gift'></i> Establecimiento <i class='fa fa-plus'></i>
+            </button>
+        </div>       
+    </div>
+
+    <div class="kt-portlet__body">
+
+        <table class="table table-striped table-bordered table-hover responsive dt-responsive table-checkable order-column" id="listaProductos" name="listaEstablecimientos" style="width:100%!important">
+            <thead>
+                <tr>
+                    <th><i class="fa fa-bars"></i></th>
+                    <th class="text-center">Código Establecimiento</th>
+                    <th class="text-center">Nombre Comercial Establecimiento</th>
+                    <th class="text-center">Dirección Comercial Establecimiento</th>    
+                    <th class="text-center" width="100px">Cantidad P.Emision</th>
+                    <th class="text-center" width="40px">P.Emision</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class=" text-success">
+                            <label class="hidden" style="display:none; visibility:hidden">@(Convert.ToInt32(item.Id))</label>
+                            <i class="fa fa-gift text-warning"></i>                           
+                        </td>
+                        <td class="text-center"><a onclick="editarEstablecimiento(@item.Id)" href="javascript:;" title="Editar Registro">@(item.Code)</a></td>                       
+                        <td>@item.Name</td>
+                        <td>@item.Address</td>
+                        <td class="text-center">@item.IssuePoint.Count</td>  
+                        <td class="text-center">
+                            <a  href="@Url.Action("", "IssuePoint", new {establishmentId =item.Id})" data-toggle="tooltip" data-theme="dark" title="Ver puntos de emisión del establecimiento: @item.Code" class="tabledit-delete-button btn btn-sm btn-pill btn-info" style="float: none;">
+                                <span class="fas fa-sitemap"></span>
+                            </a>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+
+
+<div id="myModal" class="modal fade" aria-hidden="true">
+    <div class="col-xs-12" style="text-align:center;"><img src="~/Images/ripple_white.gif" /></div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+        var selectedId = 0;
+
+        function editarEstablecimiento (id){
+            showLoader();
+
+            $.get("@Url.Action("EditarEstablecimiento", "Establishment")", { id: id }, function (data) {
+                $("#myModal").html(data);
+                hideLoader();
+
+                $("#myModal").fadeIn();
+                $("#myModal").modal("show");
+            });
+        }
+
+
+        $("#myModal").on('hide.bs.modal', function () {
+            location.reload();
+        });     
+
+
+        $("#btnNuevo").on("click", function () {
+            crearEstablecimiento();
+        });
+
+        $('#listaEstablecimientos').DataTable({
+            "language": {
+                "url": "@Url.Content("~/scripts/dt_spanish.json")"
+            },
+            dom: 'BRfrtip',
+            buttons: {
+                buttons: [
+                    { extend: 'excel', className: 'btn btn-success btn-elevate btn-pill', text:' <i class="la la-file-excel-o "></i> ' },
+                    { extend: 'pdf', className: 'btn btn-danger btn-elevate btn-pill', text:'  <i class="la la-file-pdf-o "></i> ' },
+                    { extend: 'print', className: 'btn btn-brand btn-elevate btn-pill', text:' <i class="flaticon2-printer"></i> ' }
+                ]
+            }
+        } );
+
+    </script>
+}

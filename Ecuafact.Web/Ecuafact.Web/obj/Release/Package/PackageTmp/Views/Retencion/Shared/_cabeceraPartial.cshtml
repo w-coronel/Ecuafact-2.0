@@ -1,0 +1,196 @@
+@using Ecuafact.Web.MiddleCore.ApplicationServices
+@using Ecuafact.Web.Domain.Entities
+@model RetentionRequestModel
+
+@{
+    var token = SessionInfo.ApplicationToken;
+
+    var tiposDocumento = ServicioCatalogos.ObtenerTiposDocumento(token);
+}
+
+<div class="col-12">
+    <div class="panel panel-info">
+
+        <div class="panel-heading panel-color">
+            <h4>Datos de la Retenci&oacute;n</h4>
+        </div>
+
+        <div class="panel-body">
+
+            <!--
+            <div class="row">
+                 
+                <div class="col-md-8">
+                    <label>Escriba el nombre del Contribuyente o su identificacion (RUC, Cedula, Pasaporte): </label>
+                </div>
+                <div class="col-md-4">
+                    <button id="actualizarClienteButton" data-toggle="modal" data-target="#modal-cliente" hidden type='button' onclick='editarComprador();' class='btn btn-outline blue'> Actualizar información <i class='fa fa-pencil'></i></button>
+                </div>
+            </div>
+
+            <div class="row normalform" id="bodyContrib" name="bodyContrib">
+                <div class="col-md-12">
+                    <select style="width:100%;" class="js-supplierSelector" id="inputClienteId"></select>
+                    <input type="hidden" id="proveedor_nombre" value="NO DISPONIBLE" />
+                </div>
+            </div>
+-->
+
+            <div class="row normalform" id="headDocument" name="headDocument">
+
+                <div class="col-12 text-body">
+
+                    <div class="col-12">
+
+                        <hr />
+
+                        <h5><b>Documento Sustento </b></h5>
+
+                        <select style="width:100%;" class="js-documentSelector hidden" id="inputDocumentId">
+                            <option></option>
+                        </select>
+
+                        <hr />
+
+                    </div>
+
+                    <div class="row" style="padding-left:15px;padding-right:15px;padding-bottom:10px;">
+
+                        <div class="col-md-6">
+                            
+                            <table style="width:100%;">
+
+                                <tr>
+                                    <th style="vertical-align:middle; width:50%; text-align:justify;">Tipo de Comprobante: &nbsp;</th>
+                                    <td style="text-align:right">
+
+                                        @Html.DropDownListFor(model => model.ReferenceDocumentCode,
+                                            new SelectList(tiposDocumento, "SriCode", "Name", Model.ReferenceDocumentCode),
+                                            new {
+                                                @id = "ref_tipo_comprobante",
+                                                @class = "form-control m-b",
+                                                @style = "width:100%;",
+                                                @required = ""
+                                            })
+
+                                    </td>
+                                </tr>
+
+                                <tr>
+
+                                    <th style="vertical-align:middle; width:50%; text-align:justify;"><span style="width: 50px;">Numero de Comprobante: &nbsp;</span></th>
+                                    <td style="text-align:right">
+                                        @Html.EditorFor(model => model.ReferenceDocumentNumber,
+                                            new
+                                            {
+                                                htmlAttributes = new
+                                                {
+                                                    @id = "ref_numero_comprobante",
+                                                    @class = "form-control",
+                                                    @placeholder = "Numero de Comprobante",
+                                                    @style = "width:100%;border:none none solid none; text-align:right;",
+                                                    @required = "",
+                                                    @onchange = "docNumberChanged()"
+                                                }
+                                            })
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <th style="vertical-align:middle;  width:50%; text-align:justify;">Fecha del Documento: &nbsp;</th>
+
+                                    <td style="text-align:right">
+                                        @Html.EditorFor(model => model.ReferenceDocumentDate,
+                                                        new {
+                                                            htmlAttributes = new
+                                                            {
+                                                                @id = "ref_fecha_documento",
+                                                                @class = "form-control input-readonly",
+                                                                @placeholder = "Fecha del Documento",
+                                                                @style = "border:none none solid none;background-color:white; text-align:right;",
+                                                                @required = "",
+                                                                @readonly = ""
+                                                            }
+                                                        })
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <table style="width:100%;">
+                                <tr>
+                                    <th style="vertical-align:middle; width:50%; text-align:justify;">Numero Autorizacion: &nbsp;</th>
+                                    <td style="text-align:right">
+                                        @Html.EditorFor(model => model.ReferenceDocumentAuth,
+                                            new
+                                            {
+                                                htmlAttributes = new
+                                                {
+                                                    @id = "ref_autorizacion_comprobante",
+                                                    @class = "form-control",
+                                                    @placeholder = "Numero de Autorizacion",
+                                                    @style = "width:100%;border:none none solid none; text-align:right;",
+                                                    @required = "",
+                                                    @onchange = "refautorizacionChanged()"
+                                                }
+                                            })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="vertical-align:middle; width:50%; text-align:justify;">Total del Documento: &nbsp;</th>
+                                    <td style="text-align:right">
+                                        @Html.EditorFor(model => model.ReferenceDocumentAmount,
+                                            new
+                                            {
+                                                htmlAttributes = new
+                                                {
+                                                    @id = "ref_valor_comprobante",
+                                                    @class = "form-control",
+                                                    @placeholder = "Valor del Comprobante",
+                                                    @style = "width:100%;border:none none solid none; text-align:right;",
+                                                    @required = "",
+                                                    @onchange = "actualizarTotales()"
+                                                }
+                                            })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="vertical-align:middle; width:50%; text-align:justify;">IVA del Documento: &nbsp;</th>
+                                    <td style="text-align:right">
+                                        @Html.EditorFor(model => model.ReferenceDocumentVat,
+                                            new
+                                            {
+                                                htmlAttributes = new
+                                                {
+                                                    @id = "ref_iva_comprobante",
+                                                    @class = "form-control",
+                                                    @placeholder = "Valor del Comprobante",
+                                                    @style = "width:100%;border:none none solid none; text-align:right;",
+                                                    @required = "",
+                                                    @onchange = "actualizarTotales()"
+                                                }
+                                            })
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+             
+
+        </div>
+    </div>
+</div>
+
+

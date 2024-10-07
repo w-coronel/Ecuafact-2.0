@@ -1,0 +1,136 @@
+﻿@using System.Web.Mvc.Html
+@using Ecuafact.Web.Domain.Entities;
+
+@model ObjectQueryModel
+
+@{
+    ViewBag.Title = "Reportes";
+    ViewBag.ParentTitle = "Informes";
+    var columns = new PurchaseReportModel();
+
+    var listaReportes = new SelectList(new List<SelectListItem>{
+        new SelectListItem{ Text = "Reporte de Ventas", Value=Url.Action("Ventas")  },
+        new SelectListItem{ Text = "Reporte de Compras", Value=Url.Action("Compras")  }
+    }, "Value", "Text");
+
+    var listaFormatos = new SelectList(new List<SelectListItem>{
+            new SelectListItem{ Text = "Excel", Value="Excel"  },
+            new SelectListItem{ Text = "PDF", Value="PDF"  },
+            new SelectListItem{ Text = "Word", Value="Word"  }
+    }, "Value", "Text");
+
+    var itemYear = new List<SelectListItem>();
+    var itemMonths = new List<SelectListItem>();
+    string[] months = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
+    Model.Month = DateTime.Now.Month.ToString();
+    Model.Year = DateTime.Now.Year.ToString();
+
+    for (int i = 2017; i < DateTime.Now.Year + 1; i++)
+    {
+        itemYear.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+    }
+    for (int i = 0; i < DateTime.Now.Month; i++)
+    {
+        itemMonths.Add(new SelectListItem { Text = months[i], Value = $"{(i + 1)}"});
+    }
+
+    var listaAnos = new SelectList(itemYear, "Value", "Text");
+    var listaMes = new SelectList(itemMonths, "Value", "Text");
+
+    this.PageOptions(model =>
+    {
+        model.DataTables = true;
+        model.DatePicker = true;
+    });
+
+
+}
+
+<div class="col-md-12">
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                    Reportes
+                </h3>
+            </div>
+        </div>
+
+         
+        <form id="formConsultas" class="kt-form" role="form">
+             
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <div class="kt-portlet__body align-items-center">
+                <div class="col-lg-8 ">
+                    <div class="row">
+                        <div class="form-group col-md-6 col-sm-10">
+                            @Html.Label("Reporte", new { @class = "col-form-label col-12" })
+                            <div class="col-12">
+                                @Html.DropDownListFor(model => model.DocumentType, listaReportes, new { @class = "form-control ", maxlength = 100 })
+                                @Html.ValidationMessageFor(model => model.SearchTerm)
+                            </div>
+                        </div>                    
+                         <div class="form-group col-md-3 col-sm-6">
+                            @Html.Label("Año", new { @class = "col-form-label col-12" })
+                            <div class="col-12">
+                                @Html.DropDownListFor(model => model.Year, listaAnos, new { @class = "form-control select-year", maxlength = 100 })
+                                @Html.ValidationMessageFor(model => model.Year)
+                            </div>
+                        </div>
+                         <div class="form-group col-md-3 col-sm-6">
+                            @Html.Label("Mes", new { @class = "col-form-label col-12" })
+                            <div class="col-12">
+                                @Html.DropDownListFor(model => model.Month, listaMes, new { @class = "form-control select-month", maxlength = 100 })
+                                @Html.ValidationMessageFor(model => model.Month)
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="form-group  col-md-6">
+                            @Html.LabelFor(model => model.SearchTerm, new { @class = "col-form-label col-12" })
+                            <div class="col-12">
+                                @Html.TextBoxFor(model => model.SearchTerm, new { @class = "form-control ", maxlength = 100 })
+                                @Html.ValidationMessageFor(model => model.SearchTerm)
+                            </div>
+                        </div>
+                     
+                        <div class="form-group  col-md-6">
+                            <div style="padding: 36px 12px 5px 12px ; " class="form-group ">
+                                <button type="submit" class="btn btn-dark btn-pill btn-elevate search-button ">&nbsp;&nbsp;&nbsp;<i class="fas fa-search"></i>   Buscar&nbsp;&nbsp;&nbsp;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </form>
+         
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="kt-portlet"> 
+        <div class="kt-portlet__body">
+            <div class="row">
+                 <div id="resultDiv" class="col-12">
+
+                 </div>
+            </div> 
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/reports.js"></script>
+    <script>
+        Reports.months =@Html.Raw(Json.Encode(months));
+        Reports.year = "@Model.Year";
+        Reports.month = "@Model.Month";
+        Reports.Init();
+    </script>
+
+}

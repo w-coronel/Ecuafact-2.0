@@ -1,0 +1,114 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Reporting\\Ecuafact.Web.Reporting.csproj": {}
+  },
+  "projects": {
+    "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Domain\\Ecuafact.Web.Domain.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Domain\\Ecuafact.Web.Domain.csproj",
+        "projectName": "Ecuafact.Web.Domain",
+        "projectPath": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Domain\\Ecuafact.Web.Domain.csproj",
+        "frameworks": {
+          "net46": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net46": {}
+      }
+    },
+    "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.MiddleCore\\Ecuafact.Web.MiddleCore.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.MiddleCore\\Ecuafact.Web.MiddleCore.csproj",
+        "projectName": "Ecuafact.Web.MiddleCore",
+        "projectPath": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.MiddleCore\\Ecuafact.Web.MiddleCore.csproj",
+        "frameworks": {
+          "net48": {
+            "projectReferences": {
+              "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Domain\\Ecuafact.Web.Domain.csproj": {
+                "projectPath": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Domain\\Ecuafact.Web.Domain.csproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
+    "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Reporting\\Ecuafact.Web.Reporting.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Reporting\\Ecuafact.Web.Reporting.csproj",
+        "projectName": "Ecuafact.Web.Reporting",
+        "projectPath": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Reporting\\Ecuafact.Web.Reporting.csproj",
+        "packagesPath": "C:\\Users\\wcoro\\.nuget\\packages\\",
+        "outputPath": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Reporting\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\wcoro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.devexpress.com/9RNi2cVCcmwk32vrBmO6jIQNzMbe7PjdNcnK3Q3AeGkZJJPKMS/api": {},
+          "https://nuget.telerik.com/nuget/": {}
+        },
+        "frameworks": {
+          "net48": {
+            "projectReferences": {
+              "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Domain\\Ecuafact.Web.Domain.csproj": {
+                "projectPath": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Domain\\Ecuafact.Web.Domain.csproj"
+              },
+              "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.MiddleCore\\Ecuafact.Web.MiddleCore.csproj": {
+                "projectPath": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.MiddleCore\\Ecuafact.Web.MiddleCore.csproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "dependencies": {
+            "EPPlus": {
+              "target": "Package",
+              "version": "[5.7.4, )"
+            },
+            "Microsoft.ReportingServices.ReportViewerControl.WebForms": {
+              "target": "Package",
+              "version": "[150.1404.0, )"
+            },
+            "Microsoft.SqlServer.Types": {
+              "target": "Package",
+              "version": "[14.0.1016.290, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

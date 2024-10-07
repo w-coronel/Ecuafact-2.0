@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "z74swgwjP2eou3hsI8wiaQFnINQIbTzytKIlevT+VUnhjx0cR5wpIcC25Z4zhRpQbCyn3gIGFyTbSVasfI6Sfg==",
+  "success": true,
+  "projectFilePath": "C:\\Fuentes\\Ecuafact 2.0\\Ecuafact.Web\\Ecuafact.Web.Reporting\\Ecuafact.Web.Reporting.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\wcoro\\.nuget\\packages\\epplus\\5.7.4\\epplus.5.7.4.nupkg.sha512",
+    "C:\\Users\\wcoro\\.nuget\\packages\\microsoft.io.recyclablememorystream\\1.4.1\\microsoft.io.recyclablememorystream.1.4.1.nupkg.sha512",
+    "C:\\Users\\wcoro\\.nuget\\packages\\microsoft.reportingservices.reportviewercontrol.webforms\\150.1404.0\\microsoft.reportingservices.reportviewercontrol.webforms.150.1404.0.nupkg.sha512",
+    "C:\\Users\\wcoro\\.nuget\\packages\\microsoft.sqlserver.types\\14.0.1016.290\\microsoft.sqlserver.types.14.0.1016.290.nupkg.sha512",
+    "C:\\Users\\wcoro\\.nuget\\packages\\system.componentmodel.annotations\\4.7.0\\system.componentmodel.annotations.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}

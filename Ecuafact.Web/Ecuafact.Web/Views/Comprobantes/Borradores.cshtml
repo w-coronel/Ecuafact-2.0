@@ -1,0 +1,76 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@model DocumentosQueryModel
+
+@{
+    ViewBag.Title = "Borradores";
+    ViewBag.Description = "Documentos no emitidos pendientes";
+
+    this.PageOptions(model =>
+    {
+        model.DataTables = true;
+        model.DateRangePicker = true;
+        model.DatePicker = true;
+        model.Select2 = true;
+        model.SidebarSearch = true;
+        model.DateRangeTool = true;
+    });
+
+    var tiposDocumento = new List<SelectListItem>{
+        new SelectListItem { Value="0", Text="TODOS" },
+        new SelectListItem{ Value="01", Text="FACTURA" },
+        new SelectListItem{ Value="04", Text="NOTA DE CRÉDITO" },
+        new SelectListItem{ Value="05", Text="NOTA DE DÉBITO" },
+        new SelectListItem{ Value="07", Text="COMPROBANTE DE RETENCIÓN" },
+        new SelectListItem{ Value="06", Text="GUÍA DE REMISIÓN" },
+        new SelectListItem{ Value="03", Text="LIQUIDACIÓN DE COMPRA" }
+    };
+}
+
+@using (Html.BeginForm("Borradores", "Comprobantes", FormMethod.Post, new { id = "formConsultas", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.From, new { @id = "dateFrom" })
+    @Html.HiddenFor(model => model.To, new { @id = "dateTo" })
+    @Html.HiddenFor(model => model.SearchTerm, new { @id = "searchTerm" })
+
+
+
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+
+            <div class="kt-portlet__head-label">
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-layers"></i>&nbsp;&nbsp;Tipo: </span></div>
+
+                    @Html.DropDownListFor(model => model.DocumentType, tiposDocumento, new { @class = "bs-dropdown circle-right input-sm input-inline   filter-control " })
+                </div>
+            </div>
+
+            <div class="kt-portlet__head-toolbar">
+
+                <a class="btn btn-success btn-elevate btn-pill pull-right" href="@Url.Action("Borradores", new { id = "descargar" })">&nbsp;<i class="fa fa-file-excel "></i>  Descargar</a>
+
+            </div>
+        </div>
+
+        <div class="kt-portlet__body" id="divConsultas">
+            @{ Html.RenderPartial("Shared/_BorradoresPartial", Model); }
+        </div>
+    </div>
+
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/js/documents")
+
+    <script type="text/javascript">
+        var url = "@Url.Action("GetBorradores", "Comprobantes")";
+        var table = "_borradores";
+        var loginUrl = "@Url.Action("Index", "Auth")";
+        //var executeOnInit = @((Session[SessionInfo.BORRADORES_SESSION] == null) ? "true" : "false");
+
+        Comprobantes.Configure(url, table, loginUrl, false);
+    </script>
+}

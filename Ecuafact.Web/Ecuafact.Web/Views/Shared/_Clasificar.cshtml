@@ -1,0 +1,39 @@
+﻿@model Ecuafact.Web.MiddleCore.NexusApiServices.Document
+ 
+<div class="modal fade show"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: block;" aria-modal="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Seleccionar Categor&iacute;a</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="text-center">
+                        <h3>@Model.name</h3>
+                        <span>@Model.typeDoc</span><br />
+                        <span>No. @Model.sequence</span><br />
+                        <span>Total: @Model.total</span><br />
+
+                    </div>
+                    <div class="kt-todo__nav">
+                        
+                        <ul class="kt-nav">
+                            @foreach (var deductible in SessionInfo.DeductibleTypes.Where(p => p.id != "-1"))
+                            {
+                                <li class="kt-nav__item">
+                                    <a href="#" class="kt-nav__link" data-action="list" data-type="inbox" onclick="Comprobantes.Clasificar('@Model.pk', '@deductible.id')">
+                                        <img class="kt-avatar--circle" src='~/Images/deducibles/@string.Format("{0}.png", deductible.id)' style="width:auto;height:18px" />
+                                        &nbsp;&nbsp;  <span class="kt-nav__link-text">@deductible.name</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </form>
+            </div> 
+        </div>
+    </div>
+</div>
+ 

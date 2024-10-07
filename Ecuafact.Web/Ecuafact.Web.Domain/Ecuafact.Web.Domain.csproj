@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{622FFA9B-6DF6-4996-97DF-B7F2AD18F78C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ecuafact.Web.Domain</RootNamespace>
+    <AssemblyName>Ecuafact.Web.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Development|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Development\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Development|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Development\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Constants.cs" />
+    <Compile Include="Entities\AdditionalFieldModel.cs" />
+    <Compile Include="Entities\ApiResult.cs" />
+    <Compile Include="Entities\API\BaseResult.cs" />
+    <Compile Include="Entities\API\PasswordModel.cs" />
+    <Compile Include="Entities\API\DatatablesList.cs" />
+    <Compile Include="Entities\API\ForgotPassSend.cs" />
+    <Compile Include="Entities\API\LoginSend.cs" />
+    <Compile Include="Entities\API\RegisterModel.cs" />
+    <Compile Include="Entities\API\SriSend.cs" />
+    <Compile Include="Entities\API\TipoSustento.cs" />
+    <Compile Include="Entities\CatalogBaseDto.cs" />
+    <Compile Include="Entities\ConsultaDocumentosParamsDto.cs" />
+    <Compile Include="Entities\ContributorRequestModel.cs" />
+    <Compile Include="Entities\ContributorTypeDto.cs" />
+    <Compile Include="Entities\Country.cs" />
+    <Compile Include="Entities\CreditNoteInfoModel.cs" />
+    <Compile Include="Entities\CreditNoteModel.cs" />
+    <Compile Include="Entities\CreditNoteRequestModel.cs" />
+    <Compile Include="Entities\DashboardInfo.cs" />
+    <Compile Include="Entities\DebitNoteInfo.cs" />
+    <Compile Include="Entities\DebitNoteModel.cs" />
+    <Compile Include="Entities\DebitNoteRequestModel.cs" />
+    <Compile Include="Entities\DocumentModel.cs" />
+    <Compile Include="Entities\API\DocumentReceived.cs" />
+    <Compile Include="Entities\DocumentReceivedModel.cs" />
+    <Compile Include="Entities\FirmaElectronicaViewModel.cs" />
+    <Compile Include="Entities\ElectronicSignModel.cs" />
+    <Compile Include="Entities\ElectronicSignRequest.cs" />
+    <Compile Include="Entities\EnvironmentTypeEnum.cs" />
+    <Compile Include="Entities\SalesNoteRequestModel.cs" />
+    <Compile Include="Entities\SettlementModel.cs" />
+    <Compile Include="Entities\SettlementRequestModel.cs" />
+    <Compile Include="Entities\IssueTypeEnum.cs" />
+    <Compile Include="Entities\MemoryPostedFile.cs" />
+    <Compile Include="Entities\ObjectQueryModel.cs" />
+    <Compile Include="Entities\DocumentRequestModelBase.cs" />
+    <Compile Include="Entities\DocumentTypesDto.cs" />
+    <Compile Include="Entities\PaymentResultModel.cs" />
+    <Compile Include="Entities\PaymentRequestModel.cs" />
+    <Compile Include="Entities\Province.cs" />
+    <Compile Include="Entities\PurchaseOrderModel.cs" />
+    <Compile Include="Entities\PurchaseReportModel.cs" />
+    <Compile Include="Entities\ReferralGuideInfoModel.cs" />
+    <Compile Include="Entities\ReferralGuideModel.cs" />
+    <Compile Include="Entities\ReferralGuideRequestModel.cs" />
+    <Compile Include="Entities\RetentionDetail.cs" />
+    <Compile Include="Entities\RetentionInfo.cs" />
+    <Compile Include="Entities\RetentionRate.cs" />
+    <Compile Include="Entities\RetentionRequestModel.cs" />
+    <Compile Include="Entities\RetentionModel.cs" />
+    <Compile Include="Entities\InvoiceModel.cs" />
+    <Compile Include="Entities\DocumentSequential.cs" />
+    <Compile Include="Entities\DocumentStatusEnum.cs" />
+    <Compile Include="Entities\DocumentStatusInfo.cs" />
+    <Compile Include="Entities\IceRate.cs" />
+    <Compile Include="Entities\IdentificationTypesDto.cs" />
+    <Compile Include="Entities\InvoiceInfo.cs" />
+    <Compile Include="Entities\InvoiceRequestModel.cs" />
+    <Compile Include="Entities\IssuerDto.cs" />
+    <Compile Include="Entities\PaymentMethodDto.cs" />
+    <Compile Include="Entities\PaymentModel.cs" />
+    <Compile Include="Entities\ProductTypeDto.cs" />
+    <Compile Include="Entities\RetentionTax.cs" />
+    <Compile Include="Entities\SalesReportModel.cs" />
+    <Compile Include="Entities\SRI\EstablishmentDto.cs" />
+    <Compile Include="Entities\SRI\SRIContribDto.cs" />
+    <Compile Include="Entities\SubscriptionRequest.cs" />
+    <Compile Include="Entities\TaxModel.cs" />
+    <Compile Include="Entities\TaxType.cs" />
+    <Compile Include="Entities\TotalTaxModel.cs" />
+    <Compile Include="Entities\UserPermissionsModel.cs" />
+    <Compile Include="Entities\UserSession.cs" />
+    <Compile Include="Entities\VatRatesDto.cs" />
+    <Compile Include="Entities\ComprobanteEnums.cs" />
+    <Compile Include="Entities\ContributorDto.cs" />
+    <Compile Include="Entities\EcuafactEnumAttribute.cs" />
+    <Compile Include="Entities\EnumExtensions.cs" />
+    <Compile Include="Entities\ProductDto.cs" />
+    <Compile Include="Extensions\AvatarGenerator.cs" />
+    <Compile Include="Extensions\ElectronicSignExtensions.cs" />
+    <Compile Include="Extensions\Select2Helper.cs" />
+    <Compile Include="Extensions\SystemExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegularExpressionPatterns.cs" />
+    <Compile Include="Services\OperationResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Entities\IssueTypeEnum.cs.resx">
+      <DependentUpon>IssueTypeEnum.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

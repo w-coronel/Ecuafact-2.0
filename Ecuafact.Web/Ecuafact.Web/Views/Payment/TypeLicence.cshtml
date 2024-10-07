@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "Nuestros Planes";
+    var plans = SessionInfo.Catalog.LicenceType.ToList();
+
+    bool basicPlanChange = ViewBag.basicPlanChange;
+
+}
+
+
+@section Styles{
+    @*@Styles.Render("~/css/pricing")
+    @Styles.Render("~/assets/css/pages/pricing/pricing-3.css")*@
+    @Styles.Render("~/assets/css/pages/pricing/pricing.css")
+
+}
+
+<div class="pricingTable">
+    <h3 class="pricingTable-subtitle">Seleccione un plan adecuado para usted.</h3>
+    <ul class="pricingTable-firstTable">
+        @if (plans?.Count > 0)
+        {
+            if (basicPlanChange)
+            {
+                foreach (var p in plans.Where(p=> p.Code != Ecuafact.Web.Constants.PlanBasic))
+                {
+                    var prsAnual = p.Price;
+                    var periodo = "Anual";
+                    var iva = "+ Iva / ";
+
+                    <li class="pricingTable-firstTable_table">
+                        <h1 class="pricingTable-firstTable_table__header">@p.Name</h1>
+                        <p class="pricingTable-firstTable_table__pricing">
+                            <span>$</span>
+                            <span>@($"{p.Price.ToDecimalString()}")</span>
+                            <span>@($"{iva}{periodo}")</span>
+                        </p>
+                        <ul class="pricingTable-firstTable_table__options text-left">
+                            @{
+                                var item = p.Description.Split('|');
+                                for (int a = 0; a < item.Count(); a++)
+                                {
+                                   
+                                    if (item[a].Trim() == "Incluye Firma Electrónica")
+                                    {
+                                        <li style="font-weight:bold;"><span class="include">✓</span>@item[a]</li>
+                                    }
+                                    else
+                                    {
+                                        <li><span class="include">✓</span>@item[a]</li>
+                                    }
+
+                                }
+                            }
+                        </ul>
+                        <button id="@p.Id" data-content="@(Url.Action("InvoiceOrder", "Payment", new { id = p.Id }))" class="pricingTable-firstTable_table__getstart type-licence">Empieza ahora</button>
+                    </li>
+                }
+            }
+            else
+            {
+
+                foreach (var p in plans)
+                {
+                    var prsAnual = p.Price;
+                    var periodo = p.Code == "L01" ? "" : "Anual";
+                    var iva = p.Code == "L01" ? "" : "+ Iva / ";
+
+                    <li class="pricingTable-firstTable_table">
+                        <h1 class="pricingTable-firstTable_table__header">@p.Name</h1>
+                        <p class="pricingTable-firstTable_table__pricing">
+                            <span>@(p.Code == "L01" ? "":"$")</span>
+                            <span>@(p.Code == "L01" ? "GRATIS" : $"{p.Price.ToDecimalString()}")</span>
+                            <span>@($"{iva}{periodo}")</span>
+                        </p>
+                        <ul class="pricingTable-firstTable_table__options text-left">
+                            @{
+                                var item = p.Description.Split('|');
+                                for (int a = 0; a < item.Count(); a++)
+                                {
+                                    if (item[a].Contains("No Incluye Firma"))
+                                    {
+                                        <li><span class="not_include"><i class="fa fa-ban align-content-center"></i></span>  @item[a]</li>
+                                    }
+                                    else if (item[a].Trim() == "Incluye Firma Electrónica")
+                                    {
+                                        <li style="font-weight:bold;"><span class="include">✓</span>@item[a]</li>
+                                    }
+                                    else
+                                    {
+                                        <li><span class="include">✓</span>@item[a]</li>
+                                    }
+
+                                }
+                            }
+                        </ul>
+                        <button id="@p.Id" data-content="@(Url.Action("InvoiceOrder", "Payment", new { id = p.Id }))" class="pricingTable-firstTable_table__getstart type-licence">Empieza ahora</button>
+                    </li>
+                }
+            }
+        }
+    </ul>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {          
+            $(".type-licence").click(function () {
+                var $url = $(this).data("content");
+                showLoader();
+                location.assign($url);
+            });
+        });
+    </script>
+}

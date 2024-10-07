@@ -1,0 +1,123 @@
+@using Ecuafact.Web.MiddleCore.ApplicationServices
+@using Ecuafact.Web.Domain.Entities
+@model ReferralGuideRequestModel
+
+@{
+    var token = SessionInfo.ApplicationToken;
+    var tipoIdentificacion = ServicioCatalogos.ObtenerTiposDocumento(token);
+     
+    var tiposDocumento = ServicioCatalogos.ObtenerTiposDocumento(token);
+}
+
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4>Datos del Contribuyente</h4>
+        </div>
+
+        <div class="panel-body">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-8">
+                        <label>Escriba el nombre del cliente o su identificacion (RUC, Cedula, Pasaporte) : </label>
+                    </div>
+                    <div class="col-md-4">
+                        <button id="actualizarClienteButton" data-toggle="modal" data-target="#modal-cliente"
+                                hidden type='button' onclick='editarComprador();' class='btn btn-outline blue hidden'>
+                            Actualizar información <i class='fa fa-pencil'></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-12 normalform" id="bodyContrib" name="bodyContrib">
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.ContributorId,
+                            new SelectList(new SelectListItem[0]),
+                            new { @class = "js-customerSelector", @id = "inputCustomerId", @style = "width:100%;" })
+
+                        @*
+                        @Html.HiddenFor(model => model.Identification)
+                        @Html.HiddenFor(model => model.IdentificationType)
+                        @Html.HiddenFor(model => model.ContributorName)
+                        @Html.HiddenFor(model => model.Address)
+                        @Html.HiddenFor(model => model.Phone)
+                        @Html.HiddenFor(model => model.EmailAddresses)
+                            *@
+                    </div>
+
+
+                    
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4>Datos del Conductor</h4>
+        </div>
+
+        <div class="panel-body">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-8">
+                        <label>Escriba el nombre del chofer o su identificacion (RUC, Cedula, Pasaporte) : </label>
+                    </div>
+                    <div class="col-md-4">
+                        <button id="actualizarDriverButton" data-toggle="modal" data-target="#modal-cliente"
+                                hidden type='button' onclick='editarChofer();' class='btn btn-outline blue hidden'>
+                            Actualizar información <i class='fa fa-pencil'></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-12 normalform" id="bodyDriver" name="bodyDriver">
+                    <div class="col-md-12">
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4>Datos del Destinatario</h4>
+        </div>
+
+        <div class="panel-body">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-8">
+                        <label>Escriba el nombre del destinatario o su identificacion (RUC, Cedula, Pasaporte) : </label>
+                    </div>
+                    <div class="col-md-4">
+                        <button id="actualizarRecipientButton" data-toggle="modal" data-target="#modal-cliente"
+                                hidden type='button' onclick='editarDestinatario();' class='btn btn-outline blue hidden'>
+                            Actualizar información  <i class='fa fa-pencil'></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-12 normalform" id="bodyRecipient" name="bodyRecipient">
+                    <div class="col-md-12">
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

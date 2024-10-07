@@ -1,0 +1,115 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@model DocumentosQueryModel
+
+@{
+    ViewBag.Title = "Emitidos";
+    ViewBag.Description = "Documentos Electrónicos Enviados, en proceso de Autorización, y Autorizados";
+
+    var issuePoint = new List<SelectListItem>();
+    var establishment = new List<SelectListItem>();
+
+    this.PageOptions(model =>
+    {
+        model.DataTables = true;
+        model.DateRangePicker = true;
+        model.DatePicker = true;
+        model.Select2 = true;
+        model.SidebarSearch = true;
+        model.DateRangeTool = true;
+    });
+
+    var tiposDocumento = new List<SelectListItem>{
+        new SelectListItem { Value="0", Text="Todos" },
+        new SelectListItem{ Value="01", Text="Factura" },
+        new SelectListItem{ Value="04", Text="Nota de Crédito" },
+        new SelectListItem{ Value="05", Text="Nota de Débito" },
+        new SelectListItem{ Value="07", Text="Comprobante de Retención" },
+        new SelectListItem{ Value="06", Text="Guia de Remisión" },
+        new SelectListItem{ Value="03", Text="Liquidación de Compra" }
+    };
+
+    var tiposEstados = new List<SelectListItem>{
+        //new SelectListItem { Value="0", Text="Borrador" },
+        new SelectListItem{ Value="1", Text="En Proceso" },
+        new SelectListItem{ Value="10", Text="Error" },
+        new SelectListItem{ Value="-77", Text="Anulado" },
+        new SelectListItem{ Value="-1", Text="Eliminado" },
+        new SelectListItem{ Value="100", Text="Validado SRI" }
+    };
+
+    establishment = SessionInfo.Issuer.Establishments?.Select(x => new SelectListItem { Text = string.Format("{0}", x.Code), Value = x.Code }).ToList();
+    establishment.Insert(0, new SelectListItem { Value = "0", Text = "Todos" });
+    //issuePoint.Add(new SelectListItem { Value = "0", Text = "Todos" });
+}
+
+@using (Html.BeginForm("Emitidos", "Comprobantes", FormMethod.Get, new { id = "formConsultas", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.From, new { @id = "dateFrom" })
+    @Html.HiddenFor(model => model.To, new { @id = "dateTo" })
+    @Html.HiddenFor(model => model.SearchTerm, new { @id = "searchTerm" })
+
+
+    <div class="kt-portlet">
+
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <div class="input-group">
+
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-layers"></i>&nbsp;&nbsp;Tipo: </span></div>
+
+                    @Html.DropDownListFor(model => model.DocumentType, tiposDocumento, new { @class = "bs-dropdown circle-right input-sm input-inline form-control   filter-control " })
+
+                </div>
+                <div class="kt-margin-5"></div>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-layers-2"></i>&nbsp;&nbsp;Estado: </span></div>
+
+                    @Html.DropDownListFor(model => model.Status, tiposEstados, "Todos", new { @class = "bs-dropdown circle-right input-sm input-inline form-control documentType  filter-control " })
+
+                </div>
+                <div class="kt-margin-5"></div>
+                <div class="input-group">
+
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon-home-2"></i>&nbsp;&nbsp;Establecimiento: </span></div>
+
+                    @Html.DropDownListFor(model => model.EstablishmentCode, establishment, new { @class = "bs-dropdown circle-right input-sm input-inline form-control   filter-control select-establishment" })
+
+                </div>
+                <div class="kt-margin-5"></div>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon-map"></i>&nbsp;&nbsp;Punto Emisión: </span></div>
+
+                    @Html.DropDownListFor(model => model.IssuePointCode, issuePoint, "Todos", new { @class = "bs-dropdown circle-right input-sm input-inline form-control documentType  filter-control select-issuePoint" })
+
+                </div>
+            </div>
+            <div class="kt-portlet__head-toolbar">
+                <a class="btn btn-success btn-elevate btn-pill pull-right btn-descarga" href="#">&nbsp; <i class="fa fa-file-excel "></i>  Descargar</a>
+                @*<a class="btn btn-success btn-elevate btn-pill pull-right" href="@Url.Action("Emitidos", new { id = "descargar" })">&nbsp; <i class="fa fa-file-excel "></i>  Descargar</a>*@
+
+            </div>
+        </div>
+
+        <div class="kt-portlet__body" id="divConsultas">
+            @{ Html.RenderPartial("Shared/_EmitidosPartial", Model); }
+        </div>
+
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/js/documents")
+
+<script type="text/javascript">
+    var url = "@Url.Action("GetEmitidosAsync", "Comprobantes")";
+    var table = "_emitidos";
+    var loginUrl = "@Url.Action("Index", "Auth")";
+    //var executeOnInit = @((Session[SessionInfo.EMITIDOS_SESSION] == null) ? "true" : "false");
+    //$(".documentType").select2();
+    Comprobantes.Establishment = @Html.Raw(Json.Encode(SessionInfo.Issuer.Establishments));
+    Comprobantes.Configure(url, table, loginUrl, false);
+    function _sendEmail(id) { Comprobantes.GetEmail(id); };
+</script>
+}

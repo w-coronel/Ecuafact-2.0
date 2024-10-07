@@ -1,0 +1,174 @@
+@using Ecuafact.Web.Domain.Entities
+@model ReferralGuideRequestModel
+
+<div class="col-12">
+
+    <h4>
+        Productos & Servicios
+    </h4>
+
+
+</div>
+
+<div class="col-12">
+
+    <div class="kt-container table-responsive" style="width:auto">
+                
+        <table id="product-items" name="product-items" class="col-md-12 table table-producto table-hover table-striped table-condensed kt-datatable__table cf">
+                    
+            <caption>
+                Seleccione un producto o servicio para agregarlo a la lista.
+            </caption>
+
+            <thead class="cf card-title kt-datatable__head">
+
+                <tr class="kt-datatable__row">
+
+                    <th>
+                        <div class="row">
+                            <div class="col-7">
+                                Descripción
+                            </div>
+                            <div class="col-2 collapse">
+                                Det Adic 1
+                            </div>
+                            <div class="col-2 collapse">
+                                Det Adic 2
+                            </div>
+                            <div class="col-2 collapse">
+                                Det Adic 3
+                            </div>
+
+                            <div class="col-3">
+                                Total
+                            </div>
+                            <div class="col-2 col-sm-1"></div>
+                            <div class="col-12 col-sm-12" data-title="Detalle Adicional"></div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (Model.Details != null)
+                {
+                    for (int i = 0; i < Model.Details.Count; i++)
+                    {
+                        var productList = new SelectList(new[]
+                        {
+                            new SelectListItem {
+                                Text = string.Format("{0}.{1} {2}", Model.Details[i].MainCode, Model.Details[i].AuxCode, Model.Details[i].Description),
+                                 Value = (Model.Details[i].ProductId ?? 0).ToString()
+                            }
+                         }, "Value", "Text", Model.Details[i].ProductId);
+
+
+                           <tr id="item@(i)" class="product-item">
+                           <td>
+                               <div class="row">
+                                   @Html.Hidden("Details.Index", i)
+                                   @Html.HiddenFor(model => Model.Details[i].MainCode, new { @class = "item-maincode" })
+                                   @Html.HiddenFor(model => Model.Details[i].AuxCode, new { @class = "item-auxcode" })
+                                   @Html.HiddenFor(model => Model.Details[i].Description, new { @class = "item-description" })
+
+                                   <div class="col-7" data-title="Product" style="width:100%">
+                                       @Html.DropDownListFor(model => Model.Details[i].ProductId, productList, new { @class = "form-control", @style = "width:100%;" })
+                                   </div>
+                                   
+                                   <div class="col-3" data-title="Cantidad" style="padding-bottom:5px">
+                                       @Html.TextBoxFor(model => model.Details[i].Quantity, new { @class = "form-control item-quantity", @style = "text-align:right; ", @type = "number", @value = "1", @min = "1", @placeholder = "Cantidad" })
+                                   </div>
+
+                                   <div class="col-2" data-title="">
+
+                                       <button type="button" onfocus="enfocarLista(this)" onclick="quitarItem(this)" class="tabledit-delete-button btn btn-sm btn-outline-hover-danger btn-pill" style="float: none;"><span class="la la-trash-o"></span></button>
+
+                                   </div>
+
+                                   <div class="col col-md-10 col-sm-8 col-xs-12">
+                                       <div class="accordion accordion-solid accordion-toggle-plus" id="accordAdditionalsItem@(i)">
+
+                                           <div class="card">
+                                               <div class="card-header" id="itemHeading@(i)">
+                                                   <div class="card-subtitle collapsed" data-toggle="collapse" data-target="#itemsCollapse@(i)" aria-expanded="false" aria-controls="itemsCollapse@(i)">
+                                                       <br /><i class="flaticon2-add"></i> Detalles Adicionales
+                                                   </div>
+                                               </div>
+                                               <div id="itemsCollapse@(i)" class="collapse" aria-labelledby="itemHeading@(i)" data-parent="#accordAdditionalsItem@(i)" style="">
+
+                                                   <div class="card-body">
+                                                       <table class="table table-payment col-md-12 table-hover table-striped table-condensed kt-datatable__table">
+                                                           <tbody id="additionals-items@(i)" class="kt-datatable__body">
+                                                               <tr>
+                                                                   <td>
+                                                                       <div class="row">
+                                                                           <div class="col-md-4 col-sm-12 col-xs-12 input-group" data-title="Detalle1" style="padding-bottom:5px">
+                                                                               @Html.TextBoxFor(model => Model.Details[i].Name1, new { @id = string.Format("detname1_{0}", i), @class = "form-control item-name1", @style = "text-align:left;font-size:10px;", @placeholder = "Nombre 1" })
+                                                                               @Html.TextBoxFor(model => Model.Details[i].Value1, new { @id = string.Format("detval1_{0}", i), @class = "form-control item-value1", @style = "text-align:left;font-size:10px;", @placeholder = "Valor 1" })
+                                                                           </div>
+
+                                                                           <div class="col-md-4 col-sm-12 col-xs-12 input-group" data-title="Detalle2" style="padding-bottom:5px">
+                                                                               @Html.TextBoxFor(model => Model.Details[i].Name2, new { @id = string.Format("detname2_{0}", i), @class = "form-control item-name2", @style = "text-align:left;font-size:10px;", @placeholder = "Nombre 2" })
+                                                                               @Html.TextBoxFor(model => Model.Details[i].Value2, new { @id = string.Format("detval2_{0}", i), @class = "form-control item-value2", @style = "text-align:left;font-size:10px;", @placeholder = "Valor 2" })
+                                                                           </div>
+
+                                                                           <div class="col-md-4 col-sm-4 col-xs-12 input-group" data-title="Detalle3" style="padding-bottom:5px">
+                                                                               @Html.TextBoxFor(model => Model.Details[i].Name3, new { @id = string.Format("detname3_{0}", i), @class = "form-control item-name3", @style = "text-align:left;font-size:10px;", @placeholder = "Nombre 3" })
+                                                                               @Html.TextBoxFor(model => Model.Details[i].Value3, new { @id = string.Format("detval3_{0}", i), @class = "form-control item-value3", @style = "text-align:left;font-size:10px;", @placeholder = "Valor 3" })
+                                                                           </div>
+                                                                       </div>
+                                                                   </td>
+                                                               </tr>
+
+                                                           </tbody>
+
+                                                       </table>
+                                                   </div>
+                                               </div>
+                                           </div>
+
+                                       </div>
+                                   </div>
+
+                               </div>
+                           </td>
+                           </tr>
+                    }
+                }
+            </tbody>      
+            <tfoot>
+
+                <tr style="background-color:gainsboro">
+
+                    <th>
+
+                        <div class="row">
+
+                            <div class="col-8 col-sm-9 col-lg-7 col-xl-9">
+
+                                <input name="documento_valor_total" id="documento_valor_total" disabled
+                                       type="text" placeholder="" style="text-align:right;width:100% "
+                                       class="control-total form-control bold" value="$0.00">
+
+                            </div>
+
+                            <div class="col-4 col-sm-3 col-lg-5 col-xl-3" align="left">
+
+                                <button id="addItemButton" name="addItemButton" type='button' class='btn btn-brand text-light' onclick="agregarItem()"> Agregar <i class='fa fa-plus'></i></button>
+
+                            </div>
+
+                        </div>
+
+                    </th>
+
+                </tr>
+
+            </tfoot>
+
+        </table>
+    </div>
+</div>
+  
+
+ 

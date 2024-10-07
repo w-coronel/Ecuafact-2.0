@@ -1,0 +1,102 @@
+﻿@{
+    ViewBag.Title = "Bienvenido!";
+}
+
+    <div class="kt-portlet">
+        <div class="kt-portlet__body kt-portlet__body--fit">
+            <div class="kt-grid kt-margin-30">
+                <div class="kt-heading kt-heading--md">Bienvenid@@, @SessionInfo.UserInfo.Name!</div>
+
+                <div class="kt-form__section kt-form__section--first">
+                    <div class="kt-form__body">
+
+                        <p>Ahora que eres parte de ECUAFACT, puedes comenzar a administrar tus comprobantes electr&oacute;nicos.</p>
+                        <p>
+                            Tambi&eacute;n puedes almacenar y consultar tus gastos en tiempo real!
+                        </p>
+                        <p>Para ello es necesario que configures tu cuenta:</p>
+
+                        <div class="kt-timeline-v2">
+                            <div class="kt-timeline-v2__items  kt-padding-top-25 kt-padding-bottom-30">
+                                <div class="kt-timeline-v2__item">
+
+                                    <div class="kt-timeline-v2__item-cricle">
+                                         
+                                            <i class="fa fa-genderless kt-font-danger"></i>
+                                       
+                                    </div>
+                                    <div class="kt-timeline-v2__item-text  kt-padding-top-5">
+                                        <a href="#" onclick='showModal("@Url.Action("Conectar", "SRI")");'>
+                                            Vincula tu cuenta con el SRI para la administraci&oacute;n de documentos electr&oacute;nicos.
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="kt-timeline-v2__item">
+
+                                    <div class="kt-timeline-v2__item-cricle">
+                                         
+                                            <i class="fa fa-genderless kt-font-success"></i>
+                                          
+                                    </div>
+                                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                                        <a href="@Url.Action("Configuracion","Emisor")">
+                                            Habilita la Emisi&oacute;n de documentos configurando los datos de tu firma electr&oacute;nica.
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="kt-timeline-v2__item">
+
+                                    <div class="kt-timeline-v2__item-cricle">
+                                        <i class="fa fa-genderless kt-font-brand"></i>
+                                    </div>
+                                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                                        <a href="@Url.Action("Nuevo","FirmaElectronica")">
+                                            Si no cuentas con firma electr&oacute;nica, nosotros te ayudamos a obtenerla!
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="kt-timeline-v2__item">
+
+                                    <div class="kt-timeline-v2__item-cricle">
+                                        <i class="fa fa-genderless kt-font-warning"></i>
+                                    </div>
+                                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                                        Puedes configurar tu presupuesto mensual controlando tus gastos personales.
+                                    </div>
+                                </div>
+                                <div class="kt-timeline-v2__item">
+
+                                    <div class="kt-timeline-v2__item-cricle">
+                                        <i class="fa fa-genderless kt-font-info"></i>
+                                    </div>
+                                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                                        Accede desde un mismo lugar a todas tus cuentas de ECUAFACT.
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="kt-form__section text-center">
+                    <div class="kt-space-30"></div>
+                    <button type="button" class="btn btn-success btn-md btn-pill btn-elevate btn-elevate-air btn-tall  btn-wide kt-font-bold kt-font-transform-u start-button">
+                        <i class="flaticon2-check-mark text-light"></i> Iniciar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+@section scripts{
+<script>
+    $(".start-button").on("click", function () {
+        location.assign("@Url.Action("Configuracion","Emisor")");
+    });
+
+</script>
+
+}

@@ -1,0 +1,196 @@
+﻿
+@using Ecuafact.Web.Domain.Entities
+@model  ElectronicSignModel
+@{
+    ViewBag.Title = "Firma Electronica";
+    ViewBag.ParentTitle = "Nuestros Servicios";
+    this.PageOptions(p => p.DropZone = true);
+
+    var status = "PENDIENTE DE PAGO";
+    var icon = "flaticon2-warning";
+    var type = "warning";
+    var msg = "Esta solicitud se encuentra en Estado de espera debido a que no se ha confirmado el pago de la orden.";
+    var url = Url.Action("", "Dashboard");
+    if (Model.Status == ElectronicSignStatusEnum.Approved)
+    {
+        status = "EN PROCESO";
+        icon = "fa fa-check-circle";
+        type = "success";
+        msg = "Tu solicitud de firma electrónica fue realizada con éxito, en un período de 24 a 48 horas recibirás un correo electrónico con el remitente Uanataca, para descargar tu firma.";
+        Model.StatusMsg = "";
+    }
+    else if (Model.Status == ElectronicSignStatusEnum.Error)
+    {
+        status = "ERROR";
+        icon = "fa fa-times-circle";
+        type = "danger";
+        msg = "Hubo error al procesar la emisi&oacute;n de su firma.";
+        url = Url.Action("Index", "FirmaElectronica");
+    }
+    else if (Model.Status == ElectronicSignStatusEnum.Processed)
+    {
+        status = "PROCESADA";
+        icon = "fa fa-check-circle";
+        type = "success";
+        msg = "Su firma se procesó con exito!";
+    }
+
+}
+
+<div class="row justify-content-center">
+    <div class="kt-portlet col-md-10">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h4 class="kt-portlet__head-title">
+                    <strong> FIRMA ELECTR&Oacute;NICA</strong> SOLICITUD No. @Model.PurchaseOrderId.ToString("D10")
+                </h4>
+
+                <div class="kt-portlet__head-toolbar">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="kt-portlet__body">
+
+            <div class="row">
+                <div class="col-md-7">
+                    <h4 style="margin-bottom: 50px">
+                    </h4>
+                </div>
+                <div class="col-md-5 kt-align-right">
+                    <h4 id="tipo_persona_title">
+                        @if (Model.SignType == RucTypeEnum.Natural)
+                        {
+                            <span> Persona Natural </span>
+                        }
+                        else
+                        {
+                            <span> Persona Jur&iacute;dica </span>
+                        }
+                    </h4>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Identificacion">RUC: </label>
+                        <span class="form-control">@Model.RUC</span>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="RazonSocial">Razon Social</label>
+                        <span class="form-control">@Model.BusinessName</span>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Dirección</label>
+                        <span class="form-control">@Model.BusinessAddress</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4>DATOS DE REPRESENTANTE LEGAL</h4>
+                    </div>
+                </div>
+                @{
+                    var docType = (Model.DocumentType == IdentificationTypeEnum.IdentityCard ? "Cédula"
+                            : (Model.DocumentType == IdentificationTypeEnum.RUC ? "RUC"
+                            : (Model.DocumentType == IdentificationTypeEnum.Passport ? "Pasaporte" : "Otro")));
+                }
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>@docType: </label>
+                        <span class="form-control">@Model.Identification</span>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label>Nombre: </label>
+                        <span class="form-control">@Model.FirstName @Model.LastName</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6 dir-fisica">
+                    <div class="form-group">
+                        <label> Direcci&oacute;n F&iacute;sica: </label>
+                        <span class="form-control">@Model.Address</span>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Teléfono: </label>
+                        <span class="form-control"> @Model.Phone</span>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Correo: </label>
+                        <span class="form-control">@Model.Email</span>
+                    </div>
+                </div>
+
+            </div>
+            <hr />
+
+        </div>
+        <div class="kt-portlet__foot justify-content-center">
+
+            <div class="kt-portlet__foot-wrapper">
+                <div class="alert alert-icon-top alert-outline-@type col-md-8" role="alert" id="@type">
+                    <div class="alert-icon"><i class="@icon"></i> </div>
+
+                    <div class="alert-text  ">
+                        <h4 class="alert-heading">@status</h4>
+                        <p> @Html.Raw(msg)</p>
+                        <p> @Model.StatusMsg </p>
+                    </div>
+
+                    <div class="alert-close">
+
+                    </div>
+                </div>
+                <p>
+                    Tienes problemas? <a href="//soporte.ecuafact.com">Contáctanos</a>
+                </p>
+                <p></p>
+                <p class="lead">
+                    <a class="btn btn-brand btn-sm" href="@url"  role="button">Volver a la página de Inicio</a>
+                </p>
+                
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(".btn-pagar").on("click", function () {
+            location.assign("@Url.Content("~/Payment/CheckOut?PurchaseOrderId="+Model.PurchaseOrderId.ToString())")
+        });
+
+        $(".btn-nuevo").on("click", function () {
+            location.assign("@Url.Content("Nuevo")")
+        });
+
+        $(".alert").fadeIn();
+    </script>
+
+}
+

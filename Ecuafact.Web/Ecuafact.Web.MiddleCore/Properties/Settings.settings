@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Ecuafact.Web.MiddleCore.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="NexusApiURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://nube.ecuafact.com/apiDev/Service.svc</Value>
+    </Setting>
+    <Setting Name="ExpressApiURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://nube.ecuafact.com/ExpressApi</Value>
+    </Setting>
+    <Setting Name="ExpressAdminURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://nube.ecuafact.com/express/admin</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

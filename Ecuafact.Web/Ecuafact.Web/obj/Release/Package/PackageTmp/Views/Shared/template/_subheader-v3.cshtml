@@ -1,0 +1,35 @@
+<!-- begin:: Content Head -->
+<div class="kt-subheader  kt-grid__item" id="kt_subheader">
+    <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+
+
+            <h3 class="kt-subheader__title">@ViewBag.Title</h3>
+            <span class="kt-subheader__separator kt-subheader__separator--v"></span>
+            @*<span class="kt-subheader__desc">@ViewBag.Description</span>*@
+
+            @{ Html.RenderPartial("template/_action-button"); }
+            <div class="kt-input-icon kt-input-icon--right kt-subheader__search kt-hidden">
+                <input type="text" c lass="form-control" placeholder="Search order..." id="generalSearch">
+                <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                    <span><i class="flaticon2-search-1"></i></span>
+                </span>
+            </div>
+        </div>
+        <div class="kt-subheader__toolbar">
+            <div class="kt-subheader__wrapper">
+                <a href="#" class="btn kt-subheader__btn-secondary">Hoy</a>
+                <a href="#" class="btn kt-subheader__btn-secondary">Mes Actual</a>
+                <a href="#" class="btn kt-subheader__btn-secondary">Este A&ntilde;o</a>
+                <a href="#" class="btn kt-subheader__btn-daterange" id="kt_dashboard_daterangepicker" data-toggle="kt-tooltip" title="Seleccionar un rango de fechas" data-placement="left">
+                    <span class="kt-subheader__btn-daterange-title" id="kt_dashboard_daterangepicker_title">Hoy: </span>&nbsp;
+                    <span class="kt-subheader__btn-daterange-date" id="kt_dashboard_daterangepicker_date">@DateTime.Today.ToString("MMM dd", System.Globalization.CultureInfo.GetCultureInfo("es-EC"))</span>
+                    <i class="flaticon2-calendar-1"></i>
+                </a>
+                 
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- end:: Content Head -->

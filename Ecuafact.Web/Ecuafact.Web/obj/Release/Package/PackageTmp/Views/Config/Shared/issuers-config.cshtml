@@ -1,0 +1,84 @@
+﻿@{
+    var isConfigured = false;
+    if (SessionInfo.IssuerList != null && SessionInfo.IssuerList.Count > 0)
+    {
+        isConfigured = true;
+    }
+
+    var rucActual = SessionInfo.UserInfo.Username;
+
+    if (SessionInfo.Issuer != null)
+    {
+        rucActual = SessionInfo.Issuer.RUC;
+    }    
+}
+
+<div class="kt-heading kt-heading--md">Cuentas Vinculadas</div>
+
+<div class="kt-form__section kt-form__section--first">
+    <div class="kt-wizard-v2__form">
+
+        @if (!isConfigured)
+        {
+            <div class="form-group text-danger">
+                <i class="flaticon2-cancel"></i> Usted no tiene habilitada la opci&oacute;n de generar documentos electr&oacute;nicos
+            </div>
+
+            <div class="form-group">
+                <a href="@Url.Action("Configuracion","Emisor")" class="btn btn-sm btn-primary btn-elevate btn-elevate-air">
+                    Configurar RUC
+                </a>
+            </div>
+
+        }
+        else
+        {
+            <div class="form-group text-success">
+                <i class="flaticon2-checkmark"></i> Usted puede generar documentos electr&oacute;nicos
+            </div>
+            <div class="form-group">
+                <a href="@Url.Action("Nuevo","Emisor")" class="btn btn-sm btn-primary btn-elevate btn-elevate-air">
+                    Agregar RUC
+                </a>
+            </div>      
+
+            <table class="datatable table table-striped table-bordered table-hover responsive dt-responsive table-checkable order-column">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th> RUC </th>
+                        <th> Razon Social </th>
+                        @*<th> E-mail </th>*@
+                        <th class="text-center"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in SessionInfo.IssuerList.Where(p => p.RUC != rucActual))
+                    {
+                        <tr>
+                            <td class="text-center" style="width:10%">
+                                <div class="kt-user-card-v2">
+                                    <div class="kt-user-card-v2__pic">
+                                        <img alt="photo" src="@Url.Content(Server.GetLogoFile(item.RUC))" class="img-thumbnail" style="border:0px; max-width: 50px; max-height:50px;">
+                                    </div>                                    
+                                </div>
+                            </td>
+                            <td>
+                                <a class="kt-user-card-v2__name" href="#">@item.RUC</a>
+                            </td>
+                            <td style="width:50%"> @item.BusinessName @*@Html.DisplayFor(model => item.BusinessName)*@ </td>
+                            @*<td> @item.Email@Html.DisplayFor(model => item.Email) </td>*@
+                            <td class="text-center">
+                                  @*<a href="@Url.Action("Configuracion","Emisor", new { item.RUC })" class="btn btn-sm btn-clean btn-icon btn-icon-md"><i class="flaticon2-gear"></i></a>*@
+                                <button type="button"  title="Desvincular usuario" data-toggle='tooltip' data-ruc="@item.RUC"  class="tabledit-delete-button btn btn-sm btn-pill btn-danger delete-item" style="float: none;">
+                                    <span class="fa fa-user-times"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </div>
+</div>

@@ -1,0 +1,76 @@
+﻿
+<div class="row">
+
+    <div class="col-lg-6 col-xs-12 col-sm-12">
+
+        <!--begin::Portlet-->
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <span class="kt-portlet__head-icon kt-hidden">
+                        <i class="la la-gear"></i>
+                    </span>
+                    <h3 class="kt-portlet__head-title">
+                        <span class="caption-subject bold uppercase font-dark">PRESUPUESTO </span>
+                        <span class="caption-helper">@DateTime.Now.ToString("MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("es-ES")).ToUpper()</span>
+                    </h3>
+                </div>
+            </div>
+            <div class="kt-portlet__body">
+                <div class="budget-details scroller" data-always-visible="1" data-rail-visible="1" data-rail-color="red" data-handle-color="green">
+                    
+                </div>
+
+            </div>
+        </div>
+
+        <!--end::Portlet-->
+
+    </div>
+    <div class="col-lg-6 col-xs-12 col-sm-12">
+
+        <!--begin::Portlet-->
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <span class="kt-portlet__head-icon kt-hidden">
+                        <i class="la la-gear"></i>
+                    </span>
+                    <h3 class="kt-portlet__head-title">
+                        <span class="caption-subject bold uppercase font-dark">Resumen </span>
+                    </h3>
+                </div>
+            </div>
+            <div class="kt-portlet__body">
+
+
+                <div class="col-12" id="divReporteDeducibles">
+                    @{ Html.RenderPartial("_ReporteDeducibles" ); }
+                </div>
+
+            </div>
+        </div>
+
+        <!--end::Portlet-->
+
+    </div>
+</div>
+
+<script src="@Url.Content("~/scripts/gastos.js")"></script>
+
+<script>
+    
+     $(document).ready(function () {
+        Gastos.deductibleReport.element = "divReporteDeducibles";
+        Gastos.deductibleReport.url = '@Url.Action("GetReporteDeduciblesAsync", "Gastos")';
+        Gastos.deductibleReport.year = '@DateTime.Now.Year';
+        Gastos.deductibleReport.month = '@DateTime.Now.Month';
+
+        Gastos.init();
+        Gastos.refreshDeductibles();
+        Gastos.refreshDetails('@Url.Content("~/Presupuesto/GetBudgetDetailsAsync")');
+
+    });
+
+
+</script>

@@ -1,0 +1,741 @@
+.sri-imagen-banner {
+    display: none;
+    min-width: 1300px;
+}
+
+.sri-login {
+    position: absolute;
+    top: 0;
+    left: 0%;
+    z-index: 10;
+    /* padding-top: 30%; */
+    /* margin-top: 36%; */
+}
+
+.tamanio-logo-sri{
+	width: 220px;
+    max-width: 150px;
+}
+
+.etiqueta-datos-login {
+    color: #FFFFFF;
+    float: left;
+    font-family: Arial,sans-serif;
+    font-weight: bold;
+    padding-top: 10px;
+}
+
+.input-datos-login {
+    padding: 3px 55px;
+    text-align: left;
+    width: 100%;
+}
+
+.tamanio-imagen-login {
+    width: 100% !important;
+    height: 100%;
+    position: fixed;
+}
+
+.sri-imagen-form {
+    background-color: #0c4597;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    height: 100%;
+    width: 94%;
+    position: absolute;
+    z-index: 10;
+    height: 606px;
+    opacity: 0.85;
+    /* margin-top: 30%; */
+}
+
+.espaciado-contenido{
+    /* margin-top: 0%; */
+}
+                
+.boton-ingresar-login {
+    height: 20px;
+    width: 100px;
+    color: #434a54;
+    background-color: #daeef6;
+    border-color: #daeef6;
+    border-style: solid;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+}
+
+.boton-ingresar-login:hover {
+    /*color: #ffffff;
+    background-color: #C82F1B;
+    border-color: #C82F1B;*/
+    color: #ffffff;
+    background-color: #4fc1ea;
+    border-color: #4fc1ea;
+}
+
+.boton-ingresar-login:focus {
+    box-shadow: 0 0 0 0;
+    background-color: #daeef6;
+    border-color: #daeef6;
+    color: #434a54;
+}
+
+.link-recuperar-clave-login {
+    color: #FFFFFF !important;
+    font-weight: bold;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    margin-top: 8px;
+}
+
+.contenedor-login {
+   padding-top: 10%;
+}
+
+.anchoDoc {
+	word-wrap: break-word;
+    table-layout: fixed;
+    width: 137%;
+}   
+ 
+table#interna1 {
+    word-wrap: break-word;
+    table-layout: fixed;
+    width: 100%;
+}
+
+/*icono recuperar contraseÃƒÂ±a*/
+.tamanio-icon-recuperar {
+   	width: 20px;
+    height: 20px;
+    vertical-align: super;
+}
+
+/*cambiar a span el texto de contraseÃƒÂ±a es un label*/
+.texto-recuperar-contrasenia {
+    line-height: 1.2;
+    display: table-caption;
+}
+
+.espaciado-formulario {
+    /*padding-top: 12%;*/
+    margin-left: 86px;
+    width: 100%;
+}
+
+td.link-recuperar {
+    height: 55px;
+}
+
+.contenedor-error{
+	height: 57px;
+    float: left;	
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.mensaje-error{
+	color: #FFFFFF;
+    background-color: #D73747;
+    width: 65%;
+    font-size: 12px;
+    line-height: 1.3;
+    height: 57px;
+    padding-left: 7%;
+    padding-top: 5px;
+}
+
+.img-mensaje-error{
+	float: left;
+	margin-top: 0px;
+}
+
+.tamanio-icon-mensaje-error{
+	width: 20px;
+    height: 20px;
+}
+
+.contenedor-principal{
+	padding-left: 0px;
+}
+
+.fondo-body {
+    background-color: #FFFFFF;
+    overflow-x: hidden;
+}
+
+a.link-recuperar-clave-login:hover {
+    color: #FECE56 !important;
+}
+
+.tamano-guia-usuario {
+    max-height: 20px;
+    max-width: 20px;
+    margin-top: 3px;
+    margin-bottom: 0;
+    margin-left: 17px;
+}
+
+.letras-guia-contribuyente{
+    padding-top: 1px;
+    font-weight: bold;
+    line-height: 12px;
+    color: #FFFFFF !important;
+    font-weight: bold;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    margin-top: 1px;
+    padding-right: 15px;
+}
+
+.alinea-input{
+	padding-right: 10%;
+}
+
+.alinea-footer{
+	z-index: 10;
+    text-align: center;
+    color:#FFFFFF;
+}
+
+.fondo-footer{
+	font-family: 'Roboto', sans-serif;
+	font-size: 12px;
+	background-color: rgba(101, 109, 120, 0.74);
+	position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.ui-dialog {
+    max-width: 255px;
+}	
+
+@media screen and (min-width: 320px) {
+    .fondo-body{
+		background-color: #0b111a;
+		overflow-x: hidden;
+	}
+	
+    .sri-imagen-form {
+	    height: 100%;
+	    width: 100%;
+	    position: relative;
+	    min-height: 630px;
+	    /* margin-top: 30%; */
+	}
+
+    .sri-imagen-banner {
+        display: none;
+    }
+    
+    .contenedor-principal {
+    	padding-left: 126px;
+	}
+	
+	.mensaje-error {
+    	width: 68%;
+    	height: 60px;
+	}
+	
+	.espaciado-formulario {
+    	margin-left: 10px;
+    	padding-top: 18%;
+    }
+	
+	.tamanio-logo-sri {
+	    margin-left: 124px;
+            margin-left: auto;
+    margin-right: auto;
+    display: block;
+        transform: translateY(70px);
+    -ms-transform: translateY(70px);
+    -webkit-transform: translateX(70px);
+        
+	}
+	
+	.sri-login {
+    	left: -18%;
+    	padding-top: 30%;
+    	/* margin-top: 36%; */
+ }	
+	
+	.letras-guia-contribuyente {
+	    padding-top: 1px;
+	    font-weight: bold;
+	    line-height: 12px;
+	    color: #FFFFFF !important;
+	    font-weight: bold;
+	    font-size: 12px;
+	    font-family: Arial, sans-serif;
+	    margin-top: 5px;
+	    padding-right: 1px;
+	}
+	
+	.tamano-guia-usuario {
+	    max-height: 20px;
+	    max-width: 20px;
+	    margin-top: 3px;
+	    margin-bottom: 0;
+	    margin-left: 0px;
+	}
+    	
+}
+
+@media screen and (min-width: 450px) {
+	.anchoDoc {
+		word-wrap: break-word;
+	    table-layout: fixed;
+	    width: 100%;
+	}  
+	
+	.fondo-body{
+		background-color: #0b111a;
+		overflow-x: hidden;
+	}
+	
+	.sri-imagen-form {
+	    height: 100%;
+	    width: 100%;
+	    position: relative;
+	    min-height: 630px;
+	}
+	
+    .sri-imagen-banner {
+        display: none;
+    }
+    
+    .contenedor-principal {
+    	padding-left: 126px;
+	}
+	
+	.mensaje-error {
+    	width: 68%;
+    	height: 60px;
+	}
+	
+	.espaciado-formulario {
+    	margin-left: 0px;
+    	padding-top: 50%;
+    }
+	
+	.tamanio-logo-sri {
+	    margin-left: 125px;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        transform: translateY(0px); 
+        -ms-transform: translateY(0px);
+        -webkit-transform: translateX(0px); 
+	}
+	
+	.sri-login {
+    	left: 1%;
+    	padding-top: 94px;
+ }	
+	
+	.letras-guia-contribuyente {
+	    padding-top: 1px;
+	    font-weight: bold;
+	    line-height: 12px;
+	    color: #FFFFFF !important;
+	    font-weight: bold;
+	    font-size: 12px;
+	    font-family: Arial, sans-serif;
+	    margin-top: 5px;
+	    padding-right: 1px;
+	}
+	
+	.tamano-guia-usuario {
+	    max-height: 20px;
+	    max-width: 20px;
+	    margin-top: 3px;
+	    margin-bottom: 0;
+	    margin-left: 0px;
+	}
+    	
+}
+
+.sri-tabla-login{
+	width:75%;
+}
+
+@media screen and (min-width: 576px) {
+	 
+	.sri-tabla-login{
+		width:100%;
+	}
+	
+	.fondo-body {
+		background-color: #FFFFFF;
+		overflow-x: hidden;
+	}
+
+	.contenedor-principal{
+		padding-left: 0px;
+	}
+
+	 .sri-imagen-form {
+        background-color: #0c4597;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        height: 100%;
+        width: 110%;
+        position: absolute;
+        z-index: 10;
+        height: 287px;
+        min-height: 545px;
+        margin-top: 30%;
+    }
+
+    .espaciado-contenido {
+        /* margin-top: 23%; */
+    }
+       
+	.espaciado-formulario {
+	   margin-left: 23px;
+	   /* margin-top: 36%; */
+	}
+	
+	.input-datos-login {
+	    padding: 4px 0px;
+	}
+	
+	.sri-login {
+	    position: absolute;
+	    top: 0;
+	    left: 5%;
+	    z-index: 10;
+	    padding-top: 30%;
+	    margin-top: 36%;
+	}
+	
+	.tamanio-logo-sri {
+    	width: 138px;
+    	margin-left: 0px;
+        transform: translateY(0px);
+        -ms-transform: translateY(0px);
+        -webkit-transform: translateY(0px);
+	}
+	
+	.mensaje-error {
+   		width: 90%;
+		height: 77px;
+	}
+	
+	.sri-imagen-banner {
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+    }
+    
+    .tamano-guia-usuario {
+	    max-height: 20px;
+	    max-width: 20px;
+	    margin-top: 3px;
+	    margin-bottom: 0;
+	    margin-left: 17px;
+	}
+	
+	.letras-guia-contribuyente {
+	    padding-top: 1px;
+	    font-weight: bold;
+	    line-height: 12px;
+	    color: #FFFFFF !important;
+	    font-weight: bold;
+	    font-size: 12px;
+	    font-family: Arial, sans-serif;
+	    margin-top: 1px;
+	    padding-right: 10px;
+	}
+  	
+  	.ui-dialog {
+	    max-width: 500px;
+	}	
+}
+
+@media screen and (min-width: 768px) {
+	
+	.sri-tabla-login{
+		width:97%;
+	}
+	
+	.fondo-body {
+		background-color: #FFFFFF;
+		overflow-x: hidden;
+	}
+	
+	.contenedor-principal{
+		padding-left: 0px;
+	}
+	
+	.sri-imagen-form {
+        background-color: #0c4597;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        z-index: 10;
+        height: 287px;
+        min-height: 545px;
+    }
+    
+	.espaciado-contenido {
+        /* margin-top: 18%; */
+    }
+    
+	.espaciado-formulario {
+	   margin-left: 37px;
+	}
+	
+	.input-datos-login {
+	    padding: 4px 30px;
+	}
+	
+	.mensaje-error {
+	    width: 87%;
+	    height: 68px;
+	}
+	
+	.tamanio-logo-sri {
+    	width: 196px;
+    	max-width: 150px;
+        margin-left: 14%;
+        transform: translateY(21px);
+        -ms-transform: translateY(21px);
+        -webkit-transform: translateY(21px);
+	}	
+	
+	.sri-login {
+	    position: absolute;
+	    top: 0;
+	    left: 0%;
+	    z-index: 10;
+	    padding-top: 10%;
+	}
+	
+	.sri-imagen-banner {
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+    }
+    
+    .tamano-guia-usuario {
+	    max-height: 20px;
+	    max-width: 20px;
+	    margin-top: 3px;
+	    margin-bottom: 0;
+	    margin-left: 17px;
+	}
+    
+    .letras-guia-contribuyente {
+	    padding-top: 1px;
+	    font-weight: bold;
+	    line-height: 12px;
+	    color: #FFFFFF !important;
+	    font-weight: bold;
+	    font-size: 12px;
+	    font-family: Arial, sans-serif;
+	    margin-top: 1px;
+	    padding-right: 10px;
+	}
+	
+}
+
+@media screen and (min-width: 992px) {
+	
+	.sri-tabla-login{
+		width:78%;
+	}
+	
+	.fondo-body {
+		background-color: #FFFFFF;
+		overflow-x: hidden;
+	}
+	
+	.contenedor-principal{
+		padding-left: 0px;
+	}
+	
+	.sri-imagen-form {
+        background-color: #0c4597;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        z-index: 10;
+        height: 287px;
+        min-height: 545px;
+    }
+    
+	 .espaciado-contenido {
+        /* margin-top: 13%; */
+    }
+    
+	.espaciado-formulario {
+	   margin-left: 58px;
+	}
+	
+	.input-datos-login {
+	    padding: 4px 37px;
+	}
+	
+	.mensaje-error {
+    	width: 70%;
+	}	
+	
+	.sri-login {
+	    position: absolute;
+	    top: 0;
+	    left: 4%;
+	    z-index: 10;
+	    padding-top: 10%;
+	}
+	
+	.sri-imagen-banner {
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+    }
+    
+    .tamano-guia-usuario {
+	    max-height: 20px;
+	    max-width: 20px;
+	    margin-top: 3px;
+	    margin-bottom: 0;
+	    margin-left: 17px;
+	}
+    
+    .letras-guia-contribuyente {
+	    padding-top: 1px;
+	    font-weight: bold;
+	    line-height: 12px;
+	    color: #FFFFFF !important;
+	    font-weight: bold;
+	    font-size: 12px;
+	    font-family: Arial, sans-serif;
+	    margin-top: 1px;
+	    padding-right: 10px;
+	}
+}
+
+@media screen and (min-width: 1200px){
+	
+	.fondo-body {
+		background-color: #FFFFFF;
+		overflow-x: hidden;
+	}
+	
+	.contenedor-principal{
+		padding-left: 0px;
+	}
+	
+	.sri-login {
+	    position: absolute;
+	    top: 0;
+	    left: 12%;
+	    z-index: 10;
+	    padding-top: 10%;
+	}
+	
+	.sri-imagen-form {
+        background-color: #0c4597;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        width: 100%;
+        position: absolute;
+        z-index: 10;
+        height: 287px;
+        min-height: 545px;
+    }
+
+    .espaciado-contenido {
+        /* margin-top: 13%; */
+    }
+
+    .sri-imagen-banner {
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+    }
+    
+    .espaciado-formulario {
+	   margin-left: 34px;
+	}
+	
+	.input-datos-login {
+	    padding: 3px 55px;
+	}
+	
+	.tamanio-logo-sri{
+		width: 220px;
+        max-width: 150px;
+        margin-left: 14%;
+        transform: translateY(21px);
+        -ms-transform: translateY(21px);
+        -webkit-transform: translateY(21px);
+	}
+	
+	.mensaje-error{
+		width: 70%;
+	    height: 57px;
+	}
+	
+	.tamano-guia-usuario {
+	    max-height: 20px;
+	    max-width: 20px;
+	    margin-top: 3px;
+	    margin-bottom: 0;
+	    margin-left: 17px;
+	}
+	
+	.letras-guia-contribuyente {
+	    padding-top: 1px;
+	    font-weight: bold;
+	    line-height: 12px;
+	    color: #FFFFFF !important;
+	    font-weight: bold;
+	    font-size: 12px;
+	    font-family: Arial, sans-serif;
+	    margin-top: 1px;
+	    padding-right: 10px;
+	}
+}
+
+p.letras-guia-contribuyente:hover {
+    color: #4fc1ea  !important;
+    text-decoration: underline;
+}
+
+.guia-espaciado{
+  margin-top:10px;
+  margin-bottom:10px;
+}
+
+.contenedor-guia-uso{
+  max-width: 154px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sri-padding{
+	padding-right:9px;
+	padding-left:9px;
+}
+
+
+

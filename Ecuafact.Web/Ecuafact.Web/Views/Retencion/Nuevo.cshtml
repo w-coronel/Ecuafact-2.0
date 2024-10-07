@@ -1,0 +1,538 @@
+﻿@using System.Text
+@using Ecuafact.Web.MiddleCore.ApplicationServices
+@using Ecuafact.Web.Domain.Entities
+@model RetentionRequestModel
+@{
+    ViewBag.Title = "Crear Retención";
+    ViewBag.ParentTitle = "Emitidos";
+
+    this.PageOptions(options =>
+    {
+        options.Select2 = true;
+        options.DataTables = true;
+        options.DatePicker = true;
+
+    });
+
+    var emisorActual = SessionInfo.Issuer;
+
+    // Datos Predeterminados
+    Model.IssuedOn = Model.IssuedOn ?? DateTime.Now.ToString("dd/MM/yyyy");
+    Model.FiscalPeriod = Model.FiscalPeriod ?? DateTime.Now.ToString("MM/yyyy");
+    Model.ReferenceDocumentDate = Model.ReferenceDocumentDate ?? DateTime.Now.ToString("dd/MM/yyyy");
+    Model.ReferenceDocumentAmount = Model.ReferenceDocumentAmount ?? 0.00M;
+    Model.Details = Model.Details ?? new List<RetentionDetailModel>();
+    Model.AdditionalFields = Model.AdditionalFields ?? new List<AdditionalFieldModel>();
+
+    var customers = new List<ContributorDto>();
+
+    if (Model.ContributorId > 0)
+    {
+        customers.Add(Model.ToContributor());
+    }
+
+    var customerList = customers.Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.Identification, x.BussinesName), Value = x.Id.ToString() }).ToList();
+
+
+}
+
+@section styles{
+    <link href="~/content/invoice.css" rel="stylesheet" />
+}
+
+@Html.HiddenFor(model => model.ContributorName, new { @id = "razon_social", @class = "hidden" })
+@Html.HiddenFor(model => model.Identification, new { @id = "identificacion_proveedor", @class = "hidden" })
+@Html.HiddenFor(model => model.IdentificationType, new { @id = "tipo_identificacion", @class = "hidden" })
+@Html.HiddenFor(model => model.Id, new {@class = "hidden" })
+
+<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+
+    <div class="kt-portlet">
+
+        <div class="kt-portlet__body kt-portlet__body--fit">
+
+            <div class="kt-invoice-1">
+
+                <div class="kt-invoice__head" style="background-image: url(@Url.Content("~/assets/media/bg/300.jpg"));">
+
+                    <div class="kt-invoice__container">
+
+                        <div class="kt-invoice__brand">
+
+                            <h1 class="kt-invoice__title">Retención</h1>
+
+                        </div>
+
+                        <div class="kt-invoice__items">
+
+                            <div class="kt-invoice__item col-12 col-md-7">
+
+                                <div class="row" style="padding-bottom:5px">
+
+                                    <div class="col-8">
+
+                                        <label>Escriba el nombre del Contribuyente o su identificacion (RUC, Cedula, Pasaporte): </label>
+
+                                    </div>
+
+                                    <!--No aparece-->
+                                    <div class="col-4 ">
+
+                                        <button id="actualizarClienteButton" data-toggle="modal" data-target="#modal-cliente" type="button" onclick="editarComprador();" class="btn btn-pill btn-outline-dark btn-brand kt-hide" title="Actualizar información Contribuyente">
+
+                                            <i class="la la-pencil"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="row normalform" id="bodyContrib" name="bodyContrib">
+
+                                    <div class="col-md-12">                                      
+                                        <select style="width:100%;" class="js-supplierSelector" id="inputClienteId"></select>
+
+                                        <input type="hidden" id="proveedor_nombre" value="NO DISPONIBLE" />
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-12 col-md-2"></div>
+
+                            <div class="kt-invoice__item col-md-3 col-12">
+
+                                <div class="row">
+
+                                    <div class="col-12">
+
+                                        <div class="row">
+
+                                            <div class="col-12 col-sm-6 col-md-12">
+
+                                                <span class="kt-invoice__subtitle">Fecha Emisión:</span>
+
+                                                <div class="kt-input-icon kt-input-icon--right" style="padding-bottom:5px">
+
+                                                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+
+                                                        <i class="fa fa-calendar-alt"></i>
+
+                                                    </span>
+
+                                                    <input name="fecha_documento" id="fecha_documento" type="text" class="form-control input-readonly bg-white"
+                                                           style="width:100%;border:none none solid none; text-align:right;" placeholder="Fecha" value="@DateTime.Now.ToString("dd/MM/yyyy")"
+                                                           aria-describedby="addon-fecha_documento" readonly>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="col-12 col-sm-6 col-md-12">
+
+                                                <span class="kt-invoice__subtitle">Periodo Fiscal:</span>
+                                                <div class="kt-input-icon kt-input-icon--right" style="padding-bottom:5px">
+                                                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                                        <span>
+                                                            <i class="fa fa-calendar-alt"></i>
+                                                        </span>
+                                                    </span>
+
+                                                    @Html.EditorFor(model => model.FiscalPeriod,
+                                                    new
+                                                    {
+                                                        htmlAttributes = new
+                                                        {
+                                                            @id = "periodo_fiscal",
+                                                            @class = "form-control input-readonly",
+                                                            @placeholder = "Periodo fiscal",
+                                                            @style = "border:none none solid none; text-align:right;",
+                                                            @required = "",
+                                                            @readonly = ""
+                                                        }
+                                                    })
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                @* Datos del Comprador *@
+                <div class="row" name="proveedorPage">
+                    @{
+                        Html.RenderPartial("Shared/_cabeceraPartial", Model, ViewData);
+                    }
+                </div>
+
+                @* Detalle de los productos *@
+                <div class="row" name="productosPage">
+
+                    @{
+                        Html.RenderPartial("Shared/_detallePartial", Model, ViewData);
+                    }
+
+                </div>
+
+
+
+                <div class="kt-invoice__footer">
+
+                    <div class="kt-invoice__container row">
+
+                        <div class="kt-portlet__body col-12 col-md-8">
+
+                            @{
+                                Html.RenderPartial("Shared/_infoAdicionalPartial", Model);
+                            }
+
+                        </div>
+
+                        <div class="col-12 col-md-4 kt-invoice__total align-content-center align-items-center justify-content-center" style="padding:0px">
+
+                            <div class="col-12" style="padding:0px">
+
+                                <div class="panel-body kt-container" style="padding:0px;width:100%;">
+
+                                    <table class="table table-advance table-scrollable-borderless" style="text-align:right; vertical-align:middle;background-color:transparent">
+
+                                        <tr class="bg-lighten-4">
+
+                                            <th class="text-bold-800 bg"><label class="control-label bold white" id="etiqueta_total">Total</label></th>
+                                            <td class="text-bold-800 text-right bold">
+                                                @*<input name="documento_valor_total" id="documento_valor_total" disabled type="text" placeholder="" class="control-total form-control bold" value="$0.00">*@
+                                                @Html.EditorFor(model => model.FiscalAmount,
+                                                new
+                                                {
+                                                    htmlAttributes = new
+                                                    {
+                                                        @id = "documento_valor_total",
+                                                        @class = "form-control",
+                                                        @placeholder = "Total",
+                                                        @style = "width:100%;border:none none solid none; text-align:right ;",
+                                                        @disabled = "",
+                                                        @value = "$ 0.00",
+                                                        @required = ""
+                                                    }
+                                                })
+
+                                            </td>
+
+                                        </tr>
+
+                                        <tr class="bg-blue-soft bg-lighten-4" style="color:white;background-color:#0742A8">
+
+                                            <th class="text-bold-800 bg"><label class="control-label bold white" id="etiqueta_saldo">Saldo de la Factura</label></th>
+                                            <td class="text-bold-800 text-right bold">
+                                                @Html.EditorFor(model => model.Balance,
+                                                new
+                                                {
+                                                    htmlAttributes = new
+                                                    {
+                                                        @id = "documento_saldo_total",
+                                                        @class = "form-control",
+                                                        @placeholder = "Saldo",
+                                                        @style = "width:100%;border:none none solid none; text-align:right ;",
+                                                        @disabled = "",
+                                                        @value = "$ 0.00",
+                                                        @required = ""
+
+                                                    }
+                                                })
+
+                                            </td>
+
+                                        </tr>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section toolbar{
+
+    <div class="btn-group">
+
+        <button type="button" class="btn btn-brand guardar-button">
+            <i class="la la-check"></i>
+            <span class="kt-hidden-mobile">Guardar</span>
+        </button>
+
+        <button type="button" class="btn btn-brand dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </button>
+
+        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-58px, 38px, 0px);">
+            <ul class="kt-nav">
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link guardar-button" id="btnGuardar">
+                        <i class="kt-nav__link-icon flaticon2-shield"></i>
+                        <span class="kt-nav__link-text">Guardar borrador</span>
+                    </a>
+                </li>
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link" id="btnEnviar">
+                        <i class="kt-nav__link-icon flaticon2-paper-plane"></i>
+                        <span class="kt-nav__link-text">Enviar al SRI</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+}
+
+
+@{
+    var token = SessionInfo.ApplicationToken;
+
+    var tiposIdentificacion = ServicioCatalogos.ObtenerTiposIdentificacion(token);
+    var tipos = ServicioCatalogos.ObtenerTiposImpuesto(token);
+    var impuestos = ServicioImpuestos.ObtenerImpuestos(token);
+
+    StringBuilder html = new StringBuilder();
+    foreach (var type in tipos)
+    {
+        html.AppendFormat("<optgroup label=\"{0}. {1}\">", type.SriCode, type.Name);
+
+        foreach (var imps in impuestos.Where(p => p.TaxTypeId == type.Id))
+        {
+            html.AppendFormat("<option value=\"{0}\" custom-code=\"{1}\" custom-name=\"{2}\" custom-type=\"{3}\" >{1} {2}</option>", imps.Id, imps.SriCode, imps.Name, type.SriCode);
+        }
+
+        html.Append("</optgroup>");
+    }
+
+    var listaImpuestos = html.ToString();
+}
+
+@section scripts{
+
+    @Scripts.Render("~/js/retentions")
+
+
+    <script type="text/javascript" id="startScript">
+
+    //FUNCIONES BASICAS
+
+    function docNumberChanged() {
+        var numDocObj = $("#ref_numero_comprobante");
+        var text = numDocObj.val();
+
+        numDocObj.val(formatNumDoc(text));
+
+    }
+
+
+    getUrlAuthorization = function (docTypeCode, docNumber) {
+        return '@Url.Action("GetDocumentAuthSync", "Retencion")' + '?docType=' + docTypeCode + '&docNumber=' + docNumber;
+    }
+
+    getUrlSupplierAction = function (id) {
+
+        if (typeof id !== 'undefined' && id>0) {
+            return "@Url.Action("Editar", "Contribuyentes")/"+id;
+        }
+        else {
+            return "@Url.Action("Nuevo", "Contribuyentes")";
+        }
+
+    }
+
+    getUrlSearchContrib = function () { return '@Url.Action("SearchContribAsync", "Contribuyentes")'; }
+
+    getLoginFormUrl = function () {
+        return '@Url.Action("Index", "Auth")?ReturnURL=' + location.href;
+    }
+
+
+
+    startSupplierSelector();
+
+    var fechaRefObj = $("#ref_fecha_documento");
+
+    fechaRefObj.datepicker({
+        endDate: fecha_actual,
+        keyboardNavigation: false,
+        format: "dd/mm/yyyy",
+        language: "es",
+        forceParse: false,
+        autoclose: true
+    });
+
+    fechaRefObj.val(fecha_actual);
+
+    </script>
+
+
+
+    <script id="processScript">
+    model = @Html.Raw(Json.Encode(Model));
+    productData = @Html.Raw(Json.Encode(new RetentionTax()));
+    tiposIdentificacion =  @Html.Raw(Json.Encode(tiposIdentificacion));
+    tipos =  @Html.Raw(Json.Encode(tipos));
+    impuestos =  @Html.Raw(Json.Encode(impuestos));
+
+    // Configuramos las variables que requieren informacion del Servidor
+    retencionSaveAction = '@Url.Action("SaveRetentionAsync", "Retencion")';
+    printretencionAction = '@Url.Action("PrintDocument", "Retencion")';
+    fecha_mes_atras = '@System.DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy")';
+    fecha_actual = '@System.DateTime.Now.ToString("dd/MM/yyyy")';
+
+    documentoRetencion = @Html.Raw(Json.Encode(new RetentionModel()));
+    ivaList = @Html.Raw(Json.Encode(ViewBag.ImpuestosIVA));
+
+    getImpuestosHtml = function (){
+        return '@Html.Raw(Json.Encode(listaImpuestos))';
+    }
+
+
+    getSearchTaxUrl = function(){
+        return  '@Url.Action("SearchTaxAsync", "Retencion")';
+    }
+
+    getCreateTaxUrl = function(){
+        return "@Url.Action("Nuevo", "Impuesto")";
+    }
+
+
+    getUrlSearchDocument = function (id) {
+            return "@Url.Action("GetDocumentById", "Retencion")/"+id;
+    }
+
+    $(".guardar-button").click(function () {
+        if (!$(".guardar-button").hasClass("disabled")) {
+            guardarRetencion();
+        }
+    });
+
+    $("#btnEnviar").click(function () {
+        if (!$("#btnEnviar").hasClass("disabled")) {
+            guardarRetencion(1);
+        }
+    });
+
+    $("#btnCancelar").click(function () {
+        if (!$("#btnCancelar").hasClass("disabled")) {
+            history.go(-1);
+        }
+    });
+
+    var getActionUrl = function(controller, action){
+        if (typeof controller!='string') {
+            controller = '';
+        }
+
+        if (typeof action!='string') {
+            action = '';
+        }
+
+        return '@Url.Action("", "")'+'/'+controller+'/'+action;
+    }
+
+    function fechaDocumentoChanged() {
+        var fecha = fechaDocObj.val();
+
+        if (fecha && typeof fecha == "string") {
+            periodoFiscal = fecha.substring(3, 10);
+
+            $("#periodo_fiscal").val(periodoFiscal);
+        }
+    }
+
+    var redirectAction = function(action, data){
+        var urlAction = '@Url.Action("", "Retencion")';
+
+        urlAction +='/'+action;
+
+        if (data!=null) {
+            urlAction +='/'+data;
+        }
+
+        window.location.href = urlAction;
+    };
+
+
+    //CONECTAMOS LA LISTA DEL CLIENTE
+    //startCustomerSelector();
+
+    //CONECTAMOS LA LISTA DOCUMENTOS
+    startDocumentSelector(null);
+
+    // Configuracion de Controles
+    var fechaDocObj = $('#fecha_documento');
+
+    fechaDocObj.datepicker({
+        startDate: fecha_mes_atras,
+        endDate: fecha_actual,
+        keyboardNavigation: true,
+        format: "dd/mm/yyyy",
+        language: "es",
+        forceParse: false,
+        orientation: "bottom",
+        autoclose: true
+    });
+
+    fechaDocObj.on("change", fechaDocumentoChanged);
+
+    var fechaDocRef = $('#ref_fecha_documento');
+    fechaDocRef.datepicker({
+        startDate: fecha_mes_atras,
+        endDate: fecha_actual,
+        keyboardNavigation: true,
+        format: "dd/mm/yyyy",
+        language: "es",
+        forceParse: false,
+        orientation: "bottom",
+        autoclose: true
+    });
+
+    fechaDocObj.val(fecha_actual);
+    fechaDocRef.val(fecha_actual);
+
+
+    // Creamos el primer elemento para el formulario
+    // agregarItem(); // No Debe ser automatico, debe ser seleccionado por el contador.
+
+    if (model.Id > 0)
+    {
+        Contributor =  @Html.Raw(Json.Encode(Model.ToContributor()));
+        llenarControles(model);
+    }
+
+
+     initialized = true;
+
+
+    </script>
+
+
+}

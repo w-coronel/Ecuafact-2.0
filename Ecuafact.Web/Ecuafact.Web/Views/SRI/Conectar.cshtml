@@ -1,0 +1,95 @@
+﻿@{ 
+    
+    var issuerRUC = SessionInfo.UserInfo != null ? SessionInfo.UserInfo.Username : "";
+
+    if (SessionInfo.Issuer!=null)
+    {
+        issuerRUC = SessionInfo.Issuer.RUC;
+    }
+}
+<script src="~/Scripts/SRI.Connect.js"></script>
+
+<div class="modal fade show" id="kt_modal_1"
+       role="dialog" aria-labelledby="exampleModalLabel" aria-modal="true"
+     style="display: block;">
+    <div class="modal-dialog  " role="document">
+        
+        <div class="modal-content sri-modal">
+            <div class="modal-header">
+                
+                <h4 class="modal-title"><i class="flaticon-rotate text-warning"></i> &nbsp;&nbsp; Conectar con el SRI</h4>
+                
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <center>
+
+                    <table class="col-md-10">
+                        <tbody>
+                            <tr>
+                                <td class="text-center">
+                                    <div class="col-12 kt-margin-b-40">
+                                        Ingresando tus credenciales del SRI, podr&aacute;s enviar y recibir
+                                        automáticamente los documentos electrónicos registrados a tu nombre.
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="identificacion" class="etiqueta-datos-login">RUC / C.I. / Pasaporte</label></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="alinea-input">
+                                        <input name="Identification" readonly disabled title="Ingrese su identificación" class="readonly disabled bg-white form-control sri-padding" type="text" id="identificacion" maxlength="13" size="15" required="required" oninvalid="setCustomValidity('Ingrese su identificación')" oninput="setCustomValidity('')" onkeypress="return soloNumerosLetras(event)" tabindex="1" value="@issuerRUC">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="password2" class="kt-label">Contrase&ntilde;a</label></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="alinea-input">
+                                        <input name="UserPass" title="Ingrese su contraseña" class="form-control" type="password" id="password2" maxlength="30" size="15" required="required" autocomplete="off" tabindex="3">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="kt-margin-20"></div>
+                                    <div class="alinea-input">
+                                        <label>
+
+                                            <input type="checkbox" name="checkme" id="checkme"> Acepto los
+
+                                            <a href="#" class="kt-link kt-link--warning" onclick="window.open('http://nube.ecuafact.com/apidev/Disclaimer.pdf', '_blank', 'fullscreen=yes'); return false;">
+                                                Términos y condiciones del Servicio
+                                            </a>
+
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr> 
+
+                        </tbody>
+                    </table>
+                </center>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark btn-hover-danger login-sri" name="boton" tabindex="4">
+                    <i class="flaticon2-check-mark"></i> Conectar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    SRI.LoginUrl = "@Url.Content("~/Auth")";
+    SRI.ConnectURL = "@Url.Action("CambiarClaveAPI", "SRI")";
+    SRI.Init();
+</script>

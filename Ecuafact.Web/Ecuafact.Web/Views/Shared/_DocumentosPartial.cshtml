@@ -1,0 +1,227 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web.MiddleCore.ApplicationServices
+@using Ecuafact.Web.Models
+@model DocumentosQueryModel
+
+<table class="table table-striped table-bordered table-hover responsive dt-responsive table-checkable order-column" id="_documentos" style="width:100%">
+
+    <thead>
+        <tr>
+            <th><i class="fa fa-bars"></i></th>
+
+            <th>No. Documento</th>
+            <th>Identificacion</th>
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Data != null)
+        {
+            foreach (var item in Model.Data)
+            {
+                var controller = Request.GetController(item.DocumentTypeCode);
+                var iconClass = Request.GetStatusIcon(item.Status.Value);
+                var iconType = Request.GetDocumentIcon(item.DocumentTypeCode);
+
+                // Procesamos el estado de los documentos
+                var styleClass = item.Status.Value.GetStyle() ?? "brand";
+                var statusMessage = item.Status.Value.GetDisplayValue() ?? "Procesando";
+                var statusType = Request.GetStatusType(item.Status.Value);
+                var statusMsg = item.StatusMsg ?? "El documento actual se encuentra en el estado: " + statusMessage;
+
+                <tr>
+                    <td data-order="@item.Id">
+                        <div class="kt-badge kt-badge--@Request.GetColor(item.DocumentTypeCode) kt-badge--lg">
+                            <i class="@iconType"></i>
+                        </div>
+                    </td>
+
+                    <td>
+                        <a href="@Url.Action("Ver", controller, new {  id=item.Id })"> @item.DocumentNumber</a>
+                    </td>
+                    <td>@item.ContributorIdentification</td>
+                    <td>@item.ContributorName</td>
+                    <td>@item.IssuedOn.ToString("dd/MM/yyyy")</td>
+                    <td>$ @item.Total</td>
+
+                    <td class=" text-center text-@styleClass" title="@statusMessage">
+                        <a class="text-center btn btn-circle btn-pill btn-sm btn-small btn-outline-@styleClass" href="javascript:;" onclick=' Swal.fire("@statusMessage", `@statusMsg`, "@statusType" );'>
+                            <i class=" fa fa-@iconClass"></i> @statusMessage
+                        </a>
+                    </td>
+
+                    <td class="d-print-none">
+                        <span class="dropdown">
+                            <a href="#" class="btn btn-sm btn-outline-brand btn-circle btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                                <i class="la la-ellipsis-h"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a target="_pdf" class="dropdown-item text-danger" href="@Url.Action("PDF", controller, new {  id=item.Id,  type="PDF"})"><i class="text-danger la la-file-pdf-o"></i> PDF</a>
+                                @if (!string.IsNullOrEmpty(item.AuthorizationNumber) && item.AuthorizationNumber != "-")
+                                {
+                                    <a target="_xml" class="dropdown-item text-info" href="@Url.Action("DownloadFile", "Comprobantes", new { id = item.AuthorizationNumber, type = "XML" })"><i class="text-info la la-file-code-o"></i> XML</a>
+                                    <!--
+                                        <a target="_zip" class="dropdown-item text-warning" href="@Url.Action("DownloadFile", "Comprobantes", new { id = item.AuthorizationNumber, type = "ZIP" })"><i class="text-warning la la-file-zip-o"></i> ZIP</a>
+                                    -->
+                                }
+                            </div>
+                        </span>
+                    </td>
+
+
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+<script>
+      $(document).ready(function () {
+        var $exportOptions = { columns: [0, 1, 2, 3, 4] };
+        var $_form = $('#formConsultas');
+        var pdfUrl = "@Url.Action("PDF")/";
+        var xmlUrl = "@Url.Action("DownloadFile")";
+        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) { console.log(message) };
+        Comprobantes.IssuedTable = $('#_documentos').DataTable({
+            "order": [[0, 'desc']],
+            "language": {
+                "url": "@Url.Content("~/scripts/dt_spanish.json")"
+            },
+            processing: true,
+            serverSide: true,
+            sortable: false,
+            deferRender: true,
+            ordering: true,
+            paging: true,
+            ajax: {
+                url: '@Url.Action("GetDocumentsAsync")',
+                type: 'POST',
+                data: function (d) {
+                    var _data = $_form.serializeJSON();
+                    d.model = _data;
+                    return d;
+                }
+            },
+            columns: [
+                { data: null },
+                { data: 'DocumentNumber' },
+                { data: 'ContributorIdentification' },
+                { data: 'ContributorName' },
+                { data: 'IssuedOn', render: $.fn.dataTable.render.date},
+                { data: 'Total', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                { data: 'Status' },
+                { data: null }
+
+            ],
+            "columnDefs": [
+            {
+                "targets": 0,
+                "render": function (data, e, row) {
+                    var item = "<div data-order='" + row.Id + "' class='kt-badge kt-badge--" + row.StyleColor + " kt-badge--lg'>" +
+                               "<i class='" + row.IconType + "'></i>" +
+                               "</div>";
+                    return item;
+                }
+            },
+            {
+                "targets": 1,
+                "render":function (data, e, row) {
+                    var item = "<div><a href='" + row.Controller + "'>" + row.DocumentNumber + "</a></div>";
+                    return item;
+                }
+            },
+            {
+                "targets": 2,
+                "render": function (data, e, row) {
+                    var item2 = "<div>" + row.ContributorIdentification + "</div>";
+                    return item2;
+                }
+            },
+            {
+                "targets": 3,
+                "render": function (data, e, row) {
+                    var item3 = "<div>" + row.ContributorName + "</div>";
+                    return item3;
+                }
+            },
+            {
+                "targets": 4,
+                "render": function (value) {
+                    if (value === null) return "";
+                    var pattern = /Date\(([^)]+)\)/; //date format from server side
+                    var results = pattern.exec(value);
+                    var dt = new Date(parseFloat(results[1]));
+                    if (dt.getFullYear() === 9999) return ""; //Control para MaxValue
+                    return dt.getDate() + "/" + (dt.getMonth() + 1) + "/" + dt.getFullYear();
+                }
+            },
+            {
+                "targets": 6,
+                "render": function (data, e, row) {
+                    var msj = row.StatusMessage;
+                    var status = row.StatusMsg;
+                    var type = row.StatusType;
+                    var item3 = "<div class='text-center text-" + row.StyleClass + "' title='" + row.StatusMessage + "'>" +
+                        "<a href='#' class='text-center btn btn-circle btn-pill btn-sm btn-small btn-outline-" + row.StyleClass + "' href='javascript:;' onclick=' Swal.fire(`" + msj + "`, `" + status + "`, `" + type +"` );'>" +
+                        "<i class='fa fa-" + row.IconClass +"'></i>" + row.StatusMessage +"</a>" +
+                       "</div>";
+                    return item3;
+                }
+            },
+            {
+                "targets": 7,
+                "render": function (data, e, row) {
+                    var item4 = "<div class='d-print-none'>" +
+                        "<div class='row justify-content-center align-items-center'>" +
+                        "<div class='dropdown' style='text-align:center; padding:0px; margin:0px'>" +
+                        "<a href='#' class='btn btn-sm btn-outline-brand btn-circle btn-icon btn-icon-md' data-toggle='dropdown' aria-expanded='true' style='width:35px; height:35px' data-toggle='tooltip' title='Descargar'>" +
+                        "<i class='la la-ellipsis-h'></i></a>" +
+
+                        "<div class='dropdown-menu dropdown-menu-right'>" +
+                        "<a target='_pdf' class='dropdown-item text-danger' href='" + pdfUrl + row.Id + "?type=PDF'><i class='text-danger la la-file-pdf-o'></i> PDF</a>" +
+                        "<a target='_xml' class='dropdown-item text-info' href='" + xmlUrl + '?accessKey='+ row.AuthorizationNumber + "&type=XML'><i class='text-info la la-file-code-o'></i> XML</a>" +
+                        "</div>" +
+
+                        "</div>" +
+                        "</div>" +
+                        "</div>";
+
+                     return item4;
+                    }
+                }
+
+            ],
+            dom: 'Bfrtip',
+            buttons: {
+                buttons: [
+                    { extend: 'excel', className: 'btn btn-success btn-elevate btn-pill', text:' <i class="la la-file-excel-o"></i> ' },
+                    { extend: 'pdf', className: 'btn btn-danger btn-elevate btn-pill', text:'  <i class="la la-file-pdf-o"></i> ' },
+                    { extend: 'print', className: 'btn btn-brand btn-elevate btn-pill', text:' <i class="flaticon2-printer"></i> ' }
+                ]
+            }
+        });
+      });
+
+    @*$(document).ready(function () {
+        $('#_documentos').DataTable({
+            "order": [[ 0, "desc" ]],
+            "language": {
+                    "url": "@Url.Content("~/scripts/dt_spanish.json")"
+                },
+            dom: 'BRfrtip',
+            buttons: {
+                buttons: [
+                    { extend: 'excelHtml5', className: 'btn btn-success btn-elevate btn-pill', text:' <i class="la la-file-excel-o "></i> ', footer: true },
+                    { extend: 'pdfHtml5', className: 'btn btn-danger btn-elevate btn-pill ', text:'  <i class="la la-file-pdf-o "></i> ' , footer: true},
+                    { extend: 'print', className: 'btn btn-brand btn-elevate btn-pill ', text:' <i class=" flaticon2-printer "></i> ', footer: true }
+                ]
+            }
+        });
+    });*@
+</script>

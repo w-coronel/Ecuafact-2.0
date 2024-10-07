@@ -1,0 +1,70 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI", "Ecuafact.WebAPI\Ecuafact.WebAPI.csproj", "{21B197F3-0BC1-4491-BBF7-A150ADF77821}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI.ConsoleApp", "Ecuafact.WebAPI.ConsoleApp\Ecuafact.WebAPI.ConsoleApp.csproj", "{E10A8E56-94B3-49EF-8C46-DA36D286C69D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI.Domain", "Ecuafact.WebAPI.Domain\Ecuafact.WebAPI.Domain.csproj", "{D95D5173-950A-4FE1-B9E3-67FF84C553D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI.Model", "Ecuafact.WebAPI.Model\Ecuafact.WebAPI.Model.csproj", "{6D7D9944-5627-4C25-B44A-BF9714E35843}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecuafact.WebAPI.Dal", "Ecuafact.WebAPI.Dal\Ecuafact.WebAPI.Dal.csproj", "{22FB0547-5A19-48F6-847E-3867DF2D2863}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21B197F3-0BC1-4491-BBF7-A150ADF77821}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E10A8E56-94B3-49EF-8C46-DA36D286C69D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E10A8E56-94B3-49EF-8C46-DA36D286C69D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E10A8E56-94B3-49EF-8C46-DA36D286C69D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E10A8E56-94B3-49EF-8C46-DA36D286C69D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D95D5173-950A-4FE1-B9E3-67FF84C553D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D7D9944-5627-4C25-B44A-BF9714E35843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D7D9944-5627-4C25-B44A-BF9714E35843}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D7D9944-5627-4C25-B44A-BF9714E35843}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D7D9944-5627-4C25-B44A-BF9714E35843}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22FB0547-5A19-48F6-847E-3867DF2D2863}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {81C84580-CF64-4376-B706-83EA7C6BC0E3}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://ecuanexus-it.visualstudio.com/
+		SccProjectUniqueName0 = Ecuafact.WebAPI.Domain\\Ecuafact.WebAPI.Domain.csproj
+		SccProjectName0 = Ecuafact.WebAPI.Domain
+		SccLocalPath0 = Ecuafact.WebAPI.Domain
+		SccProjectUniqueName1 = Ecuafact.WebAPI.Model\\Ecuafact.WebAPI.Model.csproj
+		SccProjectName1 = Ecuafact.WebAPI.Model
+		SccLocalPath1 = Ecuafact.WebAPI.Model
+		SccLocalPath2 = .
+		SccProjectUniqueName3 = Ecuafact.WebAPI.ConsoleApp\\Ecuafact.WebAPI.ConsoleApp.csproj
+		SccProjectName3 = Ecuafact.WebAPI.ConsoleApp
+		SccLocalPath3 = Ecuafact.WebAPI.ConsoleApp
+		SccProjectUniqueName4 = Ecuafact.WebAPI.Dal\\Ecuafact.WebAPI.Dal.csproj
+		SccProjectName4 = Ecuafact.WebAPI.Dal
+		SccLocalPath4 = Ecuafact.WebAPI.Dal
+		SccProjectUniqueName5 = Ecuafact.WebAPI\\Ecuafact.WebAPI.csproj
+		SccProjectName5 = Ecuafact.WebAPI
+		SccLocalPath5 = Ecuafact.WebAPI
+	EndGlobalSection
+EndGlobal

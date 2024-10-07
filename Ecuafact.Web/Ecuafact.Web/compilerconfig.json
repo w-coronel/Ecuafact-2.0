@@ -1,0 +1,18 @@
+﻿[
+  {
+    "outputFile": "content/style.css",
+    "inputFile": "assets/sass/style.scss"
+  },
+  //{
+  //  "outputFile": "Scripts/scripts.bundle.es5.js",
+  //  "inputFile": "Scripts/scripts.bundle.js"
+  //},
+  {
+    "outputFile": "content/invoice-1.css",
+    "inputFile": "assets/sass/pages/invoices/invoice-1.scss"
+  },
+  {
+    "outputFile": "Scripts/emisor.es5.js",
+    "inputFile": "Scripts/emisor.js"
+  }
+]

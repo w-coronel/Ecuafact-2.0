@@ -1,0 +1,353 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web
+@model  ElectronicSignModel
+@{
+    ViewBag.Title = "Firma Electronica";
+    ViewBag.ParentTitle = "Nuestros Servicios";
+    this.PageOptions(p => p.DropZone = true);
+
+    var status = "PENDIENTE DE PAGO";
+    var icon = "flaticon2-warning";
+    var type = "warning";
+    var msg = "Esta solicitud se encuentra en Estado de espera debido a que no se ha confirmado el pago de la orden.";
+
+    if (Model.Status == ElectronicSignStatusEnum.Approved)
+    {
+        status = "EN PROCESO";
+        icon = "la la-gears";
+        type = "info";
+        msg = "La solicitud de su firma electr&oacute;nica ha sido enviada, en los pr&oacute;ximos " +
+            "d&iacute;as recibir&aacute; una notificaci&oacute;n en su correo electr&oacute;nico. " +
+            "Cuando su firma sea entregada, por favor ingresar a Ecuafact y configurarla, " +
+            "para activar su servicio de emisi&oacute;n.";
+
+    }
+    else if (Model.Status == ElectronicSignStatusEnum.Error)
+    {
+        status = "ERROR";
+        icon = "fa fa-times-circle";
+        type = "danger";
+        msg = Model.PurchaseOrder?.Status == PurchaseOrderStatusEnum.Payed ? "Hubo error al procesar la emisi&oacute;n de la firma." : "Hubo errores al procesar el pago de su solicitud. Por favor intente nuevamente.";
+    }
+    else if (Model.Status == ElectronicSignStatusEnum.Processed)
+    {
+        status = "PROCESADA";
+        icon = "fa fa-check-circle";
+        type = "success";
+        msg = "Su firma se procesó con exito!";
+    }
+    else if (Model.Status == ElectronicSignStatusEnum.ValidatingPayment)
+    {
+        status = "VALIDANDO PAGO";
+        icon = "flaticon2-warning";
+        type = "warning";
+        msg = " Esta solicitud se encuentra en estado de espera debido a que nos encontramos validando su pago realizado por transferencia.";
+    }
+
+    var url = Url.Content("~/Payment/CheckOut?PurchaseOrderId=" + Model.PurchaseOrderId.ToString());
+    if (Constants.TypePayment)
+    {
+        url= Url.Content("~/Payment/typePayment?PurchaseOrderId=" + Model.PurchaseOrderId.ToString());
+    }
+
+}
+
+<div class="row justify-content-center">
+    <div class="kt-portlet col-md-10">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h4 class="kt-portlet__head-title">
+                    <strong> FIRMA ELECTR&Oacute;NICA</strong> SOLICITUD No. @Model.PurchaseOrderId.ToString("D10")
+                </h4>
+
+                <div class="kt-portlet__head-toolbar">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="kt-portlet__body">
+            <div class="row">
+                <div class="col-md-7">
+                    <h4 style="margin-bottom: 50px">
+                    </h4>
+                </div>
+                <div class="col-md-5 kt-align-right">
+                    <h4 id="tipo_persona_title">
+                        @if (Model.SignType == RucTypeEnum.Natural)
+                        {
+                            <span> Persona Natural </span>
+                        }
+                        else
+                        {
+                            <span> Persona Jur&iacute;dica </span>
+                        }
+                    </h4>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Identificacion">RUC: </label>
+                        <span class="form-control">@Model.RUC</span>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="RazonSocial">Razón Social</label>
+                        <span class="form-control">@Model.BusinessName</span>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Dirección</label>
+                        <span class="form-control">@Model.BusinessAddress</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4>DATOS DE REPRESENTANTE LEGAL</h4>
+                    </div>
+                </div>
+                @{
+                    var docType = (Model.DocumentType == IdentificationTypeEnum.IdentityCard ? "Cédula"
+                            : (Model.DocumentType == IdentificationTypeEnum.RUC ? "RUC"
+                            : (Model.DocumentType == IdentificationTypeEnum.Passport ? "Pasaporte" : "Otro")));
+                }
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>@docType: </label>
+                        <span class="form-control">@Model.Identification</span>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label>Nombre: </label>
+                        <span class="form-control">@Model.FirstName @Model.LastName</span>
+                    </div>
+                </div>
+
+                <div class="col-md-12 dir-fisica">
+                    <div class="form-group">
+                        <label> Direcci&oacute;n F&iacute;sica: </label>
+                        <span class="form-control">@Model.Address</span>
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>Teléfono: </label>
+                        <span class="form-control"> @Model.Phone</span>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="form-group">
+                        <label>Correo: </label>
+                        <span class="form-control">@Model.Email</span>
+                    </div>
+                </div>
+
+            </div>
+            <hr />
+
+            @if (Model.PurchaseOrder != null)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h4>FACTURADO A NOMBRE DE:</h4>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Número Identificación: </label>
+                            <span class="form-control">@Model.PurchaseOrder.Identification</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label>Razón Social: </label>
+                            <span class="form-control">@Model.PurchaseOrder.BusinessName</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9 dir-fisica">
+                        <div class="form-group">
+                            <label> Direcci&oacute;n de Facturaci&oacute;n: </label>
+                            <span class="form-control">@Model.PurchaseOrder.Address</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Correo Electr&oacute;nico: </label>
+                            <span class="form-control">@Model.PurchaseOrder.Email</span>
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+            <hr />
+            <div class="row  " style="margin-bottom: 25px">
+                <div class="col-md-12  ">
+                    <h5>
+                        <i class="fa fa-paperclip"></i>&nbsp;
+                        Documentos Adjuntos
+                    </h5>
+
+                    @{
+                        var styleOK = "fa fa-check text-success";
+                        var styleError = "fa fa-times text-danger";
+
+                        var classCedula = string.IsNullOrEmpty(Model.IdentificationCardFile) ? styleError : styleOK;
+                        var classRepresentante = string.IsNullOrEmpty(Model.AuthorizationLegalRepFile) ? styleError : styleOK;
+                        var classConstitucion = string.IsNullOrEmpty(Model.ConstitutionFile) ? styleError : styleOK;
+                        var classNombramiento = string.IsNullOrEmpty(Model.DesignationFile) ? styleError : styleOK;
+                        var classVotacion = string.IsNullOrEmpty(Model.ElectionsTicketFile) ? styleError : styleOK;
+                        var classRUC = string.IsNullOrEmpty(Model.RucFile) ? styleError : styleOK;
+                        var cedfront = string.IsNullOrEmpty(Model.CedulaFrontFile) ? styleError : styleOK;
+                        var cedBack = string.IsNullOrEmpty(Model.CedulaBackFile) ? styleError : styleOK;
+                        var selfie = string.IsNullOrEmpty(Model.SelfieFile) ? styleError : styleOK;
+                    }
+
+                    @if ((int)SupplierElectronicSignEnum.GSV == Constants.SupplierElectronicSign)
+                    {
+                        <p for="CopiaCedulaRaw">
+                            <i class="@classCedula"></i>&nbsp;    Cédula o Pasaporte
+                        </p>
+                        <p for="CopiaVotacionRaw">
+                            <i class="@classVotacion"></i>&nbsp;    Papeleta de Votación
+                        </p>
+                        <p for="CopiaRUCRaw">
+                            <i class="@classRUC"></i>&nbsp;    Copia del RUC
+                        </p>
+                        <p for="AutorizacionRepLegalRaw">
+                            <i class="@classRepresentante"></i>&nbsp;    Autorización de Representante Legal
+                        </p>
+                        <p for="CopiaSelfieRaw">
+                            <i class="@selfie"></i>&nbsp;    Selfie con la Cédula o Pasaporte
+                        </p>
+                    }
+                    else
+                    {
+                        <p for="CopiaCeduFrontRaw">
+                            <i class="@cedfront"></i>&nbsp; Imagen frontal Cédula o Pasaporte
+                        </p>
+                        <p for="CopiaCedBackRaw">
+                            <i class="@cedBack"></i>&nbsp;    Imagen reverso Cédula o Pasaporte
+                        </p>
+                        <p for="CopiaSelfieRaw">
+                            <i class="@selfie"></i>&nbsp;    Selfie con la Cédula o Pasaporte
+                        </p>
+                        <p for="CopiaRUCRaw">
+                            <i class="@classRUC"></i>&nbsp;    Copia del RUC
+                        </p>
+
+                    }
+
+
+                    @if (Model.SignType == RucTypeEnum.Juridical)
+                    {
+
+                        <p for="NombramientoRaw">
+                            <i class="@classNombramiento"></i>&nbsp;    Nombramiento de Representante Legal
+                        </p>
+
+                        <p for="ConstitucionRaw">
+                            <i class="@classConstitucion"></i>&nbsp;  Constitución de Compañia
+                        </p>
+
+                    }
+                </div>
+            </div>
+
+
+
+
+        </div>
+        <div class="kt-portlet__foot justify-content-center">
+
+            <div class="kt-portlet__foot-wrapper">
+                <div class="alert alert-icon-top alert-outline-@type col-md-8" role="alert" id="@type">
+                    <div class="alert-icon">  <i class="@icon"> </i>  </div>
+
+                    <div class="alert-text  ">
+                        <h4 class="alert-heading">  @status   </h4>
+                        <p> @Html.Raw(msg)</p>
+                        <p> @Model.StatusMsg </p>
+
+                    </div>
+
+
+                    <div class="alert-close">
+
+                    </div>
+                </div>
+
+                @if (Model.Status >= ElectronicSignStatusEnum.Approved)
+                {
+                    status = "ADVERTENCIA";                   
+                    msg = "Al descargar su firma electrónica desde el correo que le llegará, realizarlo desde un ordenador (Computador o Portatíl), " +
+                       "no hacerlo en dispositivos móviles (Celular, y Tablets). <br> Tendrá un ÚNICO intento de descarga, caso contrario, podrá " +
+                       "perder su archivo de firma electrónica.";
+
+                    <div class="alert alert-danger alert-close alert-dismissible fade show" role="alert">
+                        <div class="alert-icon"><i class="flaticon-warning-sign"></i></div>
+                        <div class="alert-text">
+                            <h4 class="alert-heading">@status </h4>
+                            @Html.Raw(msg)
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Status == ElectronicSignStatusEnum.Saved || Model.Status == ElectronicSignStatusEnum.Error) // Si el estado es guardado debe generar el pago
+                {
+                    if (Model?.InvoiceId == 0 || Model.PurchaseOrder?.Status != PurchaseOrderStatusEnum.Payed)
+                    {
+                        <button type="button" class="btn btn-success btn-lg btn-pagar ">
+                            <i class="fa fa-dollar-sign"></i> Pagar
+                        </button>
+                    }
+                }
+                @*else if (Model.Status >= ElectronicSignStatusEnum.Processed) // Si el estado es guardado debe generar el pago
+                {
+                    <button type="button" class="btn btn-brand btn-lg btn-nuevo ">
+                        <i class="fa fa-folder-plus"></i> Nueva Solicitud
+                    </button>
+                }*@
+
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(".btn-pagar").on("click", function () {
+            location.assign("@url")
+        });
+
+        $(".btn-nuevo").on("click", function () {
+            location.assign("@Url.Content("Nuevo")")
+        });
+
+        $(".alert").fadeIn();
+    </script>
+
+}

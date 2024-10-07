@@ -1,0 +1,222 @@
+﻿.select2-selection__rendered {
+    width: 100% !important;
+}
+
+.select2 .select2-container .select2-container--default {
+    width: 100% !important;
+}
+
+.loaderV1 {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 10198;
+    background: url('../Images/ripple_white.gif') 50% 50% no-repeat rgb(249, 249, 249);
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    display: none;
+}
+/*
+#myModal {
+    z-index: 10199;
+}
+    */
+#loaderV1Text {
+    position: fixed;
+    text-align: center;
+    top: 20%;
+    width: 100%;
+    height: 50%;
+    color: white;
+    font-size: 25px;
+}
+
+.page-sidebar
+.page-sidebar-menu.page-sidebar-menu-light > li .sub-menu, .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu.page-sidebar-menu-light > li .sub-menu {
+    background-color: Transparent;
+}
+
+.bg-sidebar {
+    /* Location of the image */
+    background-image: url('../assets/pages/media/bg/2.jpg');
+    /* Background image is centered vertically and horizontally at all times */
+    background-position: center center;
+    /* Background image doesn't tile */
+    background-repeat: no-repeat;
+    /* Background image is fixed in the viewport so that it doesn't move when 
+             the content's height is greater than the image's height */
+    background-attachment: fixed;
+    /* This is what makes the background image rescale based
+             on the container's size */
+    background-size: cover;
+    /* Set a background color that will be displayed
+             while the background image is loading */
+    background-color: #464646;
+    background-color: rgba(0,0,0,0.4);
+}
+
+
+@@media print {
+    a[href]:after {
+        content: none !important;
+    }
+
+    button {
+        content: none !important;
+    }
+}
+
+
+
+.save-button {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    box-shadow: 0 6px 10px 0 #666;
+    transition: all 0.1s ease-in-out;
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    line-height: 70px;
+    position: fixed;
+    right: 30px;
+    top: 100px;
+    z-index: 9999;
+    background: url('../Images/save-button.png') 50% 50% no-repeat transparent;
+    background-color: rgba(0, 200, 200, 0.30);
+    background-size: 60px 60px;
+}
+
+.save-button:hover {
+    box-shadow: 0 6px 10px 0 #000;
+    /*transform: scale(1.05);*/
+    background-color: rgba(200, 200, 0, 1);
+}
+
+.quick-nav li:hover {
+    color:gold;
+    background: rgba(125, 200, 125, 0.45) !important;
+}
+
+.quick-nav i:hover {
+    color: red; 
+}
+
+.disabled-link {
+    color: #eee!important;
+}
+
+.disabled {
+    color: #eee!important;
+}
+
+
+.page-header.navbar .top-menu .navbar-nav  li.quick-sidebar-toggler i:before {
+    content: "\e06a"!important;
+}
+
+.page-quick-sidebar-open .page-header.navbar .top-menu .navbar-nav  li.quick-sidebar-toggler :before {
+    content: "\e06c"!important
+}
+
+
+.page-sidebar-menu li.divider {
+    height: 1px !important;
+    width: 100% !important;
+    margin: 1px 0;
+    overflow: hidden !important;
+    background-color: #DAE6F0 !important;
+    border-top: 1px solid #DAE6F0;
+}
+
+
+.amcharts-pie-slice {
+    transform: scale(1);
+    transform-origin: 50% 50%;
+    transition-duration: 0.3s;
+    transition: all .3s ease-out;
+    -webkit-transition: all .3s ease-out;
+    -moz-transition: all .3s ease-out;
+    -o-transition: all .3s ease-out;
+    cursor: pointer;
+    box-shadow: 0 0 30px 0 #000;
+}
+
+    .amcharts-pie-slice:hover {
+        transform: scale(1.1);
+        filter: url(#shadow);
+    }
+
+.progress {
+    height: 12px!important;
+}
+    /*
+.page-header.navbar .page-logo .logo-default {
+    margin: 0px!important;
+    margin-top: 5px!important;
+}
+
+
+
+.page-fixed-main-content{
+    background-color:ActiveBorder;  
+}
+
+
+.page-header .navbar .topbar-actions .btn-group-red {
+    position: relative;
+    margin: 0 30px 0 15px;
+}
+
+.page-header .navbar .topbar-actions .btn-group-red:after {
+    top: 11px;
+    width: 1px;
+    content: " ";
+    right: -17.5px;
+    border-width: 25px;
+    position: absolute;
+    border-color: #3e4952;
+    border-top-style: solid;
+}
+
+.page-header .navbar .topbar-actions .btn-group-red .btn {
+    top: 6px;
+    padding: 8px;
+    position: relative;
+    background: #d93d5e;
+    color: #fff;
+    width: 35px;
+    height: 35px;
+}
+
+.page-header .navbar .topbar-actions .btn-group-red .btn > i {
+    font-size: 20px;
+    line-height: 0.9;
+}
+
+ .navbar-fixed-top {
+    background: #333c43 !important;
+    height: 64px !important;
+}
+
+
+.quick-sidebar-toggler:hover{
+    background:black!important;
+}
+
+@media(max-width: 480px) {
+    .page-header .topbar-actions .btn-group-red .dropdown-menu-v2 {
+        right: -70px;
+    }
+
+    .page-header .topbar-actions .btn-group-red .dropdown-menu-v2:before {
+        top: -10px;
+        right: 80px;
+        border-width: 0 7.5px 15px 7.5px;
+        border-color: transparent transparent #242b31 transparent;
+    }
+}
+
+    */

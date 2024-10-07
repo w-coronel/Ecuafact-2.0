@@ -1,0 +1,303 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices;
+@using Ecuafact.Web.Domain.Entities
+@model InvoiceRequestModel
+@{
+    ViewBag.Title = "Crear Factura";
+    ViewBag.ParentTitle = "Emitidos";
+    
+    this.PageOptions(options =>
+    {
+        options.Select2 = true;
+        options.DataTables = true;
+        options.DatePicker = true;
+
+    });
+
+    var emisorActual = SessionInfo.Issuer;
+
+
+}
+ 
+
+<input type="hidden" id="cliente_identificacion" value="CONSUMIDOR FINAL" />
+<input type="hidden" id="cliente_nombre" value="CONSUMIDOR FINAL" />
+<input type="hidden" id="cliente_address" value="Av. Principal" />
+<input type="hidden" id="cliente_phone" value="000" />
+<input type="hidden" id="cliente_email" value="info@ecuafact.com" />
+
+<div class="factura bg-white row">
+     
+    <div class=" col-xs-12 col-lg-12 col-md-12 col-xs-12">
+
+        <div class="row" name="headerPage">
+            <div class="col-xs-12">
+
+                <div class="panel panel-warning">
+
+                    <div class="panel-heading"></div>
+                    <div class="panel-body">
+                        <div class=" col-xs-12 col-lg-12 col-md-12 col-xs-12">
+
+                            <div class="row">
+                                <h5>Por favor ingrese los datos de su factura</h5><br />
+                                <table>
+                                    <tr>
+                                        <th style="vertical-align:middle">Fecha Emisi&oacute;n:</th>
+                                        <td style="text-align:right">
+
+                                            <input name="fecha_documento" id="fecha_documento" type="text" class="form-control input-readonly bg-white"
+                                                   style="width:100%;border:none none solid none; text-align:right;" placeholder="Fecha" value="@DateTime.Now.ToString("dd/MM/yyyy")"
+                                                   aria-describedby="addon-fecha_documento" readonly>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="vertical-align:middle">Guia de Remisi&oacute;n :</th>
+                                        <td style="text-align:right">
+
+                                            <input name="guia_remision" id="guia_remision" type="text" class="form-control"
+                                                   style="width:100%;border:none none solid none; text-align:right;" placeholder="(Opcional)" value=""
+                                                   aria-describedby="addon-guia_remision" onchange="validarguia()">
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <h4>Datos del Cliente</h4>
+
+                                <div class="col-md-8">
+                                    <label>Escriba el nombre del cliente o su identificacion (RUC, Cedula, Pasaporte) : </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <button id="actualizarClienteButton" data-toggle="modal" data-target="#modal-cliente" hidden type='button' onclick='editarComprador();' class='btn btn-outline blue'> Actualizar información <i class='fa fa-pencil'></i></button>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <small class="text-navy">* Si no seleccionas un cliente se facturara como Consumidor Final</small>
+                                </div>
+                                <div class="col-md-12" id="bodyContrib" name="bodyContrib">
+                                    <select style="width:100%;" class="js-customerSelector" id="inputClienteId"></select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        @* Detalle de los productos *@
+        <div class=" row" name="productosPage">
+            @{
+                Html.RenderPartial("Shared/_productosPartial", Model, ViewData);
+            }
+        </div>
+
+        <div class="row">
+            <div class="col-lg-7 col-md-6 col-sm-12 col-xs-12">
+
+                @*Detalle de la forma de Pago*@
+
+                <div class="tabbable-custom nav-justified">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li class="active">
+                            <a href="#forma_pago" data-toggle="tab" class="bold"> Forma de Pago </a>
+                        </li>
+                        <li>
+                            <a href="#info_adicional" data-toggle="tab" class="bold"> Informaci&oacute;n Adicional </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="forma_pago">
+                            @{
+                                Html.RenderPartial("Shared/_formaPagoPartial", Model);
+                            }
+                        </div>
+                        <div class="tab-pane" id="info_adicional">
+                            @{
+                                Html.RenderPartial("Shared/_infoAdicionalPartial", Model);
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12 ">
+
+                @*Total de la Facura*@
+                @{
+                    Html.RenderPartial("Shared/_totalFacturaPartial", Model);
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height:100px;">
+        <!-- A Control for height of content page because of the footer-->
+    </div>
+
+    <div class="page-header navbar navbar-fixed-bottom" style="height:80px;">
+
+        <!-- BEGIN FOOTER INNER -->
+        <div class="page-footer-fixed page-footer-fixed-mobile page-footer-tools">
+            <div class="container-fluid">
+                <center>
+                    <div class="col-xs-10 col-md-offset-5">
+                        <button id="btnGuardar" class="btn btn-danger col-xs-3  col-md-2  col-sm-2" style="width:110px; margin-top: 20px; margin-right: 5px; ">
+                            <i class="fa fa-save"></i>
+                            Guardar
+                        </button>
+
+                        <button id="btnEnviar" class="btn btn-warning col-xs-3  col-md-2  col-sm-2" style="width:110px; margin-top: 20px; margin-right: 5px; ">
+                            <i class="fa fa-paper-plane-o"></i>
+                            Enviar
+                        </button> 
+                    </div>
+                </center>
+            </div>
+            <div class="row"></div>
+
+
+            <!-- END FOOTER INNER -->
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+@{ // SCRIPTS C#
+
+    var formasPago = SessionInfo.Catalog.PaymentMethod.Select(o => new { id = o.SriCode, text = o.Name, data = o });
+    var ivaList = SessionInfo.Catalog.IVARates.Select(o => new { id = o.SriCode, text = o.Name, rate = o.RateValue, data = o });
+}
+
+@section scripts{
+
+    @Scripts.Render("~/js/settlements")
+
+    <script>
+
+    // Configuramos las variables que requieren informacion del Servidor
+    invoiceSaveAction = '@Url.Action("SaveInvoiceAsync", "Factura")';
+    printInvoiceAction = '@Url.Action("PrintDocument", "Factura")';
+    fecha_mes_atras = '@System.DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy")';
+    fecha_actual = '@System.DateTime.Now.ToString("dd/MM/yyyy")';
+
+    ivaList = @Html.Raw(Json.Encode(ivaList));
+
+    documentoFactura = @Html.Raw(Json.Encode(new InvoiceModel()));
+    productData = @Html.Raw(Json.Encode(new ProductDto()));
+    var adicionalItemCount = 0;
+
+    var getFormasDePago = function () { return @Html.Raw(Json.Encode(formasPago)); };
+
+    getSearchProductUrl = function(){
+        return  '@Url.Action("SearchProductAsync", "Factura")';
+    }
+    getCreateProductUrl = function(){
+        return "@Url.Action("Nuevo", "Producto")";
+    }
+
+    redirectAction = function(action, data){
+        var urlAction = '@Url.Action("", "Factura")';
+        urlAction +='/'+action+'/'+data;
+        window.location.href = urlAction;
+    };
+
+    getUrlAuthorization = function (docTypeCode, docNumber) {
+        return '@Url.Action("GetDocumentAuthSync", "Factura")' + '?docType=' + docTypeCode + '&docNumber=' + docNumber;
+    }
+
+    getUrlContribAction = function (id) {
+
+        if (typeof id !== 'undefined' && id>0) {
+            return "@Url.Action("Editar", "Contribuyentes")/"+id;
+        }
+        else {
+            return "@Url.Action("Nuevo", "Contribuyentes")";
+        }
+
+    }
+
+    getUrlSearchContrib = function () { return '@Url.Action("SearchContribAsync", "Factura")'; }
+
+    getLoginFormUrl = function () {
+        return '@Url.Action("Index", "Auth")?ReturnURL=' + location.href;
+    }
+
+    validarguia = function(){
+        var guiaObj = $("#guia_remision");
+        var text = guiaObj.val();
+        guiaObj.val(formatNumDoc(text));
+    }
+
+    // Configuracion de Controles
+    var fechaDocObj = $('input[name="fecha_documento"]');
+
+
+    fechaDocObj.datepicker({
+        startDate: fecha_mes_atras,
+        endDate: fecha_actual,
+        keyboardNavigation: false,
+        format: "dd/mm/yyyy",
+        language: "es",
+        forceParse: false,
+        autoclose: true
+    });
+
+    fechaDocObj.val(fecha_actual);
+
+    $("#btnGuardar").click(function () {
+        if (!$("#btnGuardar").hasClass("disabled")) {
+            guardarFactura();
+        }
+    });
+
+    $("#btnEnviar").click(function () {
+        if (!$("#btnEnviar").hasClass("disabled")) {
+            guardarFactura(1);
+        }
+    });
+
+    $("#btnCancelar").click(function () {
+        if (!$("#btnCancelar").hasClass("disabled")) {
+            history.go(-1);
+        }
+    });
+
+    //CONECTAMOS LA LISTA DEL CLIENTE
+    startCustomerSelector();
+
+
+    // AGREGAMOS EL TIPO DE PAGO PRINCIPAL
+    agregarPayment();
+
+    // CREAMOS LA PRIMERA LINEA DE ITEM
+    agregarItem();
+
+    // ADICIONALES PRINCIPALES
+    if (typeof agregarAditional != 'undefined') {
+        agregarAditional("Direccion", "");
+        agregarAditional("Telefono", "");
+        agregarAditional("Email", "");
+        agregarAditional("Observaciones", "");
+    }
+
+    </script>
+
+
+    <script type="text/javascript">
+        window.scrollTo(0, 0);
+        $(".js-customerSelector a").focus();
+        initialized = true; // hack initial element of page;
+    </script>
+}

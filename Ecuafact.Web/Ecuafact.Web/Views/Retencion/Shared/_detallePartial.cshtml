@@ -1,0 +1,74 @@
+@using Ecuafact.Web.Domain.Entities
+@model RetentionRequestModel
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+    <div class="panel panel-info">
+
+        <div class="panel-heading panel-color">
+
+            <h4>
+
+                Detalle
+
+            </h4>
+
+
+        </div>
+
+        <div class="panel-body">
+
+            <div class="kt-container table-responsive" style="width:auto">
+
+                <table  id="tax-items" name="tax-items" class=" col-12 table table-producto table-hover table-striped table-condensed kt-datatable__table cf">
+                    
+                    <thead class="cf card-title kt-datatable__head">
+                        
+                        <tr class="kt-datatable__row">
+
+                            <th class="kt-datatable__cell">
+
+                                <div class="col-12">
+
+                                    <div class="row">
+                                        
+                                        <div class="col-12"><b>Impuesto</b></div>
+                                    
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4 col-sm-6 col-xs-12"><b>Base Imponible</b></div>
+
+                                        <div class="col-md-4 col-sm-6 col-xs-12"><b>Porcentaje</b></div>
+
+                                        <div class="col-md-4 col-sm-6 col-xs-12"><b>Total</b></div>
+
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="kt-datatable__cell"></th>                        
+                        </tr>
+                    </thead>
+                    <tbody class="kt-datatable__body">                       
+                        
+                    </tbody>
+
+                    <tr style="background-color:gainsboro">
+                        <td colspan="7">
+                            <div class="col-md-5 col-sm-4  col-xs-12" align="left">
+                                <button id="addItemButton" name="addItemButton" type='button' class='add-row btn btn-outline text-light' style="background-color:#0742A8" onclick="agregarItem()"> Agregar <i class='fa fa-plus'></i></button>
+                            </div>
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

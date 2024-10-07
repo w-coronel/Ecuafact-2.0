@@ -1,0 +1,97 @@
+﻿@{ 
+    var nombre = "Invitado";
+
+    if (SessionInfo.Issuer!= null)
+    {
+        nombre = SessionInfo.Issuer.BussinesName;
+    }
+    else if(SessionInfo.UserInfo!=null)
+    {
+        nombre = SessionInfo.UserInfo.Name;
+    }
+
+}
+
+<div class="kt-heading kt-heading--md">Bienvenid@@, @nombre!</div>
+
+<div class="kt-form__section kt-form__section--first">
+    <div class="kt-form__body">
+
+        <p>Ahora que eres parte de ECUAFACT, puedes comenzar a administrar tus comprobantes electr&oacute;nicos.</p>
+        <p>
+            Tambi&eacute;n puedes almacenar y consultar tus gastos en tiempo real!
+        </p>
+        <p>Para ello es necesario que configures tu cuenta:</p>
+          
+        <div class="kt-timeline-v2">
+            <div class="kt-timeline-v2__items  kt-padding-top-25 kt-padding-bottom-30">
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-danger"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text  kt-padding-top-5">
+                        Vincula tu cuenta con el SRI para la administraci&oacute;n de documentos electr&oacute;nicos.
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-dark"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text  kt-padding-top-5">
+                        Solicitar en el portal del SRI , la autorizaci&oacute;n para la emisi&oacute;n de documentos electr&oacute;nicos en Ambiente de Producci&oacute;n.
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-success"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                        Habilita la Emisi&oacute;n de documentos configurando los datos de tu firma electr&oacute;nica.
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-bolder"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                        Activa un plan para la emisi&oacute;n de documentos electr&oacute;nicos.
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-brand"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                        Si no cuentas con firma electr&oacute;nica, nosotros te ayudamos a obtenerla!
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-warning"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                        Puedes configurar tu presupuesto mensual controlando tus gastos personales.
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-info"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                        Accede desde un mismo lugar a todas tus cuentas de ECUAFACT.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

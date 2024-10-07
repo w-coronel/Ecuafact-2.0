@@ -1,0 +1,121 @@
+@{
+    var buttonText = "Conectar";
+
+    var ruc = "0000000000";
+    var nombre = "Usuario Desconocido";
+    var sri = false;
+    var messages = new List<string>();
+
+    if (SessionInfo.Issuer != null)
+    {
+        ruc = SessionInfo.Issuer.RUC;
+        nombre = SessionInfo.Issuer.BussinesName;
+        sri = SessionInfo.UserSession.SRIConnected;
+        messages = SessionInfo.UserSession.Messages;
+    }
+    else if (SessionInfo.UserInfo != null)
+    {
+        ruc = SessionInfo.UserInfo.Username;
+        nombre = SessionInfo.UserInfo.Name;
+        sri = SessionInfo.UserInfo.SRIConnected;
+        messages = SessionInfo.UserInfo.Messages;
+    }
+    var permmission = SessionInfo.UserRole != Ecuafact.Web.Models.SecuritySessionRole.Cooperative;
+}
+
+
+<!--begin: SRI -->
+<div class="kt-header__topbar-item dropdown">
+    <div class="kt-header__topbar-wrapper text-warning" data-toggle="dropdown" data-offset="10px,0px">
+        <span class="kt-header__topbar-icon" style="border-style:solid;border-width:1px;border-color:cadetblue">
+            <small>
+                SRI
+                @if (sri)
+                {
+                    <i class="fa fa-check text-success mr-0"></i>
+                }
+                else
+                {
+                    <i class="fa fa-times text-danger mr-0"></i>
+                }
+            </small>
+        </span>
+    </div>
+    <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
+        <!-- begin:: Mi SRI -->
+        <div class="kt-mycart">
+            <div class="kt-mycart__head kt-head" style="background-image: url(@Url.Content("~/assets/media/misc/bg-2.jpg"));">
+                <div class="kt-mycart__info">
+                    <span class="kt-mycart__icon"><i class="flaticon-rotate kt-font-warning"></i></span>
+                    <div class="kt-mycart__title">
+                        Integracion con el SRI
+                    </div>
+                </div>
+            </div>
+
+            <div class="kt-mycart__body">
+
+                <div class="kt-mycart__item">
+                    <div class="kt-mycart__container">
+                        <div class="kt-mycart__info">
+                            <h4 class="kt-mycart__title">
+                                @ruc
+                                <br />
+                                <small>@nombre</small>
+                            </h4>
+                            @if (sri)
+                            {
+                                buttonText = "Cambiar Clave";
+                                <div class="alert alert-solid-primary alert-close alert-dismissible fade show" role="alert">
+                                    <div class="alert-icon"><i class="flaticon2-check-mark"></i></div>
+
+                                    <div class="alert-text">
+                                        <h4 class="alert-heading">
+                                            Su cuenta está conectada con el SRI
+                                        </h4>
+
+                                        Ahora, todos tus documentos electr&oacute;nicos ser&aacute;n sincronizados autom&aacute;ticamente a trav&eacute;s de nuestros servicios.
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-solid-danger alert-close alert-dismissible fade show" role="alert">
+                                    <div class="alert-icon"><i class="flaticon-warning-sign"></i></div>
+                                    <div class="alert-text">
+                                        <h4 class="alert-heading">
+                                            Su cuenta no est&aacute; conectada con el SRI
+                                        </h4>
+                                        Para poder sincronizar sus documentos electr&oacute;nicos es necesario que conecte su cuenta al SRI.
+                                        <ul>
+                                            @foreach (var msg in messages)
+                                            {
+                                                <li>@msg</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+            @if (permmission)
+            {
+                <div class="kt-mycart__footer">
+                    <div class="kt-mycart__button kt-align-right">
+                        <button type="button" class="btn btn-warning btn-sm" onclick="showModal('@Url.Action("Conectar", "SRI")')"> &nbsp;@buttonText</button>
+                    </div>
+                </div>
+            }
+            </div>
+        <!-- end:: Mycart -->
+
+    </div>
+</div>
+
+<!--end: Cart-->

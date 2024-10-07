@@ -1,0 +1,41 @@
+
+<input type="hidden" id="cliente_identificacion" value="CONSUMIDOR FINAL" />
+<input type="hidden" id="cliente_nombre" value="CONSUMIDOR FINAL" />
+<input type="hidden" id="cliente_address" value="Av. Principal" />
+<input type="hidden" id="cliente_phone" value="000" />
+<input type="hidden" id="cliente_email" value="info@ecuafact.com" />
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4>Datos del Cliente</h4>
+        </div>
+
+        <div class="panel-body">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-8">
+                        <label>Escriba el nombre del cliente o su identificacion (RUC, Cedula, Pasaporte) : </label>
+                    </div>
+                    <div class="col-md-4">
+                        <button id="actualizarClienteButton" data-toggle="modal" data-target="#modal-cliente" hidden type='button' onclick='editarComprador();' class='btn btn-outline blue'> Actualizar información <i class='fa fa-pencil'></i></button>
+                    </div>
+                </div>
+
+                <div class="col-md-12 normalform" id="bodyContrib" name="bodyContrib">
+                    <div class="col-md-12">
+                        <small class="text-navy">* Si no seleccionas un cliente se facturara como Consumidor Final</small>
+                    </div>
+                    <div class="col-md-12">
+                        <select style="width:100%;" class="js-customerSelector" id="inputClienteId"></select>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

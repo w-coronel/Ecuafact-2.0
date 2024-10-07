@@ -1,0 +1,206 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web
+@model  PaymentRequestModel
+@{
+    ViewBag.Title = "Transferencia";
+    ViewBag.ParentTitle = "Nuestros Servicios";
+    this.PageOptions(p => p.DropZone = true);
+
+    var NumDoc = "0000000000";
+    if (Model != null && Model.PurchaseOrder != null && Model.PurchaseOrder.PurchaseOrderId > 0)
+    {
+        NumDoc = Model.PurchaseOrder.PurchaseOrderId.ToString("D10");
+    }
+
+
+    Html.EnableClientValidation(false);
+    Html.EnableUnobtrusiveJavaScript(false);
+
+}
+@section styles{
+    <link href="~/Content/invoice.min.css" rel="stylesheet" type="text/css">
+}
+<div class="col-md-11 offset-md-1 frm_principal">
+    <div class="kt-portlet">
+        <div class="kt-portlet__body kt-portlet__body--fit">
+            <div class="kt-invoice-1">
+                <div class="kt-invoice__head" style="background-image: url(@Url.Content("~/assets/media/bg/300.jpg"));">
+                    <div class="kt-invoice__container">
+
+                        <div class="kt-invoice__brand">
+                            <div href="#" class="kt-invoice__logo">
+                                <a href="#"><img src="~/Images/ecuafact_logo_transparent.svg" width="165" height="44"></a>
+                                <span class="kt-invoice__desc">
+                                    <span>Av. San Jorge 426 entre calle Olimpo y 10ma.</span>
+                                    <span>Guayaquil, ECUADOR</span>
+                                </span>
+                            </div>
+                            <h6 class="kt-invoice__title kt-align-right">ORDEN DE PAGO<br /> No. @NumDoc</h6>
+                        </div>
+                        <div class="kt-invoice__items">
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__desc">Realizar su depósito o transferencia a :</span>
+                                <span class="kt-invoice__desc"><strong>Banco del Pacifico</strong></span>
+                                <span class="kt-invoice__desc">Cta Corriente: 7596747</span>
+                                <span class="kt-invoice__desc"><strong>Banco Pichincha</strong></span>
+                                <span class="kt-invoice__desc">Cta Corriente: 2100279131</span>
+                                <span class="kt-invoice__desc"><br /></span>
+                                <span class="kt-invoice__desc">Destinatario: Consultora Informática Ecuadorian Nexus</span>
+                                <span class="kt-invoice__desc">Ruc: 0992882549001</span>
+                                <span class="kt-invoice__desc">Correo: administracion@ecuanexus.com</span>
+                                <span class="kt-invoice__subtitle">
+                                    <strong>NOTA:</strong><br />
+                                    * En el concepto del depósito o transferencia colocar el NÚMERO DE ORDEN DE PAGO.<br />
+                                    * Para Validar su pago, deberá enviar el comprobante de pago en formato .jpg o .png a través de este sistema, seleccionando el botón "Comprobante de Pago" y luego dar clic en "Subir"
+                                </span>
+                            </div>
+                            <div class="kt-invoice__item text-right">
+                                <form id="kt_form" method="post" action="@Url.Action("GuardarComprobanteAsync")" enctype="multipart/form-data" class="alignet-form-vpos2">
+
+                                    @Html.AntiForgeryToken()
+                                    @Html.Hidden("PurchaseOrderId", Model.PurchaseOrder.PurchaseOrderId)
+                                    @Html.Hidden("Ext")
+                                    <div id="pnlImg" class="col-sm-12 text-right" style="display:none;padding-right:50px;">
+                                        <img id="imgVoucher" src="#" width="150" height="150" class="rounded" />                                        
+                                    </div>
+                                    <div id="pnlPdf" class="col-sm-12 text-right" style="display:none;padding-right:10px;">                                       
+                                        <embed id="pdfVoucher"   src="#" width="150" height="150" style="border:0px;" >
+                                    </div>
+                                    <br />
+                                    <button data-toggle="tooltip" title="Adjuntar comprobante de pago" class="btn btn-warning btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_select" type="button">
+                                        <i class="flaticon2-file-2"></i>&nbsp;Comprobante de Pago
+                                    </button>
+                                    <button data-toggle="tooltip" title="Enviar comprobante de pago" style="display:none;" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_subir" type="submit" data-ktwizard-type="action-submit">
+                                        <i class="flaticon2-arrow-up"></i>&nbsp;&nbsp;Subir&nbsp;&nbsp;
+                                    </button>
+                                    <input type="file" id="PaymentVoucher" accept="image/jpeg, image/png, application/pdf" name="PaymentVoucher" style=" display:none;" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="kt-invoice__body">
+                    <div class="kt-invoice__container">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>DESCRIPCI&Oacute;N</th>
+                                        <th class="text-center">TOTAL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>@Model.descriptionProducts</td>
+                                        <td class="text-center">                                            
+                                            <span style="font-size:x-large">$ @Model.PurchaseOrder.Total.ToString("#.00")</span>  <br />          
+                                            <span style="font-size:small;">Incluye impuestos</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="kt-invoice__footer">
+                    <div class="kt-invoice__container">
+                        <div class="kt-invoice__item"></div>
+                        <div class="kt-invoice__bank ">
+                            <div class="kt-invoice__title ">RESUMEN</div>
+
+                            @{
+                                if (Model.PurchaseOrder.TotalDiscount > 0)
+                                {
+
+                                    <div class="kt-invoice__item">
+                                        <span class="kt-invoice__label">Precio:</span>
+                                        <span class="kt-invoice__value">$ @((Model.PurchaseOrder.Subtotal12 + Model.PurchaseOrder.TotalDiscount).ToString("#.00"))</span>
+                                    </div>
+
+                                    <div class="kt-invoice__item">
+                                        <span class="kt-invoice__label">Descuento:</span>
+                                        <span class="kt-invoice__value">$ @Model.PurchaseOrder.TotalDiscount.ToString("#.00")</span>
+                                    </div>
+
+                                }
+
+                            }
+
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__label">Subtotal 0%:</span>
+                                <span class="kt-invoice__value">$ @Model.PurchaseOrder.Subtotal0.ToString("#.00")</span>
+                            </div>
+
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__label">Subtotal 15%:</span>
+                                <span class="kt-invoice__value">$ @Model.PurchaseOrder.Subtotal12.ToString("#.00")</span>
+                            </div>
+
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__label">IVA 15%:</span>
+                                <span class="kt-invoice__value">$ @Model.PurchaseOrder.IVA.ToString("#.00")</span>
+                            </div>
+
+                            <div class="kt-invoice__item">
+                                <span class="kt-invoice__label">Total a Pagar:</span>
+                                <span class="kt-invoice__value">$ @Model.PurchaseOrder.Total.ToString("#.00")</span>
+                            </div>
+                        </div>
+
+                        <div class="kt-invoice__total text-center">
+                            <span class="kt-invoice__title">TOTAL</span>
+                            <span class="kt-invoice__price">  $ @Model.PurchaseOrder.Total.ToString("#.00")  </span>
+                            <span class="kt-invoice__notice">Incluye impuestos</span>
+                        </div>
+                        <div class="kt-invoice__item">
+
+                            @if (Model != null && Model.purchaseAmount == "3125")
+                            {
+
+                                <img src="~/images/fef.png" style="width:120px;" />
+
+                            }
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="jumbotron text-center frm_respuesta" style="display:none">
+
+
+    <h1 class="display-3">Muchas Gracias!</h1>
+    <p id="pImg" style="display:none;"><img id="imgRecicbido" src="#" width="180" height="180" class="rounded" /></p>
+    <p id="pPdf" style="display:none;"><embed id="pdfRecicbido" src="#" width="180" height="180" class="rounded" /></p>
+    <p class="lead"><strong>Su comprobante ha sido recibido</strong> correctamente, se validará dicho pago, para continuar con el proceso de la solicitud. </p>
+    <hr>
+    <p>
+        Tienes problemas? <a href="https://soporteecuafact.freshdesk.com/support/home">Contáctanos</a>
+    </p>
+    <p></p>
+    <p class="lead">
+        <a class="btn btn-primary btn-sm btn_volver" href="javascript:;" role="button">Volver a la página de Inicio</a>
+    </p>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/scripts/banktransfer.js")
+
+    <script>
+    $(document).ready(function () {
+
+        banktransfer.PaymentUrl = "@Url.Action("Checkout", "Payment")";
+        banktransfer.HomeUrl = "@Url.Action("","Dashboard")";
+        banktransfer.Init();
+
+    });
+    </script>
+}
+
+

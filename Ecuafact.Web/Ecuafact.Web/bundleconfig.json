@@ -1,0 +1,68 @@
+[
+  {
+    "outputFileName": "Scripts/dashboard.min.js",
+    "inputFiles": [
+      "Scripts/dashboard.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/dashboard2.min.js",
+    "inputFiles": [
+      "Scripts/dashboard2.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/layout.min.js",
+    "inputFiles": [
+      "Scripts/layout.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/helperScripts.min.js",
+    "inputFiles": [
+      "Scripts/helperScripts.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/auth.min.js",
+    "inputFiles": [
+      "Scripts/auth.js"
+    ]
+  },
+  {
+    "outputFileName": "Content/style.min.css",
+    "inputFiles": [
+      "Content/style.css"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/config.min.js",
+    "inputFiles": [
+      "Scripts/config.js"
+    ]
+  },
+  {
+    "outputFileName": "Content/invoice.min.css",
+    "inputFiles": [
+      "Content/invoice.css"
+    ]
+  },
+  {
+    "outputFileName": "Content/login.min.css",
+    "inputFiles": [
+      "Content/login.css"
+    ]
+  },
+  {
+    "outputFileName": "Content/auth.min.css",
+    "inputFiles": [
+      "Content/auth.css"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/emisor.min.js",
+    "inputFiles": [
+      "Scripts/emisor.js"
+    ]
+  }
+]

@@ -1,0 +1,481 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web.MiddleCore.ApplicationServices;
+@using Ecuafact.Web.Controllers;
+@using Ecuafact.Web.MiddleCore.NexusApiServices;
+@using System.Collections;
+@using System.Configuration;
+
+
+@model DashboardInfo
+
+@{
+    ViewBag.Title = "Inicio";
+    this.PageOptions(options =>
+    {
+        options.Charts = true;
+        options.CounterUp = true;
+    });
+
+    var carrier = false;
+    var permmission = SessionInfo.UserRole == Ecuafact.Web.Models.SecuritySessionRole.Cooperative;
+    if (permmission)
+    {
+        carrier = SessionInfo.UserSession?.Issuer?.IsCooperativeCarrier ?? false;
+    }
+
+    var statistics = SessionInfo.DashboardInfo;
+    var Notifica = false;
+    var requestMessage = "";
+
+    var messages = SessionInfo.UserInfo.Messages.ToArray().ToList();
+
+    var _messageNotification = SessionInfo.Catalog.MessageNotification;
+
+    if ((SessionInfo.UserSession != null && !SessionInfo.UserSession.SRIConnected) || !SessionInfo.UserInfo.SRIConnected)
+    {
+        messages.Add("<h5 class='text-danger'>Tu cuenta no est&aacute; conectada con el SRI!</h5>" +
+          "Para poder sincronizar sus documentos electrónicos es necesario que conecte su cuenta al SRI. <br> <a href='#' onclick='showModal(\"" + Url.Content("~/SRI/Conectar") + "\")'>Conectar al SRI</a>");
+
+    }
+
+    if (SessionInfo.Issuer != null)
+    {
+        var subc = SessionInfo.UserSession?.Subscription;
+
+        var linkElectronicSig = "<a title='Solicitar firma electr&oacute;nica' data-toggle='tooltip' data-placement='bottom' href='" + Url.Content("~/FirmaElectronica/Nuevo") + "' class='btn btn-primary btn-pill btn-sm'> " +
+        "<i class='fa fa-check'></i>Solicitar ahora </a>";
+
+        var linkElectronicSigConfig = "<a title='Configurar firma electr&oacute;nica' data-toggle='tooltip' data-placement='bottom' href='" + Url.Content("~/Emisor/Configuracion") + "' class='btn btn-success btn-pill btn-sm'> " +
+        "<i class='fa fa-check'></i>Configurar aquí </a>";
+
+        if (subc != null)
+        {
+            if (subc.Notify || subc.Status == SubscriptionStatusEnum.Inactiva)
+            {
+                var style = subc.Day <= 0 ? "text-danger" : "text-warning";
+                var msjnotificacion = "Renueva tu suscripción por un plan Pymes o Pro y podrás solicitar tu firma electrónica <strong>GRATIS...</strong>" +
+                    "<br><a href='" + Url.Action("TypeLicence", "Payment") + "' class='btn btn-primary btn-pill btn-sm payment-subscription'>" +
+                    "<i class='fa fa-check'></i>Renovar </a>";
+
+                if (subc.LicenceType?.Code != "L03")
+                {
+                    if (subc.BalanceDocument <= 0)
+                    {
+                        style = "text-danger";
+                        msjnotificacion = "Para continuar con la emisión de comprobantes electrónicos, por favor renueva tu suscripción." +
+                        "<br><a href='" + Url.Action("TypeLicence", "Payment") + "' class='btn btn-primary btn-pill btn-sm payment-subscription'>" +
+                        "<i class='fa fa-check'></i>Renovar </a>";
+                    }
+                    else if (subc.BalanceDocument <= 5 && subc.BalanceDocument >= 1  && subc.Status == SubscriptionStatusEnum.Activa)
+                    {
+                        msjnotificacion = "Para continuar con la emisión de documentos, al finalizar tu plan por favor renueva tu suscripción. " +
+                        "<br><a href='" + Url.Action("TypeLicence", "Payment") + "' class='btn btn-primary btn-pill btn-sm payment-subscription'>" +
+                        "<i class='fa fa-check'></i>Renovar </a>";
+                    }
+                }
+
+                var msj = $"<h5 class='{style}'>{subc.StatusMsg}</h5> {msjnotificacion}";
+
+                if ((SessionInfo.Issuer.CertificateExpirationDate < DateTime.Now.AddDays(30)))
+                {
+                    requestMessage = "Estimado Cliente: " +
+                    "Antes de solicitar tu firma electrónica, por favor renovar tu suscripción, te recordamos que el pago de la  renovación de suscripción incluye GRATIS la emisión de la firma electrónica.";
+                    if (subc.LicenceType.Code == "L01")
+                    {
+                        requestMessage = $"Estimado Cliente:  Antes de solicitar tu firma electrónica, por favor renovar tu suscripción.";
+                        msj = $"<h5 class='{style}'>{subc.StatusMsg}</h5>" +
+                        "Es necesario que la renueves para que continues emitiendo tus comprobantes electrónicos." +
+                        "<br> <a href='" + Url.Action("TypeLicence", "Payment") + "' class='btn btn-primary btn-pill btn-sm payment-subscription'>" +
+                        "<i class='fa fa-check'></i>Renovar </a>";
+                    }
+
+                    linkElectronicSig = "<button title='Solicitar firma electr&oacute;nica' data-toggle='tooltip' data-placement='bottom' onclick='requestMessages()' class='btn btn-primary btn-pill btn-sm electSign-request'> " +
+                    "<i class='fa fa-check'></i>Solicitar ahora </button>";
+                }
+
+                if (subc.Status == SubscriptionStatusEnum.ValidatingPayment)
+                {
+                    if (subc.StatusMsg.Contains("Pago realizado por WooCommerce"))
+                    {
+                        msj = $"<h5 class='text-warning'>Procesando Plan {subc.LicenceType.Name}</h5>" +
+                         "En este momento se esta procesando la solicitud de suscripción, cualquier duda o información se puede comunicar vía whatsapp <a href='https://bit.ly/whatsapp-ecuafact' class='btn btn-instagram btn-pill btn-sm' target='_blank'><i class='flaticon-whatsapp'></i>Ir al Chat</a>";
+
+                    }
+                    else
+                    {
+
+                        msj = $"<h5 class='{style}'>{subc.StatusMsg}</h5>" +
+                        "Esta solicitud se encuentra en estado de espera debido a que nos encontramos validando su pago realizado por transferencia. " +
+                        "<br> <a href='" + Url.Action("TypeLicence", "Payment") + "' class='btn btn-primary btn-pill btn-sm payment-subscription'>" +
+                        "<i class='fa fa-check'></i>Ver solicitud</a>";
+                    }
+
+
+                    requestMessage = "Estimado Cliente: " +
+                    "Tu solicitud de firma electrónica no podrá ser realizada, debido a que existe un pago de suscripción que aún no hemos validado";
+                    linkElectronicSig = "<button title='Solicitar firma electr&oacute;nica' data-toggle='tooltip' data-placement='bottom' onclick='requestMessages()' class='btn btn-primary btn-pill btn-sm electSign-request'> " +
+                    "<i class='fa fa-check'></i>Solicitar ahora </button>";
+
+                }
+                else if (subc.Status == SubscriptionStatusEnum.Saved)
+                {
+                    msj = $"<h5 class='{style}'>{subc.StatusMsg}</h5>" +
+                     "Esta solicitud se encuentra en estado de espera debido a que no se ha confirmado el pago de la orden. " +
+                     "<br> <a href='" + Url.Action("TypeLicence", "Payment") + "' class='btn btn-primary btn-pill btn-sm payment-subscription'>" +
+                     "<i class='fa fa-check'></i>Pagar solicitud</a>";
+
+                    requestMessage = "Estimado Cliente: " +
+                    "Tu solicitud de firma electrónica no podrá ser realizada, debido a que existe un pago pendiente de suscripción.";
+                    linkElectronicSig = "<button title='Solicitar firma electr&oacute;nica' data-toggle='tooltip' data-placement='bottom' onclick='requestMessages()' class='btn btn-primary btn-pill btn-sm electSign-request'> " +
+                    "<i class='fa fa-check'></i>Solicitar ahora </button>";
+                }
+                messages.Add(msj);
+            }
+        }
+        else
+        {
+            var msj = $"<h5 class='text-warning'>No has seleccionado un PLAN de Suscripción</h5>  " +
+                   "Es necesario que selecciones un plan para la emisión de tus comprobantes electrónicos. Incluye <strong>GRATIS</strong> la emisión de la firma electrónica " +
+                   "<br> <a href='" + Url.Action("TypeLicence", "Payment") + "' class='btn btn-primary btn-pill btn-sm payment-subscription'>" +
+                   "<i class='fa fa-check'></i>Seleccionar </a>";
+
+            messages.Add(msj);
+        }
+
+        if (string.IsNullOrEmpty(SessionInfo.Issuer.Certificate) || string.IsNullOrEmpty(SessionInfo.Issuer.CertificatePass))
+        {
+            var msjCertificate = "";
+
+            if (subc != null)
+            {
+                if(subc.Status == SubscriptionStatusEnum.Activa)
+                {
+                    msjCertificate = "<h5 class='text-warning'>No has configurado tu firma electronica a&uacute;n!</h5>" +
+                     "El certificado de firma digital es un requisito indispensable para el proceso de facturaci&oacute;n electr&oacute;nica.<br> " +
+                     "Si no tienes firma electronica, podemos ayudarte a obtenerla. " +
+                     "El proceso es sencillo: sin salir de casa env&iacute;a tu solicitud " +
+                     "y en pocos d&iacute;as tu cuenta ser&aacute; activada autom&aacute;ticamente y podr&aacute;s facturar inmediatamente.   " +
+                     "</br> <a href='" + Url.Content("~/FirmaElectronica/Nuevo") + "'>Mas informaci&oacute;n</a> | " +
+                     "<a href='" + Url.Content("~/Emisor/Configuracion") + "'>Configuraci&oacute;n</a>";
+                }
+
+            }
+            if (!string.IsNullOrWhiteSpace(msjCertificate))
+            {
+                messages.Add(msjCertificate);
+            }
+        }
+
+        if (subc != null)
+        {
+            if (subc.Status == SubscriptionStatusEnum.Activa)
+            {
+                if(subc.SubscriptionExpirationDate > DateTime.Now.AddDays(30))
+                {
+                    if (subc.RequestElectronicSign > 0)
+                    {
+                        if (SessionInfo.Issuer.CertificateExpirationDate < DateTime.Now.AddDays(-1))
+                        {
+                            messages.Add("<h5 class='text-danger'>Tu Firma Electrónica caducó!</h5>" +
+                                "Tu plan incluye una firma electrónica GRATIS, debes renovarla pronto para continuar emitiendo tus comprobantes electrónicos <br>" +
+                                linkElectronicSigConfig);
+                        }
+                        else if (SessionInfo.Issuer.CertificateExpirationDate < DateTime.Now.AddDays(30))
+                        {
+                            messages.Add($"<h5 class='text-warning'>Tu firma electronica caducar&aacute; {SessionInfo.Issuer.CertificateExpirationDate.Value.ToString("dd/MM/yyyy")}!</h5>  " +
+                                "Tu plan incluye una firma electrónica GRATIS, debes renovarla pronto para continuar emitiendo tus comprobantes electrónicos" +
+                                "<br>" + linkElectronicSigConfig);
+
+                        }
+                    }
+                    else
+                    {
+                        if (SessionInfo.Issuer.CertificateExpirationDate < DateTime.Now.AddDays(-1))
+                        {
+                            messages.Add("<h5 class='text-danger'>Tu Firma Electrónica caducó!</h5>" +
+                                "Tu plan incluye una firma electrónica GRATIS, debes renovarla pronto para continuar emitiendo tus comprobantes electrónicos." +
+                                "<br>" + linkElectronicSig);
+                        }
+                        else if (SessionInfo.Issuer.CertificateExpirationDate < DateTime.Now.AddDays(30))
+                        {
+                            messages.Add($"<h5 class='text-warning'>Tu firma electronica caducar&aacute; {SessionInfo.Issuer.CertificateExpirationDate.Value.ToString("dd/MM/yyyy")}!</h5>  " +
+                                "Tu plan incluye una firma electrónica GRATIS, debes renovarla pronto para continuar emitiendo tus comprobantes electrónicos." +
+                                "<br>" + linkElectronicSig);
+
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (SessionInfo.Issuer.CertificateExpirationDate < DateTime.Now.AddDays(-1))
+            {
+                messages.Add("<h5 class='text-danger'>Tu Firma Electrónica caducó!</h5>" +
+                    "Tu plan incluye una firma electrónica GRATIS, debes renovarla pronto para continuar emitiendo tus comprobantes electrónicos." +
+                    "<br>" + linkElectronicSig);
+            }
+            else if (SessionInfo.Issuer.CertificateExpirationDate < DateTime.Now.AddDays(30))
+            {
+                messages.Add($"<h5 class='text-warning'>Tu firma electronica caducar&aacute; {SessionInfo.Issuer.CertificateExpirationDate.Value.ToString("dd/MM/yyyy")}!</h5>  " +
+                    "Tu plan incluye una firma electrónica GRATIS, debes renovarla pronto para continuar emitiendo tus comprobantes electrónicos." +
+                    "<br>" + linkElectronicSig);
+
+            }
+        }
+
+        if (SessionInfo.PendingPayments != null)
+        {
+            if (SessionInfo.PendingPayments.Pendiente)
+            {
+                if (SessionInfo.PendingPayments.ElectronicSign.Status == ElectronicSignStatusEnum.Saved)
+                {
+                    messages.Add($"<h5 class='text-danger'>Pago Pendiente</h5>  " +
+                                  "Estimado cliente por favor realizar su pago pendiente..." +
+                                  "<br> <a href='" + Url.Content(SessionInfo.PendingPayments.UrlPago) + "' class='btn btn-warning btn-pill btn-sm'>" +
+                                  "<i class='fa fa-dollar-sign'></i> Pagar </a>");
+                }
+                else if (SessionInfo.PendingPayments.ElectronicSign.Status == ElectronicSignStatusEnum.ValidatingPayment)
+                {
+                    messages.Add($"<h5 class='text-warning'>Validando Pago</h5>  " +
+                          "Estimado cliente se esta validando su pago, para continaur con el proceso de la solicitud..." +
+                          "<br> <a href='" + Url.Action("Ver", "FirmaElectronica", new { id = SessionInfo.PendingPayments.ElectronicSign.Id.ToString() }) + "' class='btn btn-primary btn-pill btn-sm'>" +
+                          "<i class='fa fa-check'></i> Ver </a>");
+                }
+            }
+        }
+
+    }
+
+}
+
+@section styles
+        {
+    <style>
+        .table-document {
+            width: 100%;
+        }
+    </style>
+
+}
+
+
+@if (messages.Count > 0)
+{
+    <div class="alert alert-custom alert-white shadow bg-white fade show mb-5" role="alert">
+        <div class="kt-iconbox__icon"> <img class="kt-avatar--circle" src='~/Images/Warning.svg' style="width:auto;height:50px;" /></div>
+
+        <div class="alert-text">
+
+            <ul>
+                @foreach (var msg in messages)
+                {
+                    <li>@Html.Raw(msg)</li>
+                }
+            </ul>
+        </div>
+        <div class="alert-close">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+        </div>
+    </div>
+
+}
+
+@if (SessionInfo.DocumentsReceived != null && SessionInfo.DocumentsReceived.Any() && !carrier)
+{
+
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                    Ultimos documentos recibidos
+                </h3>
+            </div>
+        </div>
+        <div class="kt-portlet__body">
+            <div class="row">
+                @foreach (var item in SessionInfo.DocumentsReceived.OrderByDescending(f => f.authorizationDate).Take(4))
+                {
+                    <div class="col-md-3 col-md-offset-3">
+                        <div  style="height:150px;">
+                            <div class="item">
+                                <div class="kt-portlet kt-iconbox--primary kt-iconbox  kt-iconbox--wave " style="height: 120px;">
+                                    <div class="kt-portlet__body" style="padding: 0;">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__content" style="bottom: 20px; position:absolute; left: 20px;">
+                                                <small>@item.typeDoc<br />No. @item.sequence</small>
+                                            </div>
+                                            <div class="kt-iconbox__icon">
+                                                <img class="kt-avatar--circle" src='~/Images/deducibles/@string.Format("{0}.png", item.deductibleId)' style="width:auto;height:25px" />
+                                            </div>
+                                            <div class="kt-iconbox__desc">
+                                                <h6 class="kt-iconbox__title" style="font-size:medium;font-weight:400;">
+                                                    <a class="kt-link" href="#" onclick="Comprobantes.Preview(@item.pk)"> @item.name  </a>
+                                                </h6>
+
+                                                <div class="kt-iconbox__content" style="bottom: 20px;position:absolute;right:20px;">
+                                                    <h4>  @item.total</h4>
+                                                    @*<span class="text-right">@item.date</span>*@
+                                                    @if (DateTime.TryParse(item.authorizationDate, out DateTime _date))
+                                                    {
+                                                        <span class="text-right">@($"{Convert.ToDateTime(item.authorizationDate):dd/MM/yyyy}")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-right">@($"{item.date}")</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="row align-self-lg-center">
+                <a href="@(carrier? "#" :Url.Action("Recibidos", "Comprobantes"))" class="btn btn-default font-weight-bold mr-2">
+                    <i class="flaticon-search"></i>Ver todos
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+
+@if (SessionInfo.Issuer != null)
+{
+    Html.RenderPartial("_IssuerPartialPage", statistics);
+}
+else
+{
+    Html.RenderPartial("_UserPartialPage");
+}
+
+
+@{
+    var result = 0M;
+
+    var cantidadRecibidos = SessionInfo.DocumentsReceived.Count();
+    var recibidosGrafico = SessionInfo.DocumentsReceived
+    .Select(model => new
+    {
+        tipo = model.typeDoc,
+        total = (Decimal.TryParse(model.total.Replace("$ ", ""), out result)) ? Decimal.Parse(model.total.Replace("$ ", "")) : 0M
+    })
+    .GroupBy(data => data.tipo)
+    .Select(mdl => new { Tipo = mdl.First().tipo, Total = mdl.Sum(t => t.total) });
+
+    var emitidosGrafico = new[]
+    {
+         new { Tipo = "FACTURA", Total = statistics.TotalSales },
+         new { Tipo = "LIQUIDACION DE COMPRA", Total = statistics.TotalSettlements },
+         new { Tipo = "NOTA DE CREDITO", Total = statistics.TotalCredits },
+         new { Tipo = "NOTA DE DEBITO", Total = statistics.TotalDebits },
+         new { Tipo = "RETENCION", Total = statistics.TotalRetentions },
+         new { Tipo = "GUIA DE REMISION", Total = statistics.TotalReferrals }
+    };
+
+}
+
+
+@{
+    if (SessionInfo.Issuer != null)
+    {
+        var subc = SessionInfo.UserSession?.Subscription;
+        if (subc != null)
+        {
+            if (subc.Status == SubscriptionStatusEnum.Inactiva)
+            {
+                if (subc.Day <= 0)
+                {
+                    Html.RenderPartial("shared/_NotificationPartial");
+                }
+            }
+        }
+    }
+}
+
+@{ 
+    if(_messageNotification != null && string.IsNullOrWhiteSpace(SessionInfo.NotificationView))
+    {
+        Html.RenderPartial("shared/_Notification");
+    }
+  
+}
+
+
+@section scripts{
+
+    <script src="~/assets/js/pages/dashboard.js" type="text/javascript"></script>
+    <script src="~/scripts/dashboard.js"></script>
+    @Scripts.Render("~/js/documents")
+
+    @*<script src="~/scripts/dashboard2.js"></script>*@
+
+    @*<script id="script_recibidos">
+            $(".recibidos") && $(".recibidos").html(@cantidadRecibidos);
+
+            var recibidosGraphData = @Html.Raw(Json.Encode(recibidosGrafico));
+            var emitidosGraphData = @Html.Raw(Json.Encode(emitidosGrafico));
+
+            Dashboard.Emitidos = emitidosGraphData;
+            Dashboard.Recibidos = recibidosGraphData;
+            Dashboard.UrlEmitidos = "@Url.Action("GetIssuedJsonAsync")";
+            Dashboard.UrlRecibidos = "@Url.Action("GetReceivedJsonAsync")";
+
+            Dashboard.Init();
+        </script>*@
+    <script id="recibidos-carousel">
+        Comprobantes.PreviewURL = '@Url.Action("Preliminar", "Comprobantes")';
+        $('#documents').owlCarousel({
+            merge: true,
+            items: 5,
+            dots: false,
+            loop: true,
+            margin: 10,
+            lazyLoad: true,
+            center: true,
+
+            responsiveClass: true,
+            responsive: {
+                0: {
+                    items: 1,
+                    nav: true
+                },
+                600: {
+                    items: 2,
+                    nav: false
+                },
+                1000: {
+                    items: 3,
+                    nav: true
+                },
+                1600: {
+                    items: 5,
+                    nav: true
+                }
+            },
+
+            autoplay: false,
+            autoplayTimeout: 5000,
+            autoplayHoverPause: false
+        })
+    </script>
+    @if (!string.IsNullOrEmpty(requestMessage))
+    {
+        <script id="notification-pagos">
+            var requestMessages = function () { Swal.fire("Información", '@($"{requestMessage}")', "info"); }
+        </script>
+    }
+    @if (SessionInfo.ShowNotification)
+    {
+        <script>
+
+        </script>
+    }
+
+}

@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "Información del Pago";
+}
+
+<div class="jumbotron text-center">
+
+
+    @if (Request.Form["authorizationResult"] != null && Request.Form["authorizationResult"] == "00")
+    {
+        <h1 class="display-3">Muchas Gracias!</h1>
+        <p>El numero de tu recibo es <b>@Request.Form["purchaseOperationNumber"]</b></p>
+        <p class="lead"><strong>Su pago ha sido recibido</strong> y su firma electronica será procesada en aproximadamente 5-7 dias laborables debido a la emergencia sanitaria en nuestro pa&iacute;s.</p>
+              
+    }
+    else
+    {
+        <h1 class="display-3">ERROR @Request.Form["errorCode"]</h1>
+        <p class="lead"><strong>Se ha producido un error</strong> mientras se procesaba el pago de su firma electronica.</p>
+        <p>El numero de la operación es <b>@Request.Form["purchaseOperationNumber"]</b>.</p>
+        <p class="lead">@Request.Form["errorMessage"]</p>
+        <p>@Request.Form["txDateTime"]</p> 
+    }
+
+    <hr>
+    <p>
+        Tienes problemas? <a href="//soporte.ecuafact.com">Contáctanos</a>
+    </p>
+    <p></p>
+    <p class="lead">
+       <a class="btn btn-primary btn-sm" href="javascript:;" onclick="history.back(-2);" role="button">Volver a la página de Inicio</a>
+    </p>
+</div> 

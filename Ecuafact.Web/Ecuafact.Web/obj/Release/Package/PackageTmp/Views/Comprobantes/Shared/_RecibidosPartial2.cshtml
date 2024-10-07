@@ -1,0 +1,188 @@
+﻿@using Ecuafact.Web.Models
+@using Ecuafact.Web.MiddleCore.NexusApiServices;
+@using Ecuafact.Web.Domain.Entities;
+@model RecibidosQueryModel
+@{
+    var tiposDocumento = new List<SelectListItem>{
+        new SelectListItem { Value="0", Text="TODOS" },
+        new SelectListItem{ Value="01", Text="FACTURA" },
+         new SelectListItem{ Value="02", Text="NOTA DE VENTA" },
+        new SelectListItem{ Value="04", Text="NOTA DE CRÉDITO" },
+        new SelectListItem{ Value="05", Text="NOTA DE DÉBITO" },
+        new SelectListItem{ Value="07", Text="COMPROBANTE DE RETENCIÓN" },
+        new SelectListItem{ Value="06", Text="GUÍA DE REMISIÓN" },
+        new SelectListItem{ Value="03", Text="LIQUIDACIÓN DE COMPRA" }
+    };
+
+    var deducibles = SessionInfo.DeductibleTypes ?? new List<DeductibleType>(); ;
+    var deducibleDefault = new DeductibleType { id = "0", name = "Sin Clasificación", maxValue = 00 };
+    var tipoSustento = SessionInfo.Catalog.SustenanceType;
+    var _activar = 0;
+    if(SessionInfo.UserSession?.Subscription?.Status == SubscriptionStatusEnum.Activa)
+    {
+        if(SessionInfo.UserSession?.Subscription.LicenceType.Code == "L03" || SessionInfo.UserSession?.Subscription.LicenceType.Code == "L04")
+        {
+            if (SessionInfo.Issuer.IsAccountingRequired)
+            {
+                _activar = 1;
+            }
+        }
+    }
+
+}
+<table class="table table-striped table-bordered table-hover responsive dt-responsive table-checkable order-column" id="_recibidos" style="width:100%">
+    <thead>
+        <tr>
+            <th><i class="fa fa-bars"></i></th>
+            <!--<th>Tipo</th>-->
+            <th>Documento</th>
+            <!--<th>Identificacion</th>-->
+            <th>Emisor</th>
+            <th class="text-center">Fecha</th>
+            <th class="text-center ">Total</th>
+            <th class="text-center"></th>
+            <th></th>
+
+        </tr>
+    </thead>
+</table>
+<form action="@Url.Action("Descargar")/Recibidos" target="_blank">
+</form>
+<script>
+    $(document).ready(function () {
+        var deducibles = @Html.Raw(Json.Encode(deducibles));
+        var tiposDocumento = @Html.Raw(Json.Encode(tiposDocumento));
+        var tipoSustento = @Html.Raw(Json.Encode(tipoSustento));
+        var $exportOptions = { columns: [0, 1, 2, 3, 4, 5, 6]};
+        var $_form = $('#formConsultas');
+        var comprobantesUrl = "@Url.Action("Recibidos", "Comprobantes")/";
+        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) { console.log(message) };
+          Comprobantes.IssuedTable = $('#_recibidos').DataTable({
+            "order": [[3, 'desc']],
+            "language": {
+                "url": "@Url.Content("~/scripts/dt_spanish.json")"
+            },
+            processing: true,
+            serverSide: true,
+            sortable: false,
+            deferRender: true,
+            ordering: true,
+            paging: true,
+            ajax: {
+                url: '@Url.Action("GetRecibidosAsync")',
+                type: 'POST',
+                data: function (d) {
+                    var _data = $_form.serializeJSON();
+                    d.model = _data;
+                    return d;
+                }
+            },
+              columns: [
+                { data: 'deductibleId' },
+                { data: 'codTypeDoc' },
+                { data: 'identificationNumber' },
+                { data: 'date'},
+                { data: 'total', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                { data: 'supportId' },
+                { data: null }
+
+            ],
+            "columnDefs": [
+            {
+                "targets": 0,
+                    "render": function (data, e, row) {
+                        var name = "Sin Clasificar";
+                        if (parseInt(row.deductibleId) > 0) {
+                            var _obj = deducibles.find(o => o.id == parseInt(row.deductibleId));
+                            if (_obj != undefined) {
+                                name = _obj.name
+                            }
+                        }
+                        var _url = '@Url.Content("~/Images/deducibles/")' + row.deductibleId + ".png";
+                        var item = "<div title='" + name + "' class='text-center' data-order='" + row.deductibleId +"'>" +
+                            "<label class='kt-hidden hidden' style='display:none;'>" + name+"</label>" +
+                            "<a href='#' onclick='Comprobantes.SetDeductibles(" + row.pk + ")' class='btn btn-sm btn-outline-hover-brand btn-circle btn-icon btn-icon-md' title='" + name +"'>" +
+                            "<img class='kt-avatar--circle' src='" + _url +"' style='width:auto;height:25px'/> </a>" +
+                            "</div>";
+                        return item;
+                }
+            },
+            {
+                "targets": 1,
+                "render": function (data, e, row) {
+                    var name = tiposDocumento.find(o => o.Value == row.codTypeDoc);
+                    var item2 = "<div><b>" + name.Text + "</b></div>" +
+                        "<a href='javascript:;' onclick='Comprobantes.Preview(" + row.pk +")'>"+ row.sequence +"</a>"
+                    return item2;
+                }
+            },
+            {
+                "targets": 2,
+                "render": function (data, e, row) {
+                    var item2 = "<div><b>" + row.name + "</b></div>" +
+                        "<div>" + row.identificationNumber + "</div>";
+                    return item2;
+                }
+            },
+            {
+                "targets": 5,
+                "render": function (data, e, row) {
+                    
+                    var item5 = "<div class='d-print-none'>" +
+                        "<div class='row justify-content-center align-items-center'>" +
+                        "<a href='#' class='btn btn-sm btn-outline-danger btn-circle btn-icon btn-icon-md cancel-document-button' href='javascript:;' onclick='_cancelDocument(" + row.pk + ")' data-uid='" + row.Id + "' data-toggle='tooltip' title='Anular comprobante''>" +
+                        "<i class='flaticon2-trash'></i>" +
+                        "</a ></div > " +
+                        "</div>" +
+                        "</div>";
+                    return item5;
+                },
+                "visible": true
+            },
+            {
+                "targets": 6,
+                "render": function (data, e, row) {
+                    var id = row.authorizationNumber;
+                    if (row.codTypeDoc == "02")
+                        id = row.pk;
+                    var item4 = "<div class='d-print-none'>" +
+                        "<div class='row justify-content-center align-items-center'>" +
+                        "<div class='dropdown' style='text-align:center; padding:0px; margin:0px'>" +
+                        "<a href='#' class='btn btn-sm btn-outline-brand btn-circle btn-icon btn-icon-md' data-toggle='dropdown' aria-expanded='true' style='width:35px; height:35px' data-toggle='tooltip' title='Descargar'>" +
+                        "<i class='flaticon-download-1'></i></a>" +
+
+                        "<div class='dropdown-menu dropdown-menu-right'>" +
+                        "<a target='_pdf' class='dropdown-item text-danger' href='" + comprobantesUrl + id + "?type=PDF'><i class='text-danger la la-file-pdf-o'></i> PDF</a>" +
+                        "<a target='_xml' class='dropdown-item text-info'   href='" + comprobantesUrl + id + "?type=XML'><i class='text-info la la-file-code-o'></i> XML</a>" +
+                        "</div>" +
+
+                        "<a href='#' class='btn btn-sm btn-outline-warning btn-circle btn-icon btn-icon-md email-button' href='javascript:;' onclick='_sendEmail(" + row.pk +")' data-uid='" +row.Id +"' data-toggle='tooltip' title='Reenviar Correo Electronico''>" +
+                        "<div id='Eamil-css'>" +
+                        "</div ></a ></div > " +
+                        "</div>" +
+                        "</div>";
+
+                     return item4;
+                    }
+                }
+
+            ]
+        });
+
+        Comprobantes.SetMail("@Url.Action("SendMail")/Recibidos");
+        Comprobantes.SetCancelDocument("@Url.Action("CancelDocument")");
+
+        $(".btn-descarga").click(function () {
+            var urlDescarga = "@Url.Action("DescargarRecibidosII")";
+            var filtro = $("#searchTerm").val();
+            var startDate = $("#dateFrom").val();
+            var endDate = $("#dateTo").val();
+            var docType = $("#DocumentType").val();
+            var deductibleType = $("#DeductibleType").val();
+            urlDescarga += "?filtro=" + filtro + "&startDate=" + startDate + "&endDate=" + endDate + "&docType=" + docType + "&deductible=" + deductibleType;
+            $(".btn-descarga").attr("href", urlDescarga);
+        });
+    });
+
+
+</script>

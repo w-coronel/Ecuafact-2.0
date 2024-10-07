@@ -1,0 +1,150 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+ @{ 
+     var msg = "Estimado Cliente: Tu solicitud de firma electrónica no podrá ser realizada, debido a que existe un pago de suscripción que aún no hemos validado";
+ }
+<div class="kt-heading kt-heading--md">Firma Electr&oacute;nica</div>
+
+<div class="kt-form__section kt-form__section--first">
+
+    <div class="kt-section kt-section--first">
+        <div class="kt-section__body">
+
+
+            <div class="row">                               
+
+                @if (SessionInfo.Issuer != null && !string.IsNullOrWhiteSpace(SessionInfo.Issuer.Certificate))
+                {
+                    if (SessionInfo.Issuer.CertificateExpirationDate < DateTime.Now)
+                    {
+                        <div class=" row col-12 align-items-center">
+                            <img class="col-6" src="~/images/digital_signature_certificate.jpg" width="370" style="margin-bottom: 15px">
+                            <div class="col-6 " style="margin-bottom: 15px">
+                                <p class="text-center">
+                                    Le ayudamos a obtener su Firma Electrónica de forma
+                                    rápida y segura.
+                                    Su tiempo es valioso y por eso lo respetamos, nuestro
+                                    proceso esta Diseñado para liberarlo de toda carga.
+                                </p>
+
+                                <div class="col-12" style="text-align:center">
+                                    @if (SessionInfo.Issuer.viewRequests)
+                                    {
+                                        <button data-options='{"option":"3","valor":"@Url.Action("index", "FirmaElectronica")"}' class="btn btn-primary solicitud-esign">
+                                            <i class="la la-gears"> </i> &nbsp;Ver mis solicitudes
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        if (SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.ValidatingPayment)
+                                        {
+                                            <button class="btn btn-primary solicitud-esign" data-options='{"option":"1","valor":"@msg"}'>
+                                                SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                            </button>
+                                        }
+                                        else if (SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.Inactiva || SessionInfo.UserSession?.Subscription?.Day <= 30)
+                                        {
+                                            msg = "Estimado Cliente: Antes de solicitar tu firma electrónica, por favor renovar tu suscripción, te recordamos que el pago de la  renovación de suscripción incluye GRATIS la emisión de la firma electrónica.";
+                                            <button class="btn btn-primary solicitud-esign" data-options='{"option":"2","valor":"@msg"}'>
+                                                SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                            </button>
+                                            <button  class="btn btn-primary solicitud-licenceType">
+                                                Solicitar Plan <i class="fa fa-check" aria-hidden="true"></i>
+                                            </button>
+                                        }
+                                        else if (SessionInfo.UserSession?.Subscription == null)
+                                        {
+                                            msg = "Estimado Cliente: Antes de solicitar tu firma electrónica, debes seleccionar un PLAN de suscripción, Incluye GRATIS la emisión de la firma electrónica";
+                                            <button class="btn btn-primary solicitud-esign" data-options='{"option":"2","valor":"@msg"}'>
+                                                SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                            </button>                                           
+                                        }
+                                        else
+                                        {
+                                            <button data-options='{"option":"3","valor":"@Url.Action("nuevo", "FirmaElectronica")"}' data-content="" class="btn btn-primary solicitud-esign">
+                                                SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-primary alert-close alert-dismissible fade show" role="alert">
+                            <div class="alert-icon"><i class="flaticon2-check-mark"></i></div>
+                            <div class="alert-text">
+                                <h4 class="alert-heading">
+                                    Usted cuenta con una firma electrónica vigente
+                                </h4>
+                                Ahora, todos tus documentos electr&oacute;nicos ser&aacute;n firmados autom&aacute;ticamente a trav&eacute;s de nuestros servicios.
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-danger alert-close alert-dismissible fade show" role="alert">
+                        <div class="alert-icon"><i class="flaticon-warning-sign"></i></div>
+                        <div class="alert-text">
+                            <h4 class="alert-heading">
+                                Usted no cuenta con una firma electr&oacute;nica
+                            </h4>
+                            Para poder emitir sus documentos electr&oacute;nicos es necesario que usted adquiera y configure una firma electr&oacute;nica.
+                        </div>
+                    </div><div class=" row col-12 align-items-center">
+                        <img class="col-6" src="~/images/digital_signature_certificate.jpg" width="370" style="margin-bottom: 15px">
+                        <div class="col-6 " style="margin-bottom: 15px">
+                            <p class="text-center">
+                                Le ayudamos a obtener su Firma Electrónica de forma
+                                rápida y segura.
+                                Su tiempo es valioso y por eso lo respetamos, nuestro
+                                proceso esta Diseñado para liberarlo de toda carga.
+                            </p>
+                            <div class="col-12" style="text-align:center">
+                                @if (SessionInfo.Issuer.viewRequests)
+                                {
+                                    <button data-options='{"option":"0","valor":"@Url.Action("index", "FirmaElectronica")"}' class="btn btn-primary solicitud-esign">
+                                        <i class="la la-gears"> </i> &nbsp;Ver mis solicitudes
+                                    </button>
+                                }
+                                else
+                                {
+                                    if (SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.ValidatingPayment)
+                                    {
+                                        <button class="btn btn-primary solicitud-esign" data-options='{"option":"1","valor":"@msg"}'>
+                                            SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </button>
+                                    }
+                                    else if (SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.Inactiva || SessionInfo.UserSession?.Subscription?.Day <= 30)
+                                    {
+                                        msg = "Estimado Cliente: Antes de solicitar tu firma electrónica, por favor renovar tu suscripción, te recordamos que el pago de la  renovación de suscripción incluye GRATIS la emisión de la firma electrónica.";
+                                        <button class="btn btn-primary solicitud-esign" data-options='{"option":"1","valor":"@msg"}'>
+                                            SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </button>
+                                        <a href='@Url.Action("TypeLicence", "Payment")' class="btn btn-primary btn-pill btn-sm collapse"><i class="fa fa-check"></i>Solicitar Plan</a>
+                                    }
+                                    else if (SessionInfo.UserSession?.Subscription == null)
+                                    {
+                                        msg = "Estimado Cliente: Antes de solicitar tu firma electrónica, debes seleccionar un PLAN de suscripción, Incluye GRATIS la emisión de la firma electrónica";
+                                        <button class="btn btn-primary solicitud-esign" data-options='{"option":"2","valor":"@msg"}'>
+                                            SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </button>
+                                        <a href='@Url.Action("TypeLicence", "Payment")' class="btn btn-primary btn-pill btn-sm collapse"><i class="fa fa-check"></i>Solicitar Plan</a>
+                                    }
+                                    else
+                                    {
+                                        <button data-options='{"option":"3","valor":"@Url.Action("nuevo", "FirmaElectronica")"}' data-content="" class="btn btn-primary solicitud-esign">
+                                            SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </button>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

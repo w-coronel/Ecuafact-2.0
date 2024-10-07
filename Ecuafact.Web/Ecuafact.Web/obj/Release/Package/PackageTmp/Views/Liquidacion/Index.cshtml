@@ -1,0 +1,70 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@model DocumentosQueryModel
+
+@{
+    ViewBag.Title = "Liquidaciones de Compras";
+    ViewBag.ParentTitle = "Emitidos";
+    ViewBag.Description = "Muestra la lista de las liquidaciones de compras de bienes y servicios emitidas electrónicamente.";
+
+    this.PageOptions(model =>
+    {
+        model.DataTables = true;
+        model.DateRangePicker = true;
+        model.DatePicker = true;
+        model.Select2 = true;
+        model.DateRangeTool = true;
+    });
+
+}
+
+@using (Html.BeginForm("Index", "Liquidacion", FormMethod.Get, new { id = "formConsultas", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.From, new { @id = "dateFrom" })
+    @Html.HiddenFor(model => model.To, new { @id = "dateTo" })
+    @Html.HiddenFor(model => model.SearchTerm, new { @id = "searchTerm" })
+    @Html.HiddenFor(model => model.DocumentType, new { @id = "documentType" })
+
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-toolbar">
+
+
+                <div class="kt-portlet__head-label">
+
+                    <div class="input-group">
+
+                        <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-layers"></i>&nbsp;&nbsp;Tipo: </span></div>
+
+                        @Html.DropDownListFor(model => model.Status, new SelectList(Request.GetStatusList(), "Id", "Text", Model.Status), new { @id = "statusFilter", @class = "form-control", @title = "Estado" })
+                    </div>
+                </div>
+
+                <div class="kt-portlet__head-actions" style="margin-left:20px">
+
+                    <a id="btnNuevo" href="@Url.Action("Nuevo")" class="btn btn-warning btn-pill btn-sm" title="Crear un nuevo Documento"><i class='@Request.GetDocumentIcon(Model.DocumentType)'></i>   Nuevo <i class='fa fa-plus'></i></a>
+                </div>
+
+            </div>
+        </div>
+        <div class="kt-portlet__body" id="divConsultas">
+            @{ Html.RenderPartial("_DocumentosPartial", Model); }
+        </div>
+    </div>
+}
+
+
+@section scripts {
+    @Scripts.Render("~/js/documents")
+
+    <script type="text/javascript">
+        var url = "@Url.Action("GetDocumentsAsync")";
+        var table = "_documentos";
+        var loginUrl = "@Url.Action("Index", "Auth")";
+        var executeOnInit = @((Session[SessionInfo.LIQUIDACIONES_SESSION] == null) ? "true" : "false");
+
+        Comprobantes.Configure(url, table, loginUrl, false);
+    </script>
+
+}

@@ -1,0 +1,292 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7BF4ED2E-88D7-4809-AC24-03BFA57A4CE5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ecuafact.Web.MiddleCore</RootNamespace>
+    <AssemblyName>Ecuafact.Web.MiddleCore</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Development|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Development\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Development|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Development\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="X.PagedList, Version=8.0.5.0, Culture=neutral, PublicKeyToken=00b6c4f97602e5e8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\X.PagedList.8.0.5\lib\netstandard2.0\X.PagedList.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApplicationServices\ServicioNotaDebito.cs" />
+    <Compile Include="ApplicationServices\ServicioSRI.cs" />
+    <Compile Include="ApplicationServices\ServicioAPI.cs" />
+    <Compile Include="ApplicationServices\ServicioCatalogos.cs" />
+    <Compile Include="ApplicationServices\ServicioComprobantes.cs" />
+    <Compile Include="ApplicationServices\ServicioContribuyentes.cs" />
+    <Compile Include="ApplicationServices\ServicioDashboard.cs" />
+    <Compile Include="ApplicationServices\ServicioDocumento.cs" />
+    <Compile Include="ApplicationServices\ServicioEmisor.cs" />
+    <Compile Include="ApplicationServices\ServicioCompras.cs" />
+    <Compile Include="ApplicationServices\ServicioFirma.cs" />
+    <Compile Include="ApplicationServices\ServicioGastos.cs" />
+    <Compile Include="ApplicationServices\ServicioLiquidacion.cs" />
+    <Compile Include="ApplicationServices\ServicioFactura.cs" />
+    <Compile Include="ApplicationServices\ServicioGuiaRemision.cs" />
+    <Compile Include="ApplicationServices\ServicioImpuestos.cs" />
+    <Compile Include="ApplicationServices\ServicioNotaCredito.cs" />
+    <Compile Include="ApplicationServices\ServicioProductos.cs" />
+    <Compile Include="ApplicationServices\ServicioReportes.cs" />
+    <Compile Include="ApplicationServices\ServicioRetencion.cs" />
+    <Compile Include="ApplicationServices\ServicioUsuario.cs" />
+    <Compile Include="Connected Services\NexusApiServices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Helpers\EncryptionHelpers.cs" />
+    <Compile Include="Helpers\ClientHelper.cs" />
+    <Compile Include="Helpers\JSONHelper.cs" />
+    <Compile Include="Helpers\JsonWebApiHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ExpressApiClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Connected Services\NexusApiServices\ApiAppService1.wsdl" />
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.CreateCustomerResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.CreateProductResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DeductibleLimitResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DeductiblesReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DeductibleTypeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DeleteCustomerResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DeleteDocumentResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DeleteProductResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DocumentResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DocumentResponseXML.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DocumentsExcelResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DocumentStateResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DocumentTypeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.DocumentUnicoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.EditCustomerResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.EditProductResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.GetAllCustomersResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.GetAllProductsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.GetCustomerResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.GetProductResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.InvalidDocumentResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.IVATypeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.loginResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.loginSRIResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.PasswordChangeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.PasswordRecoveryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.resendResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.saveDeductiblesLimitsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.saveDefaultDeductiblesRespones.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.ServerMessageResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.SetDocumentAsReceivedResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.SetDocumentsDeductiblesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.StatusDocResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.StatusDocResponseOld.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.StatusReceptionDocResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.UploadFileResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Ecuafact.Web.MiddleCore.NexusApiServices.UploadFileResponseTXT.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Service5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Service51.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Service52.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Service53.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\NexusApiServices\Service54.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\NexusApiServices\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\NexusApiServices\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\NexusApiServices\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\NexusApiServices\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\NexusApiServices\Service1.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ecuafact.Web.Domain\Ecuafact.Web.Domain.csproj">
+      <Project>{622ffa9b-6df6-4996-97df-b7f2ad18f78c}</Project>
+      <Name>Ecuafact.Web.Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

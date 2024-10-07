@@ -1,0 +1,74 @@
+﻿
+@{
+    var buttonText = "Cambiar Plan";
+  
+}
+
+
+<!--begin: SRI -->
+<div class="kt-header__topbar-item dropdown" data-toggle="kt-tooltip" title="Información del Plan" data-placement="top">
+    <div class="kt-header__topbar-wrapper text-warning" data-toggle="dropdown" data-offset="10px,0px">
+        <span class="kt-header__topbar-icon" style="border-style:solid;border-width:1px;border-color:cadetblue">
+            <small>
+                <span class="kt-header__topbar-icon" style="border-style: solid; border-width: 2px; border-color: #ffc107;">
+                    <small>
+                        <span class="kt-header__topbar-icon"><i class="flaticon2-website kt-font-warning"></i></span>
+                    </small>
+                </span>
+            </small>
+        </span>
+    </div>
+    <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
+        <!-- begin:: Mi SRI -->
+        <div class="kt-mycart">
+            <div class="kt-mycart__head kt-head" style="background-image: url(@Url.Content("~/assets/media/misc/bg-2.jpg"));">
+                <div class="kt-mycart__info">
+                    <span class="kt-mycart__icon"><i class="flaticon-rotate kt-font-warning"></i></span>
+                    <div class="kt-mycart__title">
+                        Su plan activado es "@SessionInfo.UserSession.Subscription.LicenceType.Name"
+                    </div>
+                </div>
+            </div>
+
+            <div class="kt-mycart__body">
+
+                <div class="kt-mycart__item">
+                    <div class="kt-mycart__container">
+                        <div class="kt-mycart__info">
+                            <h4 class="kt-mycart__title">
+                                <br />
+                                <small></small>
+                            </h4>
+                            <div class="alert alert-solid-primary alert-close alert-dismissible fade show" role="alert">
+                                <div class="alert-icon"><i class="flaticon2-check-mark"></i></div>
+
+                                <div class="alert-text">
+                                    <h4 class="alert-heading">
+                                        Actualmente tienes un Plan Básico
+                                    </h4>
+                                    Si deseas adquirir un plan que incluya firma electrónica y emitir más documentos, purdes cambiarlo aquí. .
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="kt-mycart__footer">
+                <div class="kt-mycart__button kt-align-right">
+                    <a type="button" class="btn btn-warning btn-sm" href="@Url.Action("TypeLicence", "Payment")"> &nbsp;@buttonText</a>
+                </div>
+            </div>
+
+
+        </div>
+        <!-- end:: Mycart -->
+
+    </div>
+</div>
+
+<!--end: Cart-->

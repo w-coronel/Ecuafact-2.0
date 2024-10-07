@@ -1,0 +1,238 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web
+@using System.Text
+@model  SubscriptionRequest
+@{
+    StringBuilder htmlTitle = new StringBuilder();
+    var item = Model.LicenceType.Description.Split('|');
+    htmlTitle.Append("<div class='text-left'>");
+    for (int a = 0; a < item.Count(); a++)
+    {
+        htmlTitle.Append($"<span style='font-size:small'>{item[a]}&nbsp;<i class='fa {(item[a].Contains("No Incluye Firma") ? "fa-times" : "fa-check")}'></i></span> <br>");
+    }
+    htmlTitle.Append("</div>");
+    
+}
+@section styles{
+    <link href="~/Content/invoice.min.css" rel="stylesheet" type="text/css">
+    <style>
+        ::placeholder {
+        opacity: 0.2;
+        }
+    </style>
+}
+<form class="kt-form" id="_kt_form" method="post" action="@Url.Action("GenerarOrdenAsync")">
+    <div class="row justify-content-center">
+        <div class="kt-portlet col-md-12">
+            <div class="kt-portlet__head">
+
+                <div class="kt-portlet__head-toolbar">
+                    <div class="kt-portlet__head-label">
+                        <h4 class="kt-portlet__head-title" title="@htmlTitle" data-toggle="tooltip" data-theme="dark" data-html="true">
+                            <strong>SUSCRIPCIÓN-</strong>@Model.InvoiceInfo.Product
+                        </h4>
+                    </div>
+                </div>
+                <div class="kt-portlet__head-toolbar">
+                    @*<div class="kt-form__actions">
+                            <button class="btn btn-bolder btn-bold btn-pill btn-tall btn-elevate btn-elevate-air btnSalir">
+                                <i class="flaticon2-arrow-2"></i> Cancelar
+                            </button>
+                        </div>*@
+                    <div class="kt-form__actions">
+                        <button type="button" class="btn btn-secondary btn-sm btn-pill btn-elevate btn-elevate-air btn-tall btn-wide kt-font-bold kt-font-transform-u back-button btnsalir">
+                            <i class="flaticon2-back"></i> Cancelar
+                        </button>
+                        <button type="button" class="btn btn-warning btn-sm btn-pill btn-elevate btn-elevate-air btn-tall btn-wide kt-font-bold kt-font-transform-u back-button btn-make-payment" data-ktwizard-type="action-submit">
+                            <i class="flaticon-price-tag"></i> Realizar Pago
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kt-portlet__body">
+                @Html.HiddenFor(model => model.IssuerId)
+                @Html.HiddenFor(model => model.RUC)
+                @*@Html.HiddenFor(model => model.InvoiceInfo.Identification)
+                @Html.HiddenFor(model => model.InvoiceInfo.Name)
+                @Html.HiddenFor(model => model.InvoiceInfo.Address)
+                @Html.HiddenFor(model => model.InvoiceInfo.Email)*@
+                @Html.HiddenFor(model => model.InvoiceInfo.Price, new { @class = "Price" })
+                @Html.HiddenFor(model => model.InvoiceInfo.IvaRate, new { @class = "IvaRate" })
+                @Html.HiddenFor(model => model.InvoiceInfo.Product)
+                @Html.HiddenFor(model => model.LicenceTypeId)
+                @Html.HiddenFor(model => model.LicenceType.Id)
+                @Html.HiddenFor(model => model.LicenceType.Code)
+                @Html.HiddenFor(model => model.LicenceType.Name)
+                @Html.HiddenFor(model => model.LicenceType.Price)
+                @Html.HiddenFor(model => model.LicenceType.TaxBase)
+                @Html.HiddenFor(model => model.LicenceType.Description)
+
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-lg-6 col-xl-6 order-lg-1 order-xl-1"> 
+                        <!--Facturar a nombre de-->
+                        <h4 class="kt-invoice__title text-left">
+                            <small>Facturar a nombre de:</small>
+                        </h4>
+                        <br /> 
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    @Html.Label("InvoiceInfo.Identificacion", "Identificación:", new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.InvoiceInfo.Identification, new { @type = "number", @class = "form-control invoice-in-Identificacion", @minlength = "10", @maxlength = "13", @required = true, @placeholder = "Identificación" })
+                                    @Html.ValidationMessageFor(model => model.InvoiceInfo.Identification, "", new { @class = "form-text text-muted" })
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <div class="form-group">
+                                    @Html.Label("InvoiceInfo.Name", "Nombre:", new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.InvoiceInfo.Name, new { @type = "text", @class = "form-control invoice-in-name", @required = true, @placeholder = "Razon Social" })
+                                    @Html.ValidationMessageFor(model => model.InvoiceInfo.Name, "", new { @class = "form-text text-muted" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    @Html.Label("InvoiceInfo.Address", "Dirección:", new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.InvoiceInfo.Address, new { @type = "text", @class = "form-control invoice-in-Address", @required = true, @placeholder = "Dirección" })
+                                    @Html.ValidationMessageFor(model => model.InvoiceInfo.Address, "", new { @class = "form-text text-muted" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-7 col-sm-12">
+                                <div class="form-group">
+                                    @Html.Label("InvoiceInfo.Email", "Email:", new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.InvoiceInfo.Email, new { @type = "email", @data_val_pattern = "Debe ingresar un correo electrónico válido", @class = "form-control invoice-in-Email", @required = true, @placeholder = "Correo Electrónico" })
+                                    @Html.ValidationMessageFor(model => model.InvoiceInfo.Email, "", new { @class = "form-text text-muted" })
+                                </div>
+                            </div>
+                            <div class="col-md-5 col-sm-12">
+                                <div class="form-group">
+                                    @Html.Label("InvoiceInfo.Phone", "Teléfono:", new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.InvoiceInfo.Phone, new { @type = "number", @class = "form-control invoice-in-Phone", @required = true, @placeholder = "Phone" })
+                                    @Html.ValidationMessageFor(model => model.InvoiceInfo.Address, "", new { @class = "form-text text-muted" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>                   
+                    <div class="col-md-6 col-sm-12 col-lg-6 col-xl-6 order-lg-1 order-xl-1">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group col-12">
+                                    @Html.Label("InvoiceInfo.DiscountCode", "Si tienes un código promocional, ingrésalo aquí:", new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.InvoiceInfo.DiscountCode, new { @autocomplete = "off", @type = "text", @class = "form-control DiscountCode", @placeholder = "0000000000", @maxlength = "10" })
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <div style="padding:22px 12px 5px 12px;" class="form-group ">
+                                    <button type="button" class="btn btn-info btn-bold btn-pill btn-tall btn-sm btnAplicar"><i class='fa fa-check'></i> Aplicar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row msg-code" style="display:none;">
+                            <div class="col-12 col-md-12">
+                                <i id="imgCode"></i>
+                                <span class="kt-inbox__label">
+                                    <strong id="msg_code"></strong>
+                                </span>
+                            </div>
+                        </div>
+                        <br />
+                        <h3 class="kt-invoice__title text-center">
+                            <small>RESUMEN</small>
+                        </h3>
+                        <div class="row">
+                            <div class="col-6 col-md-6 col-sm-6 col-xl-6">
+                                <h6 class="kt-invoice__title">Producto:</h6>
+                            </div>
+                            <div title="@htmlTitle" class="col text-lg-right" data-toggle="tooltip" data-theme="dark" data-html="true">
+                                <h5 class="kt-invoice__title"> @($"Plan {Model.LicenceType.Name}" )</h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 col-md-6 col-sm-6 col-xl-6">
+                                <h6 class="kt-invoice__title">Precio:</h6>
+                            </div>
+                            <div class="col text-right">
+                                <h5 class="kt-invoice__title"> $ @Model.InvoiceInfo.Price.ToString("#.00")</h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="kt-invoice__title">Descuento:</h6>
+                            </div>
+                            <div class="col text-right">
+                                <h5 class="kt-timeline-v1__item-title totalDiscount"> $ @Model.InvoiceInfo.Discount.ToString("#.00")</h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="kt-invoice__title">Subtotal 15%:</h6>
+                            </div>
+                            <div class="col text-right">
+                                <h5 class="kt-invoice__title subtotal"> $ @Model.InvoiceInfo.SubTotal.ToString("#.00")</h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="kt-invoice__title">IVA 15%:</h6>
+                            </div>
+                            <div class="col text-right">
+                                <h5 class="kt-invoice__title totalIva"> $ @Model.InvoiceInfo.Iva.ToString("#.00")</h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="kt-invoice__title">Total a Pagar:</h6>
+                            </div>
+                            <div class="col text-right">
+                                <h5 class="kt-invoice__title total"> $ @Model.InvoiceInfo.Total.ToString("#.00")</h5>
+                            </div>
+                        </div>
+
+                        <div class="kt-invoice-1">
+                            <div class="kt-invoice__container">
+                                <div class="kt-invoice__total text-center">
+                                    <h6 class="kt-invoice__title">TOTAL</h6>
+                                    <h4 class="kt-invoice__price _total text-success">  $ @Model.InvoiceInfo.Total.ToString("#.00")  </h4>
+                                    <span class="kt-invoice__notice text-success">Incluye impuestos</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts{
+    @Scripts.Render("~/js/invoiceOrder")
+
+<script>
+    $(document).ready(function () {
+
+        invoiceOrder.CodePromUrl = "@Url.Action("ValidateCode", "Payment")";
+        invoiceOrder.BuscarUrl = "@Url.Action("BuscarAsync", "Payment")";
+        invoiceOrder.HomeUrl = "@Url.Action("","Dashboard")";
+        invoiceOrder.LicenceName = "@Model.LicenceType.Name";
+        invoiceOrder.LicenceAmount = "@Model.LicenceType.AmountDocument";
+        invoiceOrder.LicenceCode = "@Model.LicenceType.Code"
+        invoiceOrder.Init();
+    });
+</script>
+}
+
+

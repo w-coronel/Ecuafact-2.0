@@ -1,0 +1,72 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+
+<div class="kt-heading kt-heading--md">Informaci&oacute;n de la Cuenta</div>
+<div class="kt-form__section kt-form__section--first">
+    <div class="kt-wizard-v2__form">
+        <div class="row">
+            <div class="form-group col-6">
+                <span class="kt-space-30"></span>
+                <label>RUC</label>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon-customer"></i></span></div>
+                    @Html.TextBoxFor(model => model.RUC, new { @class = "form-control", @required="", @minlength = "13", @maxlength = "13", @placeholder = "Nombre o Razon Social" })
+                </div>
+            </div>
+
+
+            <div class="form-group col-6">
+                <div class="kt-avatar kt-avatar--outline pull-right" id="kt_user_edit_avatar">
+                    <div class="kt-avatar__holder" style="background-size: contain;background-image: url('@Url.Content(Server.GetLogoFile(Model.Logo, Model.RUC))')"></div>
+                    <label class="kt-avatar__upload" data-toggle="kt-tooltip" title="" data-original-title="Cambiar Imagen">
+                        <i class="fa fa-pen"></i>
+                        <input type="file" id="profile-photo" name="LogoRaw" accept="image/jpeg, image/png, image/pjpeg, image/bmp">
+                    </label>
+                    <span class="kt-avatar__cancel" data-toggle="kt-tooltip" title="" data-original-title="Cancelar">
+                        <i class="fa fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="form-group col-12">
+                <label>Nombre o Razon Social</label>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon-profile-1"></i></span></div>
+                    @Html.TextBoxFor(model => model.BussinesName, new { @class = "form-control", @placeholder = "Nombre o Razon Social" })
+                </div>
+            </div>
+
+            <div class="form-group col-12">
+                <label>Nombre Comercial</label>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon-profile"></i></span></div>
+                    @Html.TextBoxFor(model => model.TradeName, new { @class = "form-control", @placeholder = "Nombre Comercial" })
+                </div>
+            </div>
+
+            <div class="form-group col-6">
+                <label>Tel&eacute;fono</label>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-phone"></i></span></div>
+                    @Html.TextBoxFor(model => model.Phone, new { @type = "tel", @class = "form-control", @placeholder = "Teléfono", @style = "maxwidth:150px", @autocomplete = Guid.NewGuid().ToString() })
+                </div>
+            </div>
+
+            <div class="form-group col-6">
+                <label>Correo Electr&oacute;nico</label>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-black-back-closed-envelope-shape"></i></span></div>
+                    @Html.TextBoxFor(model => model.Email, new { @type = "email", @class = "form-control", @placeholder = "Correo Electrónico", @style = "maxwidth:150px", @autocomplete = Guid.NewGuid().ToString() })
+                </div>
+            </div>
+
+            <div class="form-group col-12">
+                <label>Direcci&oacute;n</label>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon-placeholder-3"></i></span></div>
+                    @Html.TextBoxFor(model => model.MainAddress, new { @class = "form-control", @placeholder = "Dirección", @autocomplete = Guid.NewGuid().ToString() })
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>

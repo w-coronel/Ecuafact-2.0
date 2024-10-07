@@ -1,0 +1,135 @@
+﻿@model IEnumerable<Ecuafact.Web.Domain.Entities.ContributorDto>
+@{
+    ViewBag.Title = "Clientes";
+    ViewBag.Description = "Mantenimiento de Clientes, Proveedores y Transportistas";
+
+    this.PageOptions(m =>
+    {
+        m.DataTables = true;
+        m.EnablePage = true;
+
+    });
+
+}
+
+<div class="kt-portlet">
+
+    <div class="kt-portlet__head">
+
+        <div class="kt-portlet__head-toolbar">
+            <button type="button" id="btnNuevo" class="btn btn-pill btn-outline-info btn-light">
+                <i class='fa fa-user-plus'></i> Nuevo Cliente 
+            </button>
+        </div>
+        <div class="kt-portlet__head-toolbar">
+            <a title="Descargar productos" data-toggle='tooltip' class="btn btn-success btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_export" href="@Url.Action("Descargar")">
+                &nbsp; <i class="fa fa-file-excel "></i>  Descargar
+            </a>
+            <button type="button" id="btnImport" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_import">
+                Importar Clientes <i class='fa fa-user-friends'></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="kt-portlet__body">
+        @{ Html.RenderPartial("_datatableContribuyentesPartial", Model); }
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+
+    <script>
+    var urlSearch = "@Url.Action("GetContributorsAsync")";
+    var tableSearch = "_contribuyentes";
+
+    $("#btnNuevo").on("click", function () {
+        crearContribuyente();
+    });
+
+    $("#myModal").on('hide.bs.modal', function () {
+        location.reload();
+    });
+
+    $(".btn_import").on("click", function () {
+        importCliente();
+    });
+
+    function importCliente() {
+       showLoader();
+       $.get("@Url.Action("Importar", "Contribuyentes")", {}, function (data) {
+            $("#myModal").html(data);
+            hideLoader();
+            $("#myModal").fadeIn();
+            $("#myModal").modal("show");
+       });
+    }
+
+
+    function editarContribuyente(cliente_id) {
+        showLoader();
+
+        var urlAction = "@Url.Action("Editar", "Contribuyentes")/" + cliente_id;
+
+        $.get(urlAction, {}, function (data) {
+            if (data.includes("modal-dialog")) {
+
+                $("#myModal").html(data);
+                hideLoader();
+
+                $("#myModal").fadeIn();
+                $("#myModal").modal("show");
+
+            }
+            else {
+                window.open(urlLogin, "_login")
+            }
+        });
+
+    }
+
+
+    function eliminarContribuyente(id) {
+        var urlAction = '@Url.Action("EliminarAsync", "Contribuyentes")/' + id;
+
+        Swal.fire({
+            title: 'Clientes',
+            text: "¿Esta usted seguro de eliminar este registro?",
+            icon: 'info',
+            type: 'question',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Eliminar'
+
+        }).then(function(result){
+            if (result.value) {
+                // done function
+                showLoader();
+
+                $.ajax({
+                    url: urlAction,
+                    type: "post",
+                    async: true,
+                    cache: false,
+                    error: function (error) {
+                        console.log(error);
+                        toastr.error("No se pudo eliminar el registro!");
+                    },
+                    success: function (result) {
+                        toastr.success("Registro eliminado correctamente!");
+                        // refresh page
+                        location.reload();
+                    }
+                }).always(function () {
+                        hideLoader();
+                    });
+            }
+        });
+
+    }
+
+    </script>
+}
+

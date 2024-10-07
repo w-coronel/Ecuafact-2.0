@@ -1,0 +1,937 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="EcuafactPruebasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="campoAdicional">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pkFactura" Type="bigint" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="valor" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="NumLinea" Type="int" />
+        </EntityType>
+        <EntityType Name="detalle">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PkDocumento" Type="bigint" Nullable="false" />
+          <Property Name="Secuencia" Type="varchar" MaxLength="100" />
+          <Property Name="codigoPrincipal" Type="varchar" MaxLength="25" Nullable="false" />
+          <Property Name="codigoAuxiliar" Type="varchar" MaxLength="25" />
+          <Property Name="descripcion" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="cantidad" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="precioUnitario" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="descuento" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="precioTotalSinImpuesto" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="nom1" Type="varchar" MaxLength="300" />
+          <Property Name="val1" Type="varchar" MaxLength="300" />
+          <Property Name="nom2" Type="varchar" MaxLength="300" />
+          <Property Name="val2" Type="varchar" MaxLength="300" />
+          <Property Name="nom3" Type="varchar" MaxLength="300" />
+          <Property Name="val3" Type="varchar" MaxLength="300" />
+          <Property Name="unidadMedida" Type="varchar" MaxLength="300" />
+          <Property Name="esDeducible" Type="bit" />
+        </EntityType>
+        <EntityType Name="documento">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PkDocumento" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="SecuencialUltimoProceso" Type="int" />
+          <Property Name="version" Type="text" Nullable="false" />
+          <Property Name="id" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ambiente" Type="varchar" MaxLength="1" />
+          <Property Name="tipoEmision" Type="varchar" MaxLength="1" />
+          <Property Name="razonSocial" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="nombreComercial" Type="varchar" MaxLength="300" />
+          <Property Name="ruc" Type="varchar" MaxLength="13" />
+          <Property Name="claveAcceso" Type="varchar" MaxLength="49" />
+          <Property Name="codDoc" Type="varchar" MaxLength="2" />
+          <Property Name="estab" Type="varchar" MaxLength="3" />
+          <Property Name="ptoEmi" Type="varchar" MaxLength="3" />
+          <Property Name="secuencial" Type="varchar" MaxLength="9" />
+          <Property Name="dirMatriz" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="numeroautorizacion" Type="varchar" MaxLength="49" />
+          <Property Name="Estado" Type="int" />
+          <Property Name="StrEstado" Type="varchar" MaxLength="100" />
+          <Property Name="fechaAutorizacion" Type="varchar" MaxLength="50" />
+          <Property Name="FechaIngreso" Type="datetime" />
+          <Property Name="FechaUltimoIntento" Type="datetime" />
+          <Property Name="FechaRecepcionCorreo" Type="datetime" />
+          <Property Name="FechaEnvioCorreo" Type="datetime" />
+          <Property Name="FechaVisualizaciónCliente" Type="datetime" />
+          <Property Name="FechaReenvioCorreo" Type="datetime" />
+          <Property Name="emails" Type="varchar" MaxLength="500" />
+          <Property Name="PorcentajeDescuento" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="EstadoProceso" Type="smallint" />
+          <Property Name="FechaHibernacion" Type="datetime" />
+          <Property Name="UsuarioIngreso" Type="varchar" MaxLength="100" />
+          <Property Name="FechaEnvio" Type="datetime" />
+          <Property Name="PDF" Type="varchar" MaxLength="500" />
+          <Property Name="XML" Type="varchar" MaxLength="500" />
+          <Property Name="MSG" Type="varchar" MaxLength="500" />
+          <Property Name="IDMAIL" Type="varchar" MaxLength="500" />
+          <Property Name="CodDoc2" Type="varchar" MaxLength="2" />
+          <Property Name="XMLC" Type="varchar" MaxLength="500" />
+          <Property Name="PDFC" Type="varchar" MaxLength="500" />
+          <Property Name="Prioridad" Type="int" />
+          <Property Name="idDeducible" Type="int" />
+          <Property Name="Destino" Type="varchar" MaxLength="8000" />
+          <Property Name="Origen" Type="varchar" MaxLength="8000" />
+          <Property Name="ResultadoEnviado" Type="tinyint" />
+          <Property Name="Replicado" Type="tinyint" />
+          <Property Name="Validado" Type="tinyint" />
+          <Property Name="AutorizarAhora" Type="bit" />
+          <Property Name="EstadoExtra1" Type="int" />
+          <Property Name="FechaEstadoExtra1" Type="datetime" />
+          <Property Name="EstadoExtra2" Type="int" />
+          <Property Name="FechaEstadoExtra2" Type="datetime" />
+          <Property Name="EstadoExtraObservacion1" Type="varchar" MaxLength="1000" />
+          <Property Name="EstadoExtraObservacion2" Type="varchar" MaxLength="1000" />
+          <Property Name="numregistros" Type="int" />
+          <Property Name="MigracionNube" Type="bit" />
+          <Property Name="ErrorMigracion" Type="varchar" MaxLength="8000" />
+          <Property Name="MigracionRegion" Type="bit" />
+          <Property Name="ErrorMigracionRegion" Type="varchar" MaxLength="8000" />
+          <Property Name="Offline" Type="bit" />
+          <Property Name="FechaEnvioSRI" Type="datetime" />
+          <Property Name="CodSucursal" Type="varchar" MaxLength="5" />
+          <Property Name="EstadoUltimaGestion" Type="smallint" />
+          <Property Name="FechaUltimaGestion" Type="datetime" />
+          <Property Name="DatosRecepcionEnviados" Type="bit" />
+        </EntityType>
+        <EntityType Name="Emisor">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RUC" Type="varchar" MaxLength="13" Nullable="false" />
+          <Property Name="RazonSocial" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="NombreComercial" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="DireccionMatriz" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="EsContribuyenteEspecial" Type="bit" Nullable="false" />
+          <Property Name="NoResolucion" Type="varchar" MaxLength="50" />
+          <Property Name="ObligadoContabilidad" Type="bit" Nullable="false" />
+          <Property Name="Logo" Type="varchar" MaxLength="500" />
+          <Property Name="CertificadoDigital" Type="varchar" MaxLength="500" />
+          <Property Name="Clave" Type="varchar" MaxLength="500" />
+          <Property Name="TipoEmision" Type="int" Nullable="false" />
+          <Property Name="TipoAmbiente" Type="int" Nullable="false" />
+          <Property Name="Version" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Autorizacion" Type="varchar" MaxLength="8000" Nullable="false" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+          <Property Name="PortalClientes" Type="varchar" MaxLength="400" />
+          <Property Name="EmailNotificacion" Type="varchar" MaxLength="200" />
+          <Property Name="HoraInicio" Type="varchar" MaxLength="5" />
+          <Property Name="Frecuencia" Type="int" />
+          <Property Name="ClaveSRI" Type="varchar" MaxLength="300" />
+        </EntityType>
+        <EntityType Name="FormaPago">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pkDocumento" Type="bigint" Nullable="false" />
+          <Property Name="formaPago" Type="varchar" MaxLength="2" />
+          <Property Name="total" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="plazo" Type="int" />
+          <Property Name="unidadTiempo" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="impuesto">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pkDetalle" Type="bigint" Nullable="false" />
+          <Property Name="codigo" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="codigoPorcentaje" Type="varchar" MaxLength="4" Nullable="false" />
+          <Property Name="tarifa" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="baseImponible" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="valor" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+        </EntityType>
+        <EntityType Name="infoFactura">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PkDocumento" Type="bigint" Nullable="false" />
+          <Property Name="fechaEmision" Type="varchar" MaxLength="10" />
+          <Property Name="dirEstablecimiento" Type="varchar" MaxLength="500" />
+          <Property Name="contribuyenteEspecial" Type="varchar" MaxLength="5" />
+          <Property Name="obligadoContabilidad" Type="varchar" MaxLength="2" />
+          <Property Name="tipoIdentificacionComprador" Type="varchar" MaxLength="2" />
+          <Property Name="guiaRemision" Type="varchar" MaxLength="20" />
+          <Property Name="razonSocialComprador" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="identificacionComprador" Type="varchar" MaxLength="100" />
+          <Property Name="totalSinImpuestos" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="totalDescuento" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="propina" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="importeTotal" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="moneda" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="SubTotal12" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="SubTotal0" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="rise" Type="varchar" MaxLength="40" />
+          <Property Name="codDocModificado" Type="varchar" MaxLength="2" />
+          <Property Name="numDocModificado" Type="varchar" MaxLength="17" />
+          <Property Name="fechaEmisionDocSustento" Type="varchar" MaxLength="10" />
+          <Property Name="valorModificacion" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="motivo" Type="varchar" MaxLength="300" />
+          <Property Name="periodoFiscal" Type="varchar" MaxLength="7" />
+          <Property Name="dirpartida" Type="varchar" MaxLength="500" />
+          <Property Name="fechainitransporte" Type="varchar" MaxLength="10" />
+          <Property Name="fechafintransporte" Type="varchar" MaxLength="10" />
+          <Property Name="placa" Type="varchar" MaxLength="50" />
+          <Property Name="identificaciondestinatario" Type="varchar" MaxLength="100" />
+          <Property Name="razonsocialdestinatario" Type="varchar" MaxLength="300" />
+          <Property Name="dirdestinatario" Type="varchar" MaxLength="500" />
+          <Property Name="descuentoAdicional" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="numAutDocSustento" Type="varchar" MaxLength="49" />
+          <Property Name="SubTotalNoObjetoIVA" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="SubTototalExcentoIVA" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="incoTermFactura" Type="varchar" MaxLength="10" />
+          <Property Name="lugarIncoTerm" Type="varchar" MaxLength="300" />
+          <Property Name="paisOrigen" Type="varchar" MaxLength="3" />
+          <Property Name="puertoEmbarque" Type="varchar" MaxLength="300" />
+          <Property Name="puertoDestino" Type="varchar" MaxLength="300" />
+          <Property Name="paisDestino" Type="varchar" MaxLength="3" />
+          <Property Name="paisAdquisicion" Type="varchar" MaxLength="3" />
+          <Property Name="direccionComprador" Type="varchar" MaxLength="300" />
+          <Property Name="incoTermTotalSinImpuestos" Type="varchar" MaxLength="10" />
+          <Property Name="fleteInternacional" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="seguroInternacional" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="gastosAduaneros" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="gastosTransporteOtros" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="SubTotal14" Type="decimal" Precision="18" Scale="6" />
+        </EntityType>
+        <EntityType Name="totalImpuesto">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pkInfoFactura" Type="bigint" Nullable="false" />
+          <Property Name="codigo" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="codigoPorcentaje" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="baseImponible" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="tarifa" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="valor" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="codDocSustento" Type="varchar" MaxLength="2" />
+          <Property Name="numDocSustento" Type="varchar" MaxLength="15" />
+          <Property Name="fechaEmisionDocSustento" Type="varchar" MaxLength="10" />
+          <Property Name="descuentoAdicional" Type="decimal" Precision="18" Scale="6" />
+        </EntityType>
+        <Association Name="FK_campoAdicional_documento">
+          <End Role="documento" Type="Self.documento" Multiplicity="1" />
+          <End Role="campoAdicional" Type="Self.campoAdicional" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="documento">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="campoAdicional">
+              <PropertyRef Name="pkFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_detalle_documento">
+          <End Role="documento" Type="Self.documento" Multiplicity="1" />
+          <End Role="detalle" Type="Self.detalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="documento">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="detalle">
+              <PropertyRef Name="PkDocumento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FormaPago_documento">
+          <End Role="documento" Type="Self.documento" Multiplicity="1" />
+          <End Role="FormaPago" Type="Self.FormaPago" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="documento">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="FormaPago">
+              <PropertyRef Name="pkDocumento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_impuesto_detalle">
+          <End Role="detalle" Type="Self.detalle" Multiplicity="1" />
+          <End Role="impuesto" Type="Self.impuesto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="detalle">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="impuesto">
+              <PropertyRef Name="pkDetalle" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_infoFactura_infoTributaria">
+          <End Role="documento" Type="Self.documento" Multiplicity="1" />
+          <End Role="infoFactura" Type="Self.infoFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="documento">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="infoFactura">
+              <PropertyRef Name="PkDocumento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_totalImpuesto_infoFactura1">
+          <End Role="infoFactura" Type="Self.infoFactura" Multiplicity="1" />
+          <End Role="totalImpuesto" Type="Self.totalImpuesto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="infoFactura">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="totalImpuesto">
+              <PropertyRef Name="pkInfoFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EcuafactPruebasModelStoreContainer">
+          <EntitySet Name="campoAdicional" EntityType="Self.campoAdicional" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="detalle" EntityType="Self.detalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="documento" EntityType="Self.documento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Emisor" EntityType="Self.Emisor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FormaPago" EntityType="Self.FormaPago" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="impuesto" EntityType="Self.impuesto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="infoFactura" EntityType="Self.infoFactura" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="totalImpuesto" EntityType="Self.totalImpuesto" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_campoAdicional_documento" Association="Self.FK_campoAdicional_documento">
+            <End Role="documento" EntitySet="documento" />
+            <End Role="campoAdicional" EntitySet="campoAdicional" />
+          </AssociationSet>
+          <AssociationSet Name="FK_detalle_documento" Association="Self.FK_detalle_documento">
+            <End Role="documento" EntitySet="documento" />
+            <End Role="detalle" EntitySet="detalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormaPago_documento" Association="Self.FK_FormaPago_documento">
+            <End Role="documento" EntitySet="documento" />
+            <End Role="FormaPago" EntitySet="FormaPago" />
+          </AssociationSet>
+          <AssociationSet Name="FK_impuesto_detalle" Association="Self.FK_impuesto_detalle">
+            <End Role="detalle" EntitySet="detalle" />
+            <End Role="impuesto" EntitySet="impuesto" />
+          </AssociationSet>
+          <AssociationSet Name="FK_infoFactura_infoTributaria" Association="Self.FK_infoFactura_infoTributaria">
+            <End Role="documento" EntitySet="documento" />
+            <End Role="infoFactura" EntitySet="infoFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK_totalImpuesto_infoFactura1" Association="Self.FK_totalImpuesto_infoFactura1">
+            <End Role="infoFactura" EntitySet="infoFactura" />
+            <End Role="totalImpuesto" EntitySet="totalImpuesto" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EcuafactEngineModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="campoAdicional">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkFactura" Type="Int64" Nullable="false" />
+          <Property Name="nombre" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="valor" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NumLinea" Type="Int32" />
+          <NavigationProperty Name="documento" Relationship="Self.FK_campoAdicional_documento" FromRole="campoAdicional" ToRole="documento" />
+        </EntityType>
+        <EntityType Name="detalle">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PkDocumento" Type="Int64" Nullable="false" />
+          <Property Name="Secuencia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="codigoPrincipal" Type="String" MaxLength="25" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="codigoAuxiliar" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="descripcion" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="cantidad" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="precioUnitario" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="descuento" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="precioTotalSinImpuesto" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="nom1" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="val1" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="nom2" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="val2" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="nom3" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="val3" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="unidadMedida" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="esDeducible" Type="Boolean" />
+          <NavigationProperty Name="documento" Relationship="Self.FK_detalle_documento" FromRole="detalle" ToRole="documento" />
+          <NavigationProperty Name="impuesto" Relationship="Self.FK_impuesto_detalle" FromRole="detalle" ToRole="impuesto" />
+        </EntityType>
+        <EntityType Name="documento">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PkDocumento" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SecuencialUltimoProceso" Type="Int32" />
+          <Property Name="version" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="id" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ambiente" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="tipoEmision" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="razonSocial" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="nombreComercial" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="ruc" Type="String" MaxLength="13" FixedLength="false" Unicode="false" />
+          <Property Name="claveAcceso" Type="String" MaxLength="49" FixedLength="false" Unicode="false" />
+          <Property Name="codDoc" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="estab" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="ptoEmi" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="secuencial" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
+          <Property Name="dirMatriz" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="numeroautorizacion" Type="String" MaxLength="49" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Int32" />
+          <Property Name="StrEstado" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="fechaAutorizacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaIngreso" Type="DateTime" Precision="3" />
+          <Property Name="FechaUltimoIntento" Type="DateTime" Precision="3" />
+          <Property Name="FechaRecepcionCorreo" Type="DateTime" Precision="3" />
+          <Property Name="FechaEnvioCorreo" Type="DateTime" Precision="3" />
+          <Property Name="FechaVisualizaciónCliente" Type="DateTime" Precision="3" />
+          <Property Name="FechaReenvioCorreo" Type="DateTime" Precision="3" />
+          <Property Name="emails" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PorcentajeDescuento" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="EstadoProceso" Type="Int16" />
+          <Property Name="FechaHibernacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioIngreso" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FechaEnvio" Type="DateTime" Precision="3" />
+          <Property Name="PDF" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="XML" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="MSG" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="IDMAIL" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="CodDoc2" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="XMLC" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PDFC" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Prioridad" Type="Int32" />
+          <Property Name="idDeducible" Type="Int32" />
+          <Property Name="Destino" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="Origen" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="ResultadoEnviado" Type="Byte" />
+          <Property Name="Replicado" Type="Byte" />
+          <Property Name="Validado" Type="Byte" />
+          <Property Name="AutorizarAhora" Type="Boolean" />
+          <Property Name="EstadoExtra1" Type="Int32" />
+          <Property Name="FechaEstadoExtra1" Type="DateTime" Precision="3" />
+          <Property Name="EstadoExtra2" Type="Int32" />
+          <Property Name="FechaEstadoExtra2" Type="DateTime" Precision="3" />
+          <Property Name="EstadoExtraObservacion1" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="EstadoExtraObservacion2" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="numregistros" Type="Int32" />
+          <Property Name="MigracionNube" Type="Boolean" />
+          <Property Name="ErrorMigracion" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="MigracionRegion" Type="Boolean" />
+          <Property Name="ErrorMigracionRegion" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="Offline" Type="Boolean" />
+          <Property Name="FechaEnvioSRI" Type="DateTime" Precision="3" />
+          <Property Name="CodSucursal" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="EstadoUltimaGestion" Type="Int16" />
+          <Property Name="FechaUltimaGestion" Type="DateTime" Precision="3" />
+          <Property Name="DatosRecepcionEnviados" Type="Boolean" />
+          <NavigationProperty Name="campoAdicional" Relationship="Self.FK_campoAdicional_documento" FromRole="documento" ToRole="campoAdicional" />
+          <NavigationProperty Name="detalle" Relationship="Self.FK_detalle_documento" FromRole="documento" ToRole="detalle" />
+          <NavigationProperty Name="FormaPago" Relationship="Self.FK_FormaPago_documento" FromRole="documento" ToRole="FormaPago" />
+          <NavigationProperty Name="infoFactura" Relationship="Self.FK_infoFactura_infoTributaria" FromRole="documento" ToRole="infoFactura" />
+        </EntityType>
+        <EntityType Name="Emisor">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RUC" Type="String" MaxLength="13" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RazonSocial" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NombreComercial" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DireccionMatriz" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EsContribuyenteEspecial" Type="Boolean" Nullable="false" />
+          <Property Name="NoResolucion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ObligadoContabilidad" Type="Boolean" Nullable="false" />
+          <Property Name="Logo" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="CertificadoDigital" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Clave" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="TipoEmision" Type="Int32" Nullable="false" />
+          <Property Name="TipoAmbiente" Type="Int32" Nullable="false" />
+          <Property Name="Version" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Autorizacion" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <Property Name="PortalClientes" Type="String" MaxLength="400" FixedLength="false" Unicode="false" />
+          <Property Name="EmailNotificacion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="HoraInicio" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Frecuencia" Type="Int32" />
+          <Property Name="ClaveSRI" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="FormaPago">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkDocumento" Type="Int64" Nullable="false" />
+          <Property Name="formaPago1" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="total" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="plazo" Type="Int32" />
+          <Property Name="unidadTiempo" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="documento" Relationship="Self.FK_FormaPago_documento" FromRole="FormaPago" ToRole="documento" />
+        </EntityType>
+        <EntityType Name="impuesto">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkDetalle" Type="Int64" Nullable="false" />
+          <Property Name="codigo" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="codigoPorcentaje" Type="String" MaxLength="4" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="tarifa" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="baseImponible" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="valor" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <NavigationProperty Name="detalle" Relationship="Self.FK_impuesto_detalle" FromRole="impuesto" ToRole="detalle" />
+        </EntityType>
+        <EntityType Name="infoFactura">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PkDocumento" Type="Int64" Nullable="false" />
+          <Property Name="fechaEmision" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="dirEstablecimiento" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="contribuyenteEspecial" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="obligadoContabilidad" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="tipoIdentificacionComprador" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="guiaRemision" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="razonSocialComprador" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="identificacionComprador" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="totalSinImpuestos" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="totalDescuento" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="propina" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="importeTotal" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="moneda" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SubTotal12" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="SubTotal0" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="rise" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="codDocModificado" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="numDocModificado" Type="String" MaxLength="17" FixedLength="false" Unicode="false" />
+          <Property Name="fechaEmisionDocSustento" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="valorModificacion" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="motivo" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="periodoFiscal" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="dirpartida" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="fechainitransporte" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="fechafintransporte" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="placa" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="identificaciondestinatario" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="razonsocialdestinatario" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="dirdestinatario" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="descuentoAdicional" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="numAutDocSustento" Type="String" MaxLength="49" FixedLength="false" Unicode="false" />
+          <Property Name="SubTotalNoObjetoIVA" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="SubTototalExcentoIVA" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="incoTermFactura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="lugarIncoTerm" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="paisOrigen" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="puertoEmbarque" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="puertoDestino" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="paisDestino" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="paisAdquisicion" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="direccionComprador" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="incoTermTotalSinImpuestos" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="fleteInternacional" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="seguroInternacional" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="gastosAduaneros" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="gastosTransporteOtros" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="SubTotal14" Type="Decimal" Precision="18" Scale="6" />
+          <NavigationProperty Name="documento" Relationship="Self.FK_infoFactura_infoTributaria" FromRole="infoFactura" ToRole="documento" />
+          <NavigationProperty Name="totalImpuesto" Relationship="Self.FK_totalImpuesto_infoFactura1" FromRole="infoFactura" ToRole="totalImpuesto" />
+        </EntityType>
+        <EntityType Name="totalImpuesto">
+          <Key>
+            <PropertyRef Name="pk" />
+          </Key>
+          <Property Name="pk" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkInfoFactura" Type="Int64" Nullable="false" />
+          <Property Name="codigo" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="codigoPorcentaje" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="baseImponible" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="tarifa" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="valor" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="codDocSustento" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="numDocSustento" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="fechaEmisionDocSustento" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="descuentoAdicional" Type="Decimal" Precision="18" Scale="6" />
+          <NavigationProperty Name="infoFactura" Relationship="Self.FK_totalImpuesto_infoFactura1" FromRole="totalImpuesto" ToRole="infoFactura" />
+        </EntityType>
+        <Association Name="FK_campoAdicional_documento">
+          <End Role="documento" Type="Self.documento" Multiplicity="1" />
+          <End Role="campoAdicional" Type="Self.campoAdicional" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="documento">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="campoAdicional">
+              <PropertyRef Name="pkFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_detalle_documento">
+          <End Role="documento" Type="Self.documento" Multiplicity="1" />
+          <End Role="detalle" Type="Self.detalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="documento">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="detalle">
+              <PropertyRef Name="PkDocumento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_impuesto_detalle">
+          <End Role="detalle" Type="Self.detalle" Multiplicity="1" />
+          <End Role="impuesto" Type="Self.impuesto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="detalle">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="impuesto">
+              <PropertyRef Name="pkDetalle" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FormaPago_documento">
+          <End Role="documento" Type="Self.documento" Multiplicity="1" />
+          <End Role="FormaPago" Type="Self.FormaPago" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="documento">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="FormaPago">
+              <PropertyRef Name="pkDocumento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_infoFactura_infoTributaria">
+          <End Role="documento" Type="Self.documento" Multiplicity="1" />
+          <End Role="infoFactura" Type="Self.infoFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="documento">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="infoFactura">
+              <PropertyRef Name="PkDocumento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_totalImpuesto_infoFactura1">
+          <End Role="infoFactura" Type="Self.infoFactura" Multiplicity="1" />
+          <End Role="totalImpuesto" Type="Self.totalImpuesto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="infoFactura">
+              <PropertyRef Name="pk" />
+            </Principal>
+            <Dependent Role="totalImpuesto">
+              <PropertyRef Name="pkInfoFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EcuafactEngineEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="campoAdicional" EntityType="Self.campoAdicional" />
+          <EntitySet Name="detalle" EntityType="Self.detalle" />
+          <EntitySet Name="documento" EntityType="Self.documento" />
+          <EntitySet Name="Emisor" EntityType="Self.Emisor" />
+          <EntitySet Name="FormaPago" EntityType="Self.FormaPago" />
+          <EntitySet Name="impuesto" EntityType="Self.impuesto" />
+          <EntitySet Name="infoFactura" EntityType="Self.infoFactura" />
+          <EntitySet Name="totalImpuesto" EntityType="Self.totalImpuesto" />
+          <AssociationSet Name="FK_campoAdicional_documento" Association="Self.FK_campoAdicional_documento">
+            <End Role="documento" EntitySet="documento" />
+            <End Role="campoAdicional" EntitySet="campoAdicional" />
+          </AssociationSet>
+          <AssociationSet Name="FK_detalle_documento" Association="Self.FK_detalle_documento">
+            <End Role="documento" EntitySet="documento" />
+            <End Role="detalle" EntitySet="detalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_impuesto_detalle" Association="Self.FK_impuesto_detalle">
+            <End Role="detalle" EntitySet="detalle" />
+            <End Role="impuesto" EntitySet="impuesto" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormaPago_documento" Association="Self.FK_FormaPago_documento">
+            <End Role="documento" EntitySet="documento" />
+            <End Role="FormaPago" EntitySet="FormaPago" />
+          </AssociationSet>
+          <AssociationSet Name="FK_infoFactura_infoTributaria" Association="Self.FK_infoFactura_infoTributaria">
+            <End Role="documento" EntitySet="documento" />
+            <End Role="infoFactura" EntitySet="infoFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK_totalImpuesto_infoFactura1" Association="Self.FK_totalImpuesto_infoFactura1">
+            <End Role="infoFactura" EntitySet="infoFactura" />
+            <End Role="totalImpuesto" EntitySet="totalImpuesto" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EcuafactPruebasModelStoreContainer" CdmEntityContainer="EcuafactEngineEntities">
+          <EntitySetMapping Name="campoAdicional">
+            <EntityTypeMapping TypeName="EcuafactEngineModel.campoAdicional">
+              <MappingFragment StoreEntitySet="campoAdicional">
+                <ScalarProperty Name="pk" ColumnName="pk" />
+                <ScalarProperty Name="pkFactura" ColumnName="pkFactura" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
+                <ScalarProperty Name="NumLinea" ColumnName="NumLinea" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="detalle">
+            <EntityTypeMapping TypeName="EcuafactEngineModel.detalle">
+              <MappingFragment StoreEntitySet="detalle">
+                <ScalarProperty Name="pk" ColumnName="pk" />
+                <ScalarProperty Name="PkDocumento" ColumnName="PkDocumento" />
+                <ScalarProperty Name="Secuencia" ColumnName="Secuencia" />
+                <ScalarProperty Name="codigoPrincipal" ColumnName="codigoPrincipal" />
+                <ScalarProperty Name="codigoAuxiliar" ColumnName="codigoAuxiliar" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+                <ScalarProperty Name="precioUnitario" ColumnName="precioUnitario" />
+                <ScalarProperty Name="descuento" ColumnName="descuento" />
+                <ScalarProperty Name="precioTotalSinImpuesto" ColumnName="precioTotalSinImpuesto" />
+                <ScalarProperty Name="nom1" ColumnName="nom1" />
+                <ScalarProperty Name="val1" ColumnName="val1" />
+                <ScalarProperty Name="nom2" ColumnName="nom2" />
+                <ScalarProperty Name="val2" ColumnName="val2" />
+                <ScalarProperty Name="nom3" ColumnName="nom3" />
+                <ScalarProperty Name="val3" ColumnName="val3" />
+                <ScalarProperty Name="unidadMedida" ColumnName="unidadMedida" />
+                <ScalarProperty Name="esDeducible" ColumnName="esDeducible" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="documento">
+            <EntityTypeMapping TypeName="EcuafactEngineModel.documento">
+              <MappingFragment StoreEntitySet="documento">
+                <ScalarProperty Name="pk" ColumnName="pk" />
+                <ScalarProperty Name="PkDocumento" ColumnName="PkDocumento" />
+                <ScalarProperty Name="SecuencialUltimoProceso" ColumnName="SecuencialUltimoProceso" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="ambiente" ColumnName="ambiente" />
+                <ScalarProperty Name="tipoEmision" ColumnName="tipoEmision" />
+                <ScalarProperty Name="razonSocial" ColumnName="razonSocial" />
+                <ScalarProperty Name="nombreComercial" ColumnName="nombreComercial" />
+                <ScalarProperty Name="ruc" ColumnName="ruc" />
+                <ScalarProperty Name="claveAcceso" ColumnName="claveAcceso" />
+                <ScalarProperty Name="codDoc" ColumnName="codDoc" />
+                <ScalarProperty Name="estab" ColumnName="estab" />
+                <ScalarProperty Name="ptoEmi" ColumnName="ptoEmi" />
+                <ScalarProperty Name="secuencial" ColumnName="secuencial" />
+                <ScalarProperty Name="dirMatriz" ColumnName="dirMatriz" />
+                <ScalarProperty Name="numeroautorizacion" ColumnName="numeroautorizacion" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="StrEstado" ColumnName="StrEstado" />
+                <ScalarProperty Name="fechaAutorizacion" ColumnName="fechaAutorizacion" />
+                <ScalarProperty Name="FechaIngreso" ColumnName="FechaIngreso" />
+                <ScalarProperty Name="FechaUltimoIntento" ColumnName="FechaUltimoIntento" />
+                <ScalarProperty Name="FechaRecepcionCorreo" ColumnName="FechaRecepcionCorreo" />
+                <ScalarProperty Name="FechaEnvioCorreo" ColumnName="FechaEnvioCorreo" />
+                <ScalarProperty Name="FechaVisualizaciónCliente" ColumnName="FechaVisualizaciónCliente" />
+                <ScalarProperty Name="FechaReenvioCorreo" ColumnName="FechaReenvioCorreo" />
+                <ScalarProperty Name="emails" ColumnName="emails" />
+                <ScalarProperty Name="PorcentajeDescuento" ColumnName="PorcentajeDescuento" />
+                <ScalarProperty Name="EstadoProceso" ColumnName="EstadoProceso" />
+                <ScalarProperty Name="FechaHibernacion" ColumnName="FechaHibernacion" />
+                <ScalarProperty Name="UsuarioIngreso" ColumnName="UsuarioIngreso" />
+                <ScalarProperty Name="FechaEnvio" ColumnName="FechaEnvio" />
+                <ScalarProperty Name="PDF" ColumnName="PDF" />
+                <ScalarProperty Name="XML" ColumnName="XML" />
+                <ScalarProperty Name="MSG" ColumnName="MSG" />
+                <ScalarProperty Name="IDMAIL" ColumnName="IDMAIL" />
+                <ScalarProperty Name="CodDoc2" ColumnName="CodDoc2" />
+                <ScalarProperty Name="XMLC" ColumnName="XMLC" />
+                <ScalarProperty Name="PDFC" ColumnName="PDFC" />
+                <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
+                <ScalarProperty Name="idDeducible" ColumnName="idDeducible" />
+                <ScalarProperty Name="Destino" ColumnName="Destino" />
+                <ScalarProperty Name="Origen" ColumnName="Origen" />
+                <ScalarProperty Name="ResultadoEnviado" ColumnName="ResultadoEnviado" />
+                <ScalarProperty Name="Replicado" ColumnName="Replicado" />
+                <ScalarProperty Name="Validado" ColumnName="Validado" />
+                <ScalarProperty Name="AutorizarAhora" ColumnName="AutorizarAhora" />
+                <ScalarProperty Name="EstadoExtra1" ColumnName="EstadoExtra1" />
+                <ScalarProperty Name="FechaEstadoExtra1" ColumnName="FechaEstadoExtra1" />
+                <ScalarProperty Name="EstadoExtra2" ColumnName="EstadoExtra2" />
+                <ScalarProperty Name="FechaEstadoExtra2" ColumnName="FechaEstadoExtra2" />
+                <ScalarProperty Name="EstadoExtraObservacion1" ColumnName="EstadoExtraObservacion1" />
+                <ScalarProperty Name="EstadoExtraObservacion2" ColumnName="EstadoExtraObservacion2" />
+                <ScalarProperty Name="numregistros" ColumnName="numregistros" />
+                <ScalarProperty Name="MigracionNube" ColumnName="MigracionNube" />
+                <ScalarProperty Name="ErrorMigracion" ColumnName="ErrorMigracion" />
+                <ScalarProperty Name="MigracionRegion" ColumnName="MigracionRegion" />
+                <ScalarProperty Name="ErrorMigracionRegion" ColumnName="ErrorMigracionRegion" />
+                <ScalarProperty Name="Offline" ColumnName="Offline" />
+                <ScalarProperty Name="FechaEnvioSRI" ColumnName="FechaEnvioSRI" />
+                <ScalarProperty Name="CodSucursal" ColumnName="CodSucursal" />
+                <ScalarProperty Name="EstadoUltimaGestion" ColumnName="EstadoUltimaGestion" />
+                <ScalarProperty Name="FechaUltimaGestion" ColumnName="FechaUltimaGestion" />
+                <ScalarProperty Name="DatosRecepcionEnviados" ColumnName="DatosRecepcionEnviados" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Emisor">
+            <EntityTypeMapping TypeName="EcuafactEngineModel.Emisor">
+              <MappingFragment StoreEntitySet="Emisor">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="RUC" ColumnName="RUC" />
+                <ScalarProperty Name="RazonSocial" ColumnName="RazonSocial" />
+                <ScalarProperty Name="NombreComercial" ColumnName="NombreComercial" />
+                <ScalarProperty Name="DireccionMatriz" ColumnName="DireccionMatriz" />
+                <ScalarProperty Name="EsContribuyenteEspecial" ColumnName="EsContribuyenteEspecial" />
+                <ScalarProperty Name="NoResolucion" ColumnName="NoResolucion" />
+                <ScalarProperty Name="ObligadoContabilidad" ColumnName="ObligadoContabilidad" />
+                <ScalarProperty Name="Logo" ColumnName="Logo" />
+                <ScalarProperty Name="CertificadoDigital" ColumnName="CertificadoDigital" />
+                <ScalarProperty Name="Clave" ColumnName="Clave" />
+                <ScalarProperty Name="TipoEmision" ColumnName="TipoEmision" />
+                <ScalarProperty Name="TipoAmbiente" ColumnName="TipoAmbiente" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="Autorizacion" ColumnName="Autorizacion" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="PortalClientes" ColumnName="PortalClientes" />
+                <ScalarProperty Name="EmailNotificacion" ColumnName="EmailNotificacion" />
+                <ScalarProperty Name="HoraInicio" ColumnName="HoraInicio" />
+                <ScalarProperty Name="Frecuencia" ColumnName="Frecuencia" />
+                <ScalarProperty Name="ClaveSRI" ColumnName="ClaveSRI" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormaPago">
+            <EntityTypeMapping TypeName="EcuafactEngineModel.FormaPago">
+              <MappingFragment StoreEntitySet="FormaPago">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="pkDocumento" ColumnName="pkDocumento" />
+                <ScalarProperty Name="formaPago1" ColumnName="formaPago" />
+                <ScalarProperty Name="total" ColumnName="total" />
+                <ScalarProperty Name="plazo" ColumnName="plazo" />
+                <ScalarProperty Name="unidadTiempo" ColumnName="unidadTiempo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="impuesto">
+            <EntityTypeMapping TypeName="EcuafactEngineModel.impuesto">
+              <MappingFragment StoreEntitySet="impuesto">
+                <ScalarProperty Name="pk" ColumnName="pk" />
+                <ScalarProperty Name="pkDetalle" ColumnName="pkDetalle" />
+                <ScalarProperty Name="codigo" ColumnName="codigo" />
+                <ScalarProperty Name="codigoPorcentaje" ColumnName="codigoPorcentaje" />
+                <ScalarProperty Name="tarifa" ColumnName="tarifa" />
+                <ScalarProperty Name="baseImponible" ColumnName="baseImponible" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="infoFactura">
+            <EntityTypeMapping TypeName="EcuafactEngineModel.infoFactura">
+              <MappingFragment StoreEntitySet="infoFactura">
+                <ScalarProperty Name="pk" ColumnName="pk" />
+                <ScalarProperty Name="PkDocumento" ColumnName="PkDocumento" />
+                <ScalarProperty Name="fechaEmision" ColumnName="fechaEmision" />
+                <ScalarProperty Name="dirEstablecimiento" ColumnName="dirEstablecimiento" />
+                <ScalarProperty Name="contribuyenteEspecial" ColumnName="contribuyenteEspecial" />
+                <ScalarProperty Name="obligadoContabilidad" ColumnName="obligadoContabilidad" />
+                <ScalarProperty Name="tipoIdentificacionComprador" ColumnName="tipoIdentificacionComprador" />
+                <ScalarProperty Name="guiaRemision" ColumnName="guiaRemision" />
+                <ScalarProperty Name="razonSocialComprador" ColumnName="razonSocialComprador" />
+                <ScalarProperty Name="identificacionComprador" ColumnName="identificacionComprador" />
+                <ScalarProperty Name="totalSinImpuestos" ColumnName="totalSinImpuestos" />
+                <ScalarProperty Name="totalDescuento" ColumnName="totalDescuento" />
+                <ScalarProperty Name="propina" ColumnName="propina" />
+                <ScalarProperty Name="importeTotal" ColumnName="importeTotal" />
+                <ScalarProperty Name="moneda" ColumnName="moneda" />
+                <ScalarProperty Name="SubTotal12" ColumnName="SubTotal12" />
+                <ScalarProperty Name="SubTotal0" ColumnName="SubTotal0" />
+                <ScalarProperty Name="rise" ColumnName="rise" />
+                <ScalarProperty Name="codDocModificado" ColumnName="codDocModificado" />
+                <ScalarProperty Name="numDocModificado" ColumnName="numDocModificado" />
+                <ScalarProperty Name="fechaEmisionDocSustento" ColumnName="fechaEmisionDocSustento" />
+                <ScalarProperty Name="valorModificacion" ColumnName="valorModificacion" />
+                <ScalarProperty Name="motivo" ColumnName="motivo" />
+                <ScalarProperty Name="periodoFiscal" ColumnName="periodoFiscal" />
+                <ScalarProperty Name="dirpartida" ColumnName="dirpartida" />
+                <ScalarProperty Name="fechainitransporte" ColumnName="fechainitransporte" />
+                <ScalarProperty Name="fechafintransporte" ColumnName="fechafintransporte" />
+                <ScalarProperty Name="placa" ColumnName="placa" />
+                <ScalarProperty Name="identificaciondestinatario" ColumnName="identificaciondestinatario" />
+                <ScalarProperty Name="razonsocialdestinatario" ColumnName="razonsocialdestinatario" />
+                <ScalarProperty Name="dirdestinatario" ColumnName="dirdestinatario" />
+                <ScalarProperty Name="descuentoAdicional" ColumnName="descuentoAdicional" />
+                <ScalarProperty Name="numAutDocSustento" ColumnName="numAutDocSustento" />
+                <ScalarProperty Name="SubTotalNoObjetoIVA" ColumnName="SubTotalNoObjetoIVA" />
+                <ScalarProperty Name="SubTototalExcentoIVA" ColumnName="SubTototalExcentoIVA" />
+                <ScalarProperty Name="incoTermFactura" ColumnName="incoTermFactura" />
+                <ScalarProperty Name="lugarIncoTerm" ColumnName="lugarIncoTerm" />
+                <ScalarProperty Name="paisOrigen" ColumnName="paisOrigen" />
+                <ScalarProperty Name="puertoEmbarque" ColumnName="puertoEmbarque" />
+                <ScalarProperty Name="puertoDestino" ColumnName="puertoDestino" />
+                <ScalarProperty Name="paisDestino" ColumnName="paisDestino" />
+                <ScalarProperty Name="paisAdquisicion" ColumnName="paisAdquisicion" />
+                <ScalarProperty Name="direccionComprador" ColumnName="direccionComprador" />
+                <ScalarProperty Name="incoTermTotalSinImpuestos" ColumnName="incoTermTotalSinImpuestos" />
+                <ScalarProperty Name="fleteInternacional" ColumnName="fleteInternacional" />
+                <ScalarProperty Name="seguroInternacional" ColumnName="seguroInternacional" />
+                <ScalarProperty Name="gastosAduaneros" ColumnName="gastosAduaneros" />
+                <ScalarProperty Name="gastosTransporteOtros" ColumnName="gastosTransporteOtros" />
+                <ScalarProperty Name="SubTotal14" ColumnName="SubTotal14" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="totalImpuesto">
+            <EntityTypeMapping TypeName="EcuafactEngineModel.totalImpuesto">
+              <MappingFragment StoreEntitySet="totalImpuesto">
+                <ScalarProperty Name="pk" ColumnName="pk" />
+                <ScalarProperty Name="pkInfoFactura" ColumnName="pkInfoFactura" />
+                <ScalarProperty Name="codigo" ColumnName="codigo" />
+                <ScalarProperty Name="codigoPorcentaje" ColumnName="codigoPorcentaje" />
+                <ScalarProperty Name="baseImponible" ColumnName="baseImponible" />
+                <ScalarProperty Name="tarifa" ColumnName="tarifa" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
+                <ScalarProperty Name="codDocSustento" ColumnName="codDocSustento" />
+                <ScalarProperty Name="numDocSustento" ColumnName="numDocSustento" />
+                <ScalarProperty Name="fechaEmisionDocSustento" ColumnName="fechaEmisionDocSustento" />
+                <ScalarProperty Name="descuentoAdicional" ColumnName="descuentoAdicional" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

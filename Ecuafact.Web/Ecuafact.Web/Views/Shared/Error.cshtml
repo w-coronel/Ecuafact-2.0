@@ -1,0 +1,65 @@
+﻿@model  HandleErrorInfo
+
+@{
+    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+ 
+@section styles{
+    <meta http-equiv="refresh" content="5;url=@Url.Content("~/")" />
+
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,400,700" rel="stylesheet">
+    <link href="~/Content/error.css" rel="stylesheet" />
+}
+
+<div class="kt-portlet" style="background-image: url(@Url.Content("assets/media/bg/bg-2.jpg"));background-color: #1b112a;background-repeat: no-repeat; background-size: cover;">
+    <div class="kt-portlet__body">
+
+        <div id="notfound">
+            <div class="notfound">
+                <div class="notfound-404">
+                    <h1>Oops!</h1>
+                    <h2>
+                        Ha ocurrido un error inesperado.<br />
+
+                    </h2>
+
+                </div>
+                <p style="color:white;"> El problema ha sido notificado a nuestro equipo tecnico. </p>
+                <p>
+                    @RenderBody()
+                </p>
+                <a href="~/">Volver a Inicio...</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@{
+    var jsonModel = "";
+
+    if (Model != null)
+    {
+        jsonModel = Json.Encode(Model);
+
+        if (Model.Exception != null)
+        {
+            SessionInfo.Alert.SetAlert(Model.Exception.Message, SessionInfo.AlertType.Error);
+        }
+    }
+
+}
+
+<script>
+    var exceptionString = "@jsonModel";
+
+    console.log("Ocurrio un error: " + exceptionString);
+    console.log(@jsonModel);
+
+
+    setTimeout(function(){ location.assign("@Url.Content("~/")") }, 5000);
+</script>

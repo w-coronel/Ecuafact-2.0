@@ -1,0 +1,109 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web.MiddleCore.ApplicationServices
+@using Ecuafact.Web.Models
+@model DocumentosQueryModel
+ 
+
+<table class="table table-striped table-bordered table-hover responsive dt-responsive table-checkable order-column" id="_borradores" style="width:100%">
+    <thead>
+        <tr>
+            <th><i class="fa fa-bars"></i></th>
+            <th>Tipo</th>
+            <th>No. Documento</th>
+            <th>Identificacion</th>
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th>Total</th> 
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+<script>
+    $(document).ready(function () {
+        var $exportOptions = { columns: [0, 1, 2, 3, 4, 5, 6] };
+        var $_form = $('#formConsultas');
+        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) { console.log(message) };
+        Comprobantes.IssuedTable = $('#_borradores').DataTable({
+            "order": [[0, 'desc']],
+            "language": {
+                "url": "@Url.Content("~/scripts/dt_spanish.json")"
+            },
+            processing: true,
+            serverSide: true,
+            sortable: false,
+            deferRender: true,
+            ordering: true,
+            paging: true,
+            ajax: {
+                url: '@Url.Action("GetBorradoresAsync")',
+                type: 'POST',
+                data: function (d) {
+                    var _data = $_form.serializeJSON();
+                    d.model = _data;
+                    return d;
+                }
+            },
+            columns: [
+                { data: 'DocumentTypeCode' },
+                { data: 'DocumentName' },
+                { data: 'DocumentNumber' },
+                { data: 'ContributorIdentification' },
+                { data: 'ContributorName' },
+                { data: 'IssuedOn', render: $.fn.dataTable.render.date},
+                { data: 'Total', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                { data: null }
+
+            ],
+            "columnDefs": [
+            {
+                "targets": 0,
+                    "render": function (data, e, row) {
+                        var item = "<div class='kt-badge kt-badge--" + row.StyleColor + " kt-badge--lg'>" +
+                            "<i class='" + row.IconType + "'></i></div>";
+                        return item;
+                    }
+            },
+            {
+                "targets": 2,
+                "render": function (data, e, row) {
+                    var item1 = "<div><a href='" + row.Controller + "'>" + row.DocumentNumber + "</a></div>";
+                    return item1;
+                }
+            },
+            {
+                "targets": 5,
+                "render": function (value) {
+                    if (value === null) return "";
+                    var pattern = /Date\(([^)]+)\)/; //date format from server side
+                    var results = pattern.exec(value);
+                    var dt = new Date(parseFloat(results[1]));
+                    if (dt.getFullYear() === 9999) return ""; //Control para MaxValue
+                    return dt.getDate() + "/" + (dt.getMonth() + 1) + "/" + dt.getFullYear();
+                }
+            },
+            {
+                "targets": 7,
+                "render": function (data, e, row) {                  
+                    var item3 = "<div class='d-print-none text-center'>" +
+                        "<a href='" + row.PdfUrl +"' target='_file' data-toggle='tooltip' title='Vista preliminar' class='text-primary'>" +
+                        "<span class='btn btn-sm btn-outline-brand btn-circle btn-icon btn-icon-md'><i class='fas fa-search'></i></span>" +
+                        "</a>" +
+                        "</div>";
+
+                     return item3;
+                    }
+                }
+
+            ]
+            //dom: 'Bfrtip',
+            //buttons: {
+            //    buttons: [
+            //        { extend: 'excel', className: 'btn btn-success btn-elevate btn-pill', text:' <i class="la la-file-excel-o"></i> ' },
+            //        { extend: 'pdf', className: 'btn btn-danger btn-elevate btn-pill', text:'  <i class="la la-file-pdf-o"></i> ' },
+            //        { extend: 'print', className: 'btn btn-brand btn-elevate btn-pill', text:' <i class="flaticon2-printer"></i> ' }
+            //    ]
+            //}
+        });
+    });
+</script>

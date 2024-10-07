@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ApiAppService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://nube.ecuafact.com/apiDev/Service.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://nube.ecuafact.com/apiDev/Service.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://nube.ecuafact.com/apiDev/Service.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/WcfServiceApi.DataTransferObjects" />
+      <xsd:import schemaLocation="http://nube.ecuafact.com/apiDev/Service.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://nube.ecuafact.com/apiDev/Service.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/WcfServiceApi.DataContracts" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IApiAppService_GetDocumentsType_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentsType" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocumentsType_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentsTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDeductibles_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDeductibles" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDeductibles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDeductiblesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocumentsSate_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentsSate" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocumentsSate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentsSateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetIVAType_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetIVAType" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetIVAType_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetIVATypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Login_InputMessage">
+    <wsdl:part name="parameters" element="tns:Login" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Login_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Login2_InputMessage">
+    <wsdl:part name="parameters" element="tns:Login2" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Login2_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Login2Response" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Logout_InputMessage">
+    <wsdl:part name="parameters" element="tns:Logout" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Logout_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LogoutResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_ValidateToken_InputMessage">
+    <wsdl:part name="parameters" element="tns:ValidateToken" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_ValidateToken_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ValidateTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Register_InputMessage">
+    <wsdl:part name="parameters" element="tns:Register" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Register_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RegisterResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_forgot_password_InputMessage">
+    <wsdl:part name="parameters" element="tns:forgot_password" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_forgot_password_OutputMessage">
+    <wsdl:part name="parameters" element="tns:forgot_passwordResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_change_password_InputMessage">
+    <wsdl:part name="parameters" element="tns:change_password" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_change_password_OutputMessage">
+    <wsdl:part name="parameters" element="tns:change_passwordResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_ResendMail_InputMessage">
+    <wsdl:part name="parameters" element="tns:ResendMail" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_ResendMail_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ResendMailResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocuments_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocuments" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocuments_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_SetDocumentAsReceived_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetDocumentAsReceived" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_SetDocumentAsReceived_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetDocumentAsReceivedResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocumentsReception_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentsReception" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocumentsReception_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentsReceptionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocumentDetail_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentDetail" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocumentDetail_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetInvalidDocuments_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetInvalidDocuments" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetInvalidDocuments_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetInvalidDocumentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Upload_InputMessage">
+    <wsdl:part name="parameters" element="tns:Upload" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_Upload_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UploadResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStatus" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetStatus_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetStatusOld_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStatusOld" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetStatusOld_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStatusOldResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetReceptionStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetReceptionStatus" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetReceptionStatus_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetReceptionStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetAllProducts_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllProducts" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetAllProducts_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllProductsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetProduct_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProduct" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetProduct_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProductResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_CreateProduct_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateProduct" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_CreateProduct_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateProductResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_EditProduct_InputMessage">
+    <wsdl:part name="parameters" element="tns:EditProduct" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_EditProduct_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EditProductResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_DeleteProduct_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteProduct" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_DeleteProduct_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteProductResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetAllCustomers_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllCustomers" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetAllCustomers_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllCustomersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetCustomer_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomer" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetCustomer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_CreateCustomer_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateCustomer" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_CreateCustomer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_EditCustomer_InputMessage">
+    <wsdl:part name="parameters" element="tns:EditCustomer" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_EditCustomer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EditCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_DeleteCustomer_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteCustomer" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_DeleteCustomer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_DeleteDocument_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteDocument" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_DeleteDocument_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteDocumentResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_SetDocumentsDeductibles_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetDocumentsDeductibles" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_SetDocumentsDeductibles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetDocumentsDeductiblesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_ResendInvalidDocuments_InputMessage">
+    <wsdl:part name="parameters" element="tns:ResendInvalidDocuments" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_ResendInvalidDocuments_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ResendInvalidDocumentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetInvoiceDeductiblesReport_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetInvoiceDeductiblesReport" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetInvoiceDeductiblesReport_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetInvoiceDeductiblesReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDeductiblesLimits_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDeductiblesLimits" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDeductiblesLimits_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDeductiblesLimitsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_SaveDefaultDeductibles_InputMessage">
+    <wsdl:part name="parameters" element="tns:SaveDefaultDeductibles" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_SaveDefaultDeductibles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveDefaultDeductiblesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_SaveDeductiblesLimits_InputMessage">
+    <wsdl:part name="parameters" element="tns:SaveDeductiblesLimits" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_SaveDeductiblesLimits_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveDeductiblesLimitsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetServerMessage_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetServerMessage" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetServerMessage_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetServerMessageResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_LoginSRI_InputMessage">
+    <wsdl:part name="parameters" element="tns:LoginSRI" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_LoginSRI_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LoginSRIResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocumentsExcel_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentsExcel" />
+  </wsdl:message>
+  <wsdl:message name="IApiAppService_GetDocumentsExcel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentsExcelResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IApiAppService">
+    <wsdl:operation name="GetDocumentsType">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentsType" message="tns:IApiAppService_GetDocumentsType_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentsTypeResponse" message="tns:IApiAppService_GetDocumentsType_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDeductibles">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetDeductibles" message="tns:IApiAppService_GetDeductibles_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetDeductiblesResponse" message="tns:IApiAppService_GetDeductibles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentsSate">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentsSate" message="tns:IApiAppService_GetDocumentsSate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentsSateResponse" message="tns:IApiAppService_GetDocumentsSate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIVAType">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetIVAType" message="tns:IApiAppService_GetIVAType_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetIVATypeResponse" message="tns:IApiAppService_GetIVAType_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/Login" message="tns:IApiAppService_Login_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/LoginResponse" message="tns:IApiAppService_Login_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Login2">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/Login2" message="tns:IApiAppService_Login2_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/Login2Response" message="tns:IApiAppService_Login2_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Logout">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/Logout" message="tns:IApiAppService_Logout_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/LogoutResponse" message="tns:IApiAppService_Logout_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateToken">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/ValidateToken" message="tns:IApiAppService_ValidateToken_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/ValidateTokenResponse" message="tns:IApiAppService_ValidateToken_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Register">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/Register" message="tns:IApiAppService_Register_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/RegisterResponse" message="tns:IApiAppService_Register_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="forgot_password">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/forgot_password" message="tns:IApiAppService_forgot_password_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/forgot_passwordResponse" message="tns:IApiAppService_forgot_password_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="change_password">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/change_password" message="tns:IApiAppService_change_password_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/change_passwordResponse" message="tns:IApiAppService_change_password_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ResendMail">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/ResendMail" message="tns:IApiAppService_ResendMail_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/ResendMailResponse" message="tns:IApiAppService_ResendMail_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocuments">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetDocuments" message="tns:IApiAppService_GetDocuments_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentsResponse" message="tns:IApiAppService_GetDocuments_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetDocumentAsReceived">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/SetDocumentAsReceived" message="tns:IApiAppService_SetDocumentAsReceived_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/SetDocumentAsReceivedResponse" message="tns:IApiAppService_SetDocumentAsReceived_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentsReception">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentsReception" message="tns:IApiAppService_GetDocumentsReception_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentsReceptionResponse" message="tns:IApiAppService_GetDocumentsReception_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentDetail">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentDetail" message="tns:IApiAppService_GetDocumentDetail_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentDetailResponse" message="tns:IApiAppService_GetDocumentDetail_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetInvalidDocuments">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetInvalidDocuments" message="tns:IApiAppService_GetInvalidDocuments_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetInvalidDocumentsResponse" message="tns:IApiAppService_GetInvalidDocuments_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Upload">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/Upload" message="tns:IApiAppService_Upload_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/UploadResponse" message="tns:IApiAppService_Upload_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetStatus" message="tns:IApiAppService_GetStatus_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetStatusResponse" message="tns:IApiAppService_GetStatus_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStatusOld">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetStatusOld" message="tns:IApiAppService_GetStatusOld_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetStatusOldResponse" message="tns:IApiAppService_GetStatusOld_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReceptionStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetReceptionStatus" message="tns:IApiAppService_GetReceptionStatus_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetReceptionStatusResponse" message="tns:IApiAppService_GetReceptionStatus_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllProducts">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetAllProducts" message="tns:IApiAppService_GetAllProducts_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetAllProductsResponse" message="tns:IApiAppService_GetAllProducts_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProduct">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetProduct" message="tns:IApiAppService_GetProduct_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetProductResponse" message="tns:IApiAppService_GetProduct_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateProduct">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/CreateProduct" message="tns:IApiAppService_CreateProduct_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/CreateProductResponse" message="tns:IApiAppService_CreateProduct_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EditProduct">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/EditProduct" message="tns:IApiAppService_EditProduct_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/EditProductResponse" message="tns:IApiAppService_EditProduct_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteProduct">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/DeleteProduct" message="tns:IApiAppService_DeleteProduct_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/DeleteProductResponse" message="tns:IApiAppService_DeleteProduct_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllCustomers">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetAllCustomers" message="tns:IApiAppService_GetAllCustomers_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetAllCustomersResponse" message="tns:IApiAppService_GetAllCustomers_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetCustomer" message="tns:IApiAppService_GetCustomer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetCustomerResponse" message="tns:IApiAppService_GetCustomer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateCustomer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/CreateCustomer" message="tns:IApiAppService_CreateCustomer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/CreateCustomerResponse" message="tns:IApiAppService_CreateCustomer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EditCustomer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/EditCustomer" message="tns:IApiAppService_EditCustomer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/EditCustomerResponse" message="tns:IApiAppService_EditCustomer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteCustomer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/DeleteCustomer" message="tns:IApiAppService_DeleteCustomer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/DeleteCustomerResponse" message="tns:IApiAppService_DeleteCustomer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteDocument">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/DeleteDocument" message="tns:IApiAppService_DeleteDocument_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/DeleteDocumentResponse" message="tns:IApiAppService_DeleteDocument_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetDocumentsDeductibles">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/SetDocumentsDeductibles" message="tns:IApiAppService_SetDocumentsDeductibles_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/SetDocumentsDeductiblesResponse" message="tns:IApiAppService_SetDocumentsDeductibles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ResendInvalidDocuments">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/ResendInvalidDocuments" message="tns:IApiAppService_ResendInvalidDocuments_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/ResendInvalidDocumentsResponse" message="tns:IApiAppService_ResendInvalidDocuments_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetInvoiceDeductiblesReport">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetInvoiceDeductiblesReport" message="tns:IApiAppService_GetInvoiceDeductiblesReport_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetInvoiceDeductiblesReportResponse" message="tns:IApiAppService_GetInvoiceDeductiblesReport_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDeductiblesLimits">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetDeductiblesLimits" message="tns:IApiAppService_GetDeductiblesLimits_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetDeductiblesLimitsResponse" message="tns:IApiAppService_GetDeductiblesLimits_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveDefaultDeductibles">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/SaveDefaultDeductibles" message="tns:IApiAppService_SaveDefaultDeductibles_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/SaveDefaultDeductiblesResponse" message="tns:IApiAppService_SaveDefaultDeductibles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveDeductiblesLimits">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/SaveDeductiblesLimits" message="tns:IApiAppService_SaveDeductiblesLimits_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/SaveDeductiblesLimitsResponse" message="tns:IApiAppService_SaveDeductiblesLimits_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetServerMessage">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetServerMessage" message="tns:IApiAppService_GetServerMessage_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetServerMessageResponse" message="tns:IApiAppService_GetServerMessage_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LoginSRI">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/LoginSRI" message="tns:IApiAppService_LoginSRI_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/LoginSRIResponse" message="tns:IApiAppService_LoginSRI_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentsExcel">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentsExcel" message="tns:IApiAppService_GetDocumentsExcel_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApiAppService/GetDocumentsExcelResponse" message="tns:IApiAppService_GetDocumentsExcel_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:service name="ApiAppService" />
+</wsdl:definitions>

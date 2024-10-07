@@ -1,0 +1,214 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices
+@model Ecuafact.Web.Domain.Entities.IssuePoint
+
+@{
+    Culture = "en-US";
+    var token = SessionInfo.ApplicationToken;
+    var tipoMantenimiento = "Agregar";
+    var urlAction = "GuardarPuntoEmiAsync";
+
+    if (Model.Id > 0)
+    {
+        tipoMantenimiento = "Editar";
+        //urlAction += "/" + Convert.ToString(Model.Id);
+        if (string.IsNullOrWhiteSpace(Model.CarrierRUC))
+        {
+            Model.Name = "";
+        }
+    }
+
+    var planPro = Ecuafact.Web.Constants.PlanPro;
+
+    var tiposCrontribuyente = new List<SelectListItem>{
+        new SelectListItem { Value="Contribuyente Régimen RIMPE", Text="Contribuyente Régimen Rimpe" },
+        new SelectListItem{ Value="Contribuyente Regimen General", Text="Contribuyente Regimen General" },
+        new SelectListItem{ Value="Regimen Sociedades Simplificadas", Text="Regimen Sociedades Simplificadas" },
+        new SelectListItem{ Value="Contribuyente Especial", Text="Contribuyente Especial" },
+        new SelectListItem{ Value="Agente Retención", Text="Agente Retención" }
+    };
+
+    var styleResolution = "style=display:none";
+
+    if (Model.Id > 0 && Model.CarrierContribuyente != null)
+    {
+        if (Model.CarrierContribuyente.Contains("Contribuyente Especial") || Model.CarrierContribuyente.Contains("Agente Retención"))
+        {
+            styleResolution = "";
+        }
+    }
+
+}
+
+
+@using (Html.BeginForm(urlAction, "Cooperativa", FormMethod.Post, new { @id = "issuePointForm", @name = "issuePointForm" }))
+{
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.EstablishmentsId)
+    @Html.HiddenFor(model => model.IssuerId)
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="loaderV1"></div>
+
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="flaticon2-gift"></i>&nbsp;&nbsp;&nbsp;@tipoMantenimiento Punto Emisión</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-content">
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="form-group col-md-4 col-sm-12 col-xs-12">
+                                    <label for="Name" class="control-label col-md-10 col-sm-12 col-xs-12">Código del Punto Emisión:</label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="flaticon-home-2"></i>
+                                            </span>
+                                        </span>
+                                        @Html.EditorFor(model => model.Code, new
+                                        {
+                                            htmlAttributes = new
+                                            {
+                                               @class = "form-control placeholder-no-fix issuePoint-Code",
+                                               @type = "number",
+                                               //@min = "1",
+                                               //@max = "999",
+                                               @minlength = "3",
+                                               @maxlength = "3",
+                                               @required = "required",
+                                               @data_msg = "Código del punto emisón es requerido"
+                                            }
+                                        })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12 contribuyente_identificacion_group">
+                                    <div class="row">
+                                        <label class="col-sm-10 col-12 control-label align-self-center"><b>No. RUC Transportista</b></label>
+                                        <div class="col-sm-8 col-12">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-solid">
+                                                    @Html.TextBoxFor(model => model.CarrierRUC, new
+                                                       {
+                                                           @class = "form-control placeholder-no-fix issuePoint",
+                                                           @placeholder = "# RUC Transportista",
+                                                           @required = "",
+                                                           data_msg_pattern = "Debe especificar un número de identificación válido.",
+                                                           data_msg_required = "Debe especificar el número de identificación.",
+                                                           data_msg_maxlength = "No debe exceder el número de dígitos permitidos.",
+                                                           data_msg_minlength = "Se requiere un número minimo de {0} dígitos."
+                                                       })
+                                                    <div class="input-group-append">
+                                                        <button type="button" class="btn btn-primary mr-2 btn-verificar-ruc" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Validar RUC del transportista">
+                                                            Validar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                    <label for="Name" class="control-label col-md-10 col-sm-12 col-xs-12">Nombre Transportista:</label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="flaticon-users"></i>
+                                            </span>
+                                        </span>
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control issuePoint", @required = "required", @data_msg = "El nombre del transportista  es requerido" } })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-8 col-lg-8 col-sm-12 col-xs-12">
+                                    <label for="CarrierContribuyente" class="control-label col-md-10 col-sm-12 col-xs-12 ">Tipo Contribuyente:</label>
+                                    <div class="kt-input-icon kt-input-icon--left">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--left">
+                                            <span>
+                                                <i class="flaticon-map"></i> &nbsp;
+                                            </span>
+                                        </span>
+                                        @Html.DropDownListFor(model => model.CarrierContribuyente, new SelectList(tiposCrontribuyente, "Value", "Text", Model.CarrierContribuyente), "Seleccione Tipo Contribuyente", new { @class = "bs-dropdown circle-right input-sm input-inline form-control filter-control carrier-contribuyente" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12">
+                                    <div class="form-group resolution-number" @styleResolution>
+                                        <label for="CarrierResolutionNumber" class="control-label col-md-10 col-sm-12 col-xs-12">Resolución No:</label>
+                                        <div class="kt-input-icon kt-input-icon--right">
+                                            <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                                <span>
+                                                    <i class="flaticon2-writing "></i>
+                                                </span>
+                                            </span>
+                                            @Html.EditorFor(model => model.CarrierResolutionNumber, new { htmlAttributes = new { @class = "form-control placeholder-no-fix", @maxlength = "4" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 col-xs-6">
+                                    <label for="CarPlate" class="control-label col-md-10 col-sm-12 col-xs-12">Placa vehiculo:</label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="flaticon2-delivery-truck"></i>
+                                            </span>
+                                        </span>
+                                        @Html.EditorFor(model => model.CarPlate, new { htmlAttributes = new { @class = "form-control placeholder-no-fix issuePoint", @maxlength = "8" } })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-8 col-sm-12 col-xs-12">
+                                    <label for="Name" class="control-label col-md-10 col-sm-12 col-xs-12">Teléfono Transportista:</label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="flaticon2-phone"></i>
+                                            </span>
+                                        </span>
+                                        @Html.EditorFor(model => model.CarrierPhone, new { htmlAttributes = new { @class = "form-control placeholder-no-fix issuePoint", @type = "text", @multiple = "", @data_role = "tagsinput", @placeholder = "Teléfono" } })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                    <label for="CarrierEmail" class="control-label col-md-10 col-sm-12 col-xs-12">Correo Transportista:</label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="flaticon-email"></i>
+                                            </span>
+                                        </span>
+                                        @Html.TextBoxFor(model => model.CarrierEmail, new { @class = "form-control bootstrap-tagsinput issuePoint", @multiple = "", @data_role = "tagsinput", @placeholder = "Correo Electrónico" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btnSave" type="button" class="btn btn-outline-brand text-dark" style="margin-right:5px"><i class="la la-save"></i> Guardar</button>
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> Cancelar</button>
+            </div>
+        </div>
+
+    </div>
+}
+
+
+@Scripts.Render("~/js/inputmask")
+@Scripts.Render("~/Scripts/IssuePoint.js")
+<script>
+    $(document).ready(function () {
+        IssuePoint.planPro = '@planPro';
+        IssuePoint.Init();
+    });
+</script>

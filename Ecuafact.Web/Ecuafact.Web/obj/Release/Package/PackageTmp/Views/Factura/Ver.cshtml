@@ -1,0 +1,663 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web.MiddleCore.ApplicationServices;
+@using System.Globalization;
+
+@model InvoiceModel
+
+@{
+    var token = SessionInfo.UserSession.Token;
+
+
+    var emisorActual = SessionInfo.Issuer;
+    const string IVA_CODE = "2";
+
+    var msg = AnulacionMsg.MensajeStatus(Model.Status);
+    var formasPago = ServicioCatalogos.ObtenerMetodosPago(token);
+
+    ViewBag.Title = string.Format("Factura # {0}", Model.DocumentNumber);
+    ViewBag.ParentTitle = "Emitidos";
+
+    var codeIva = Model.InvoiceInfo.TotalTaxes?.Where(s => s.TaxCode == "2").FirstOrDefault()?.PercentageTaxCode;
+    var valorIva = "12%";
+    if (codeIva == "8")
+    {
+        valorIva = "8%";
+    }
+
+    var ivasRate = Model.InvoiceInfo.TotalTaxes?.Where(s => s.TaxRate != 0).ToList();
+
+}
+
+@section Styles{
+
+    <link href="~/content/invoice.css" rel="stylesheet" />
+
+    <style>
+        control-label {
+            height: 34px;
+        }
+
+        control-total {
+            width: 180px;
+            text-align: right;
+            border: none;
+            background-color: white;
+        }
+
+        factura {
+            width: 100%;
+            height: 100%;
+            background: white;
+        }
+    </style>
+
+}
+
+
+
+<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+
+    <div class="kt-portlet">
+
+        <div class="kt-portlet__body kt-portlet__body--fit">
+
+            <div class="kt-invoice-1">
+
+                <div class="kt-invoice__head" style="background-image: url(@Url.Content("~/assets/media/bg/300.jpg"));">
+
+                    <div class="kt-invoice__container">
+
+                        <div class="kt-invoice__brand">
+
+                            <div class="row" style="width:100%">
+
+                                <div class="col-md-8 col-12 col-sm-6 align-self-center">
+                                    <div class="row">
+                                        <div class="col-12 col-md-4 col-lg-4 kt-invoice__title" style="margin-bottom:5px;margin-left:0px">
+                                            <h1 style="margin-bottom:5px;font-size:2rem;">
+                                                <b>FACTURA</b>
+                                            </h1>
+                                        </div>
+
+                                        <div class="col-12 col-md-8 col-lg-8 kt-invoice__title" style="margin-bottom:5px;margin-left:0px">
+                                            <h1 style="margin-bottom:5px;font-size:2rem;">
+                                                <span name="numero_documento" id="numero_documento"><b>@Model.DocumentNumber</b></span>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-12 col-sm-6 align-self-center kt-font-bolder" style="text-align:center; font-size:1.5rem;">
+                                    <a class="btn btn-pill btn-@Model.Status.GetStyle()" href="#" onclick="Swal.fire('Mensaje', `@Model.StatusMsg`, '@Request.GetStatusType(Model.Status)')">
+                                        &nbsp;&nbsp;
+                                        @Model.Status.GetDisplayValue()
+                                        <i class="fa fa-@Request.GetStatusIcon(Model.Status)"></i>
+                                        &nbsp;&nbsp;
+                                    </a>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                        <div class="kt-invoice__items">
+
+                            <!--<div class="kt-invoice__item col-12 col-lg-7">
+
+                                <div class="row">
+
+                                    <div class="col-12">
+
+                                        <div class="row">
+
+                                            <h4 class="col-12">
+                                                @Model.BussinesName
+                                            </h4>
+
+                                        </div>
+
+                                        <div class="row">
+
+                                            <span class="col-12 col-sm-2 col-md-3 col-lg-3 kt-font-bolder">RUC No:</span>
+                                            <span class="col-12 col-sm-10 col-md-9 col-lg-9">@Model.RUC</span>
+                                            <span class="col-12 col-sm-2 col-md-3 col-lg-3 kt-font-bolder">Dir. Matriz:</span>
+                                            <span class="col-12 col-sm-10 col-md-9 col-lg-9">@emisorActual.MainAddress</span>
+
+                                            @if (emisorActual.IsSpecialContributor)
+                                            {
+                                                <span class="col-12">ES CONTRIBUYENTE ESPECIAL</span>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(emisorActual.ResolutionNumber))
+                                            {
+                                                <span class="col-12 col-md-3 col-lg-3 col-sm-2 kt-font-bolder">Resolucion No. :</span>
+                                                <span class="col-12 col-md-9 col-lg-9 col-sm-10">@emisorActual.ResolutionNumber</span>
+                                            }
+
+                                            <span class="col-12">
+                                                <span class="kt-font-bolder">OBLIGADO A LLEVAR CONTABILIDAD:&nbsp; &nbsp;</span>
+
+                                                @if (emisorActual.IsAccountingRequired)
+                                                {
+                                                    <span>SI</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>NO</span>
+                                                }
+
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>-->
+
+                            <div class="kt-invoice__item col-12 col-lg-5">
+
+                                <div class="row">
+
+                                    <div class="col-12">
+
+                                        <div class="row">
+
+                                            <h4 class="col-12" style="margin-bottom:20px">
+                                                CLIENTE
+                                            </h4>
+                                        </div>
+
+                                        <div class="row">
+
+                                            @{
+                                                var ltipoi = ServicioCatalogos.ObtenerTiposIdentificacion(token);
+                                                var ftipoi = ltipoi.Find(i => i.SriCode == Model.InvoiceInfo.IdentificationType);
+                                                var tipoIdentificacion = "Cedula/RUC";
+                                                if (ftipoi != null)
+                                                {
+                                                    tipoIdentificacion = ftipoi.Name;
+                                                }
+                                            }
+
+                                            <span class='col-12 col-sm-5 col-md-3 col-lg-5 kt-font-bolder'>
+                                                @*@tipoIdentificacion CI:*@
+                                                Identificación:
+                                            </span>
+
+                                            <span class="col-12 col-sm-7 col-md-8 col-lg-7 col-12">
+                                                @Model.InvoiceInfo.Identification
+                                            </span>
+
+                                            <span class='col-12 col-sm-5 col-md-3 col-lg-5 kt-font-bolder'>
+                                                Razon Social:
+                                            </span>
+
+                                            <span class="col-12 col-sm-7 col-md-8 col-lg-7">
+                                                @Model.InvoiceInfo.BussinesName
+                                            </span>
+
+                                            <span class='col-12 col-sm-5 col-md-3 col-lg-5 kt-font-bolder'>
+                                                Direccion:
+                                            </span>
+
+                                            <span class="col-12 col-sm-7 col-md-8 col-lg-7">
+                                                @Model.InvoiceInfo.Address
+                                            </span>
+                                            <span class='col-12 col-sm-5 col-md-3 col-lg-5 kt-font-bolder'>
+                                                E-mail:
+                                            </span>
+                                            <span class="col-12 col-sm-7 col-md-8 col-lg-7 arrow">
+                                                @Model.Emails
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="kt-visible-mobile col-12"></div>
+
+                            <div class="kt-invoice__item col-lg-5 col-12">
+
+                                <div class="row">
+                                    <div class="col-12">
+
+                                        <div class="row">
+
+                                            <div class="col-12" style="margin-bottom:20px">
+
+                                                <b>Fecha Emision: </b> <label id="fecha_documento"> @Model.InvoiceInfo.IssuedOn</label>
+                                                @if (!string.IsNullOrEmpty(Model.InvoiceInfo.ReferralGuide))
+                                                {
+                                                    <br /><b>Gu&iacute;a de Remisi&oacute;n: </b> <label id="guia_remision"> @Model.InvoiceInfo.ReferralGuide</label>
+                                                }
+
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+                                             
+
+                                            <span class="col-12 col-sm-5 col-md-4 col-lg-5 kt-font-bolder">
+
+                                                Fecha Autorizacion:
+                                            </span>
+
+                                            <span class="col-12 col-sm-7 col-md-8 col-lg-7 col-12">
+                                                @Model.AuthorizationDate
+                                            </span>
+
+                                            <span class="col-12 col-sm-5 col-md-4 col-lg-5 kt-font-bolder">
+                                                No. Autorizacion:
+                                            </span>
+
+                                            <span class="col-12 col-sm-7 col-md-8 col-lg-7">
+                                                @Model.AuthorizationNumber
+                                            </span>
+
+                                            <span class="col-12 col-sm-5 col-md-4 col-lg-5 kt-font-bolder">
+                                                Clave de Acceso:
+                                            </span>
+
+                                            <span class="col-12 col-sm-7 col-md-8 col-lg-7">
+                                                @Model.AccessKey
+                                            </span>
+
+                                            
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!--
+                        <div class="kt-invoice__items">
+
+
+
+                            <div class="kt-visible-mobile col-12"></div>
+
+                            <div class="kt-invoice__item col-lg-5 col-12">
+
+                                <div class="row">
+                                    <b>Fecha Emision: </b> <label id="fecha_documento"> @Model.InvoiceInfo.IssuedOn</label>
+                                </div>
+
+                            </div>
+
+                        </div>-->
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="kt-invoice__container row">
+                    @* Detalle de los productos *@
+
+                    <div class="col-12" style="margin-bottom:20px">
+
+                        <div class="row panel panel-info">
+
+
+
+                            <div class="panel-body" style="width:100%">
+                                <div class="kt-margin-t-30"></div>
+                                <div class="table-responsive" style="width:auto">
+                                    <h4>
+                                        Productos & Servicios
+                                    </h4>
+                                    <table id="product-items" name="product-items" class="col-12 table table-producto table-hover table-striped table-condensed kt-datatable__table cf">
+
+                                        <thead class="cf card-title">
+                                            <tr>
+                                                <th>Descripción</th>
+                                                <th><center>Det Adic 1</center></th>
+                                                <th><center>Det Adic 2</center></th>
+                                                <th><center>Det Adic 3</center></th>
+                                                <th><center>Cant.</center></th>
+                                                <th><center>Precio</center></th>
+                                                <th><center>Desc.</center></th>
+                                                <th><center>IVA</center></th>
+                                                <th><center>Subtotal</center></th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @foreach (var detail in Model.InvoiceInfo.Details)
+                                            {
+
+                                                var imp = detail.Taxes.FirstOrDefault(iva => iva.Code == IVA_CODE);
+                                                if (imp == null)
+                                                {
+                                                    imp = new TaxModel();
+                                                    imp.Rate = 0;
+                                                    imp.TaxValue = 0;
+                                                }
+                                                var det1 = (string.IsNullOrEmpty(detail.Name1) && string.IsNullOrEmpty(detail.Value1)) ? "-" : $"{detail.Name1}: {detail.Value1}";
+                                                var det2 = (string.IsNullOrEmpty(detail.Name2) && string.IsNullOrEmpty(detail.Value2)) ? "-" : $"{detail.Name2}: {detail.Value2}";
+                                                var det3 = (string.IsNullOrEmpty(detail.Name3) && string.IsNullOrEmpty(detail.Value3)) ? "-" : $"{detail.Name3}: {detail.Value3}";
+                                                <tr class="product-item">
+                                                    <td> @($"{detail.MainCode}{detail.AuxCode}-{detail.Description}")</td>
+                                                    <td><center> @det1</center></td>
+                                                    <td> <center>@det2</center></td>
+                                                    <td> <center>@det3</center></td>
+                                                    <td> <center>@detail.Amount.ToDecimalString()</center></td>
+                                                    <td title="@detail.UnitPrice.ToString("c6", new CultureInfo("en"))"> <center>@detail.UnitPrice.ToString("c", new CultureInfo("en")) </center></td>
+                                                    <td> <center>@detail.Discount % </center></td>
+                                                    <td> <center>@imp.TaxValue.ToString("c", new CultureInfo("en")) </center></td>
+                                                    <th> <center>@(detail.SubTotal.ToString("c", new CultureInfo("en"))) </center></th>
+                                                </tr>
+                                            }
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!--Forma de Pago e Info Adicional-->
+
+                    <div class="col-12 col-md-7 col-lg-8">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <h4>
+                                    Forma de Pago
+                                </h4>
+                                <table id="payment-items" name="payment-items" class="table table-payment table-hover   table-condensed kt-datatable__table">
+
+                                    <thead class="kt-datatable__head">
+                                        @{
+                                            var terms = 0;
+                                            var time = "dias";
+                                            var paymentModel = Model.InvoiceInfo.Payments.FirstOrDefault();
+                                            if (paymentModel != null)
+                                            {
+                                                terms = paymentModel.Term;
+                                                time = paymentModel.TimeUnit;
+                                            }
+
+                                        }
+                                        <tr>
+
+                                            <td>
+                                                Plazo:   @terms @time
+                                            </td>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody class="kt-datatable__body">
+
+                                        @foreach (var payForm in Model.InvoiceInfo.Payments)
+                                        {
+                                            var fpago = formasPago.Find(p => p.SriCode == payForm.PaymentMethodCode);
+                                            if (fpago == null)
+                                            {
+                                                fpago = formasPago.FirstOrDefault();
+                                            }
+
+                                            <tr id="payment" class="payment-item">
+
+                                                <td data-title="Detalle">
+
+                                                    <div class="row">
+
+                                                        <div data-title="FormaPago" class="col-sm-9 col-12 bold" style="border-right: 1px solid #ebedf2;">
+                                                            @fpago.Name
+                                                        </div>
+
+                                                        <div data-title="Valor" class="col-sm-3 col-12 numeric" style="text-align:right;border-right: 1px solid #ebedf2;">
+                                                            $  @payForm.Total
+                                                        </div>
+
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+                                        }
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                            <div class="col-12">
+
+                                <div style="margin-top:10px">
+
+                                    <h4>
+                                        Información Adicional
+                                    </h4>
+
+                                </div>
+
+                                <table id="adicional-items" class="table kt-datatable__table table-adicional table-hover table-condensed cf">
+
+                                    <tbody>
+
+                                        @foreach (var fields in Model.AdditionalFields.OrderBy(o => o.LineNumber))
+                                        {
+                                            <tr id="payment" class="additional-item">
+                                                <td>
+                                                    <div class="row">
+                                                        <div data-title="Detalle" class="col-sm-6 col-12 kt-font-boldest" style="border-right: 1px solid #ebedf2; padding-bottom:5px">
+                                                            @fields.Name
+                                                        </div>
+                                                        <div data-title="Valor" class="col-sm-6 col-12" style="border-right: 1px solid #ebedf2;text-align:left;white-space:initial">
+                                                            @if (fields.Value != null)
+                                                            {
+                                                                if (fields.Value.Contains(';'))
+                                                                {
+                                                                    var _cadena = fields.Value.Split(';');
+                                                                    var texto = "";
+                                                                    for (int i = 0; i < _cadena.Length; i++)
+                                                                    {
+                                                                        texto += $"{_cadena[i]}, ";
+                                                                    }
+                                                                    fields.Value = texto.Substring(0, texto.Length - 2);
+                                                                }
+                                                            }
+                                                            @fields.Value
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-12 col-md-5 col-lg-4">
+
+                        <div class="kt-invoice__total align-content-center align-items-center justify-content-center align-self-center">
+
+                            <table class="table table-advance table-hover table-scrollable-borderless table-total">
+
+                                <tbody>
+
+                                    <tr>
+                                        <td><label class="control-label">Subtotal Base 0%:</label></td>
+                                        <td>
+                                            @Model.InvoiceInfo.SubtotalVatZero.ToString("c", new CultureInfo("en"))
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><label class="control-label">Subtotal Base IVA:</label></td>
+                                        <td>
+                                            @Model.InvoiceInfo.SubtotalVat.ToString("c", new CultureInfo("en"))
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><label class="control-label">Subtotal no sujeto:</label></td>
+                                        <td>
+                                            @Model.InvoiceInfo.SubtotalNotSubject.ToString("c", new CultureInfo("en"))
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><label class="control-label">Subtotal Exento:</label></td>
+                                        <td>
+                                            @Model.InvoiceInfo.SubtotalExempt.ToString("c", new CultureInfo("en"))
+                                        </td>
+                                    </tr>
+                                    @foreach (var iva in ivasRate)
+                                    {
+                                        <tr>
+                                            <td><label class="control-label" id="etiqueta_iva">IVA @($"{Convert.ToInt32(iva.TaxRate).ToString()}%"):</label></td>
+                                            <td>
+                                                @iva.TaxValue.ToString("c", new CultureInfo("en"))
+                                                
+                                            </td>
+                                        </tr>
+                                    }
+
+                                    <tr class="bg-lighten-4">
+
+                                        <td><label class="control-label blue" id="etiqueta_propina">Propina</label></td>
+                                        <td>
+                                            @Model.InvoiceInfo.Tip.ToString("c", new CultureInfo("en"))
+                                        </td>
+                                    </tr>
+
+                                    <tr style="border-top:3px;border-top-style:double; margin-bottom:30px;">
+                                        <td class="bold bg"><label class="control-label kt-font-bold" id="etiqueta_total">TOTAL A PAGAR</label></td>
+                                        <td class="bold text-left">
+                                            @Model.InvoiceInfo.Total.ToString("c", new CultureInfo("en"))
+                                        </td>
+                                    </tr>
+
+                                    <tr class="bg-grey bg-lighten-4">
+                                        <td><label class="control-label " id="etiqueta_pagos">Pagos</label></td>
+                                        <td>
+                                            @{
+                                                var totalPayment = Model.InvoiceInfo.Payments.Sum(pay => pay.Total);
+                                            }
+
+                                            @totalPayment.ToString("c", new CultureInfo("en"))
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script type="text/javascript">
+    window.scrollTo(0, 0);
+    $(".js-customerSelector a").focus();
+    initialized = true; // hack initial element of page;
+</script>
+
+@section toolbar{
+
+    <div class="btn-group">
+
+
+        @if (Model.Status == DocumentStatusEnum.Draft)
+        {
+            using (Html.BeginForm("EmitirAsync", "Factura"))
+            {
+                <input type="hidden" name="id" value='@Model.Id' />
+                <button id="btnEnviar" type="submit" tooltip="Enviar al SRI" data-toggle="tooltip" class="btn btn-outline-info">
+                    <i class="flaticon2-paper-plane"></i> Enviar al SRI
+                </button>
+            }
+        }
+
+
+        <div class="dropdown">
+
+            <a href="#" class="btn btn-sm btn-brand btn-pill dropdown-toggle " data-toggle="dropdown" aria-expanded="true" title="Descargar">
+                <i class="flaticon2-console"></i> Comprobante
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+
+                @if (Model.Status == DocumentStatusEnum.Draft || Model.Status == DocumentStatusEnum.Error)
+                {
+                    <a class="dropdown-item text-warning" href="@Url.Action("Editar", "Factura", new { id = Model.Id})"><i class="text-warning flaticon-edit"></i> Modificar</a>
+                }
+
+                <a target="_pdf" class="dropdown-item text-danger" href="@Url.Action("Emitidos", "Comprobantes", new { id = Model.Id, type = "PDF" })"><i class="text-danger la la-file-pdf-o"></i> Descargar PDF</a>
+                <a target="_xml" class="dropdown-item text-info" href="@Url.Action("Emitidos", "Comprobantes", new { id = Model.Id, type = "XML" })"><i class="text-info la la-file-code-o"></i> Descargar XML</a>
+                <a class="dropdown-item text-warning email-button" data-uid="@Model.Id" href="#"><i class="flaticon2-email"></i> Enviar por Email</a>
+
+                @if (Model.Status == DocumentStatusEnum.Validated && Model.AuthorizationDate != null || Model.Status == DocumentStatusEnum.Draft)
+                {
+                    using (Html.BeginForm("EliminarAsync", "Factura", FormMethod.Post, new { @id = "eliminarDocumento" }))
+                    {
+                        <input type="hidden" name="id" value='@Model.Id' id="deleteId" />
+                        <input type="hidden" name="reason" value='@Model.Reason' id="deleteReason" />
+                    }                   
+                    <a id="btnEliminar" href="#" tooltip="Eliminar Documento" data-toggle="tooltip" class="dropdown-item">
+                        <i class="flaticon2-trash"></i> @(Model.Status == DocumentStatusEnum.Draft ? "Eliminar" : "Anular") comprobante
+                    </a>
+                }
+            </div>
+        </div>
+
+    </div>
+
+}
+
+@section scripts{
+    @Scripts.Render("~/js/documents")
+    @Scripts.Render("~/js/facturas")
+
+<script>
+        documentoFactura = @Html.Raw(Json.Encode(Model));
+        printInvoiceAction = '@Url.Action("PrintDocument", "Factura")';
+        Comprobantes.SetDocumento();
+        Comprobantes.SetMail("@Url.Action("SendMail", "Comprobantes")/Emitidos");       
+        Comprobantes.htmlmsg = "@Html.Raw(msg)";
+</script>
+
+}

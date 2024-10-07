@@ -1,0 +1,706 @@
+﻿
+
+@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web
+@model ElectronicSignRequest
+@{
+    ViewBag.Title = "Firma Electrónica";
+
+    if (Model.InvoiceInfo == null)
+    {
+        Model.InvoiceInfo = new ElectronicSignInvoice
+        {
+
+        };
+    }
+
+    this.PageOptions(x =>
+    {
+        x.DropZone = true;
+        x.DatePicker = true;
+
+    });
+
+    int Older = -System.Math.Abs(Constants.Older);
+    var minDate = $"{DateTime.Now.AddYears(-100):yyyy-MM-dd}";
+    var maxDate = $"{DateTime.Now.AddYears(Older):yyyy-MM-dd}";
+    var proveedor = Constants.SupplierElectronicSign;
+
+    var countries = new List<SelectListItem>()
+{
+        new SelectListItem { Text = "ECUADOR", Value = "EC" }
+    };
+
+
+    var provinces = new List<SelectListItem>();
+    if (!string.IsNullOrEmpty(Model.Province))
+    {
+        provinces.Add(new SelectListItem { Text = Model.Province, Value = Model.Province });
+    }
+
+    var cities = new List<SelectListItem>();
+    if (!string.IsNullOrEmpty(Model.City))
+    {
+        cities.Add(new SelectListItem { Text = Model.City, Value = Model.City });
+    }
+
+    var docTypes = new List<SelectListItem> {
+        new SelectListItem{ Text="Cedula", Value="1" },
+        new SelectListItem{ Text="Pasaporte", Value="6" },
+    };
+
+    if (Model.SignType == RucTypeEnum.Juridical)
+    {
+        if(Model.Identification.Length == 13)
+        {
+            Model.Identification = "";
+            Model.FirstName = "";
+            Model.LastName = "";
+        }
+        Model.DocumentType = IdentificationTypeEnum.IdentityCard;
+
+    }
+    else
+    {
+        if (Model.DocumentType != IdentificationTypeEnum.Passport)
+        { Model.Identification = Model.Identification.Substring(0, 10); }
+    }
+
+    var signTypes = new List<SelectListItem> {
+        new SelectListItem{ Text="Persona Natural", Value="1" },
+        new SelectListItem{ Text="Persona Jurídica", Value="2" }
+    };
+
+    var sexTypes = new List<SelectListItem> {
+        new SelectListItem{ Text="Masculino", Value="1" },
+        new SelectListItem{ Text="Femenino", Value="2" }
+    };
+
+
+    var display_perJur = "style='display:none'";
+    var display_juridical = "style='display:none'";
+    var display_videoAut = false; // ;
+    var emailSoliictud = "style=display:none";
+    if (Model.SignType == RucTypeEnum.Juridical)
+    {
+        display_juridical = "";
+        display_perJur = "";
+    }
+
+    if (!string.IsNullOrWhiteSpace(Model.BirthDate))
+    {
+        var birthDate  = DateTime.Parse(Model.BirthDate.ToDateTime().ToString("MM/dd/yyyy"));
+        var age = (DateTime.Now.Year - birthDate.Year);
+        if (DateTime.Today < birthDate.AddYears(age))
+        {
+            --age;
+        }
+        if (age > 64){ display_videoAut = true; }
+    }
+
+    if(!string.IsNullOrWhiteSpace(Model.Email2) && !string.IsNullOrWhiteSpace(Model.Phone2))
+    {
+        emailSoliictud = "";
+    }
+
+    Html.EnableClientValidation(false);
+    Html.EnableUnobtrusiveJavaScript(false);
+
+}
+            @section Styles{
+                @Styles.Render("~/assets/css/pages/wizard/wizard-1.css")
+    <style >
+        .sinbordefondo {
+            background-color: white;
+            border: 0;
+            outline: none; 
+
+        }
+     </style>
+
+
+}
+
+<div class="kt-portlet">
+
+    <div class="kt-portlet__body kt-portlet__body--fit">
+        <div class="kt-grid  kt-wizard-v1 kt-wizard-v1--white" id="kt_wizard_v1" data-ktwizard-state="step-first">
+            <div class="kt-grid__item">
+
+                <!--begin: Form Wizard Nav -->
+                <div class="kt-wizard-v1__nav">
+                    <div class="kt-wizard-v1__nav-items">
+                        @{
+                           var i = 1;
+                        }
+                        <!--doc: Replace A tag with SPAN tag to disable the step link click -->
+                        <div class="kt-wizard-v1__nav-item" data-ktwizard-type="step" data-ktwizard-state="current">
+                            <div class="kt-wizard-v1__nav-body">
+                                <div class="kt-wizard-v1__nav-icon"> <i class="flaticon-medal"></i> </div>
+                                <div class="kt-wizard-v1__nav-label"> @(i++). Información del RUC </div>
+                            </div>
+                        </div>
+
+                        <div class="kt-wizard-v1__nav-item" data-ktwizard-type="step">
+                            <div class="kt-wizard-v1__nav-body">
+                                <div class="kt-wizard-v1__nav-icon"> <i class="flaticon-list"></i> </div>
+                                <div class="kt-wizard-v1__nav-label"> @(i++). Representante Legal </div>
+                            </div>
+                        </div>
+
+
+                        <div class="kt-wizard-v1__nav-item" data-ktwizard-type="step">
+                            <div class="kt-wizard-v1__nav-body">
+                                <div class="kt-wizard-v1__nav-icon"> <i class="flaticon-file-1"></i> </div>
+                                <div class="kt-wizard-v1__nav-label"> @(i++). Suba los documentos </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--end: Form Wizard Nav -->
+            </div>
+
+            <div class="kt-grid__item kt-grid__item--fluid kt-wizard-v1__wrapper">
+
+                <!--begin: Form Wizard Form-->
+                <form class="kt-form" id="kt_form" method="post" action="@Url.Action("EditarFirmaAsync")" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.Id)
+                    @Html.HiddenFor(model => model.AuthorizationAgeFormat)
+                    <!--begin: Form Wizard Step 1-->
+                    <div class="kt-wizard-v1__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
+                        <div class="kt-heading kt-heading--md">Ingrese los datos del RUC para el Certificado Digital</div>
+                        <div class="kt-form__section kt-form__section--first">
+                            <div class="kt-wizard-v1__form">
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("SignType", "Tipo de Firma:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.SignType, new SelectList(signTypes, "Value", "Text", Model.DocumentType), new { @class = "form-control", @required = true, @placeholder = "Tipo de Firma" })
+                                            @Html.ValidationMessageFor(model => model.SignType, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("RUC", "RUC:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.RUC, new { @type = "number", @class = "form-control readonly", @minlength = "13", @maxlength = "13", @required = true, @placeholder = "RUC", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(model => model.RUC, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("BusinessName", "Razón Social:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.BusinessName, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Razon Social" })
+                                            @Html.ValidationMessageFor(model => model.BusinessName, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.Label("BusinessAddress", "Dirección:", new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.BusinessAddress, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Dirección" })
+                                    @Html.ValidationMessageFor(model => model.BusinessAddress, "", new { @class = "form-text text-muted" })
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            @Html.Label("Country", "País:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.Country, new SelectList(countries, "Value", "Text", Model.Country), "Seleccione el Pais", new { @class = "form-control", @required = true, @placeholder = "País" })
+                                            @Html.ValidationMessageFor(model => model.Country, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            @Html.Label("Province", "Provincia:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.Province, new SelectList(provinces, "Value", "Text", Model.Province), "Seleccione la Provincia", new { @class = "form-control", @required = true, @placeholder = "Provincia" })
+                                            @Html.ValidationMessageFor(model => model.Province, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            @Html.Label("City", "Ciudad:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.City, new SelectList(cities, "Value", "Text", Model.City), "Seleccione la Provincia", new { @class = "form-control", @required = true, @placeholder = "Ciudad" })
+                                            @Html.ValidationMessageFor(model => model.City, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--end: Form Wizard Step 1-->
+                    <!--begin: Form Wizard Step 2-->
+                    <div class="kt-wizard-v1__content" data-ktwizard-type="step-content">
+                        <div class="kt-heading kt-heading--md">Ingrese los datos del Contacto o Representante Legal</div>
+                        <div class="kt-form__section kt-form__section--first">
+                            <div class="kt-wizard-v1__form">
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("DocumentType", "Identificación:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.DocumentType, new SelectList(docTypes, "Value", "Text", Model.DocumentType), new { @class = "form-control", @required = true, @placeholder = "País" })
+                                            @Html.ValidationMessageFor(model => model.DocumentType, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("Identification", "Número:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Identification, new { @type = "number", @class = "form-control ", @required = true, @placeholder = "Identificación" })
+                                            @Html.ValidationMessageFor(model => model.Identification, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("FirstName", "Nombres:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.FirstName, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Nombres", @pattern = Constants.FirstName })
+                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "form-text text-muted" })
+                                            <div class="invalid-feedback">Debe ingresar el nombre completo</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("LastName", "Apellidos:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.LastName, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Apellidos", @pattern = Constants.LastName })
+                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "form-text text-muted" })
+                                            <div class="invalid-feedback">Debe ingresar los apellidos completos</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("Sexo", "Sexo:", new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.Sexo, new SelectList(sexTypes, "Value", "Text", Model.Sexo), "Seleccione sexo", new { @class = "form-control", @required = true, @placeholder = "Sexo" })
+                                            @Html.ValidationMessageFor(model => model.Sexo, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.Label("BirthDate", "Fecha Nacimiento:", new { @class = "control-label" })
+                                            <input type="date" id="BirthDate" name="BirthDate" value="@Model.BirthDate" min="@minDate" max="@maxDate" class="form-control" required>
+                                            @Html.ValidationMessageFor(model => model.BirthDate, "")
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Address", "Dirección:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Address, new { @type = "text", @class = "form-control ", @required = true, @placeholder = "Dirección", @minlength = "20" })
+                                            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Email", "Email:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Email, new { @type = "email", @class = "form-control", @required = true, @placeholder = "Correo Electrónico" })
+                                            <span class="form-text text-muted">A este email, se enviará el link de descarga de la firma</span>
+                                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("ConfirmEmail", "Confirmar Email:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.ConfirmEmail, new { @type = "email", @class = "form-control", @required = true, @placeholder = "Confirmar Correo Electrónico" })
+                                            @Html.ValidationMessageFor(model => model.ConfirmEmail, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Phone", "Celular:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Phone, new { @type = "number", @minlength = "10", @maxlength = "10", @pattern = "(09)?([0-9]){8}", @data_val_pattern = "Debe ingresar un número de celular válido (09XXXXXXXXXX)", @class = "form-control ", @required = true, @placeholder = "Celular", })
+                                            <span class="form-text text-muted">Para descargar la firma, te enviaremos un código de verificación a este número</span>
+                                            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "form-text text-muted" })
+                                            @*<div class="invalid-feedback">Debe ingresar un número de celular válido (09XXXXXXXXXX)</div>*@
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("ConfirmPhone", "Confirmar Celular:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.ConfirmPhone, new { @type = "number", @minlength = "10", @maxlength = "10", @pattern = "(09)?([0-9]){8}", @data_val_pattern = "Debe ingresar un número de celular válido (09XXXXXXXXXX)", @class = "form-control ", @required = true, @placeholder = "Confirmar Celular", })
+                                            @Html.ValidationMessageFor(model => model.ConfirmPhone, "", new { @class = "form-text text-muted" })
+                                            @*<div class="invalid-feedback">Debe ingresar un número de celular válido (09XXXXXXXXXX)</div>*@
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row email-soliictud" @emailSoliictud>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Email2", "Email 2:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Email2, new { @type = "email", @class = "form-control", @placeholder = "Correo Electrónico" })
+                                            <span class="form-text text-muted">A este email, se enviará el link de descarga de la firma</span>
+                                            @*@Html.ValidationMessageFor(model => model.Email2, "", new { @class = "form-text text-muted" })*@
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("ConfirmEmail2", "Confirmar Email 2:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.ConfirmEmail2, new { @type = "email", @class = "form-control", @placeholder = "Confirmar Correo Electrónico" })
+                                            @*@Html.ValidationMessageFor(model => model.ConfirmEmail2, "", new { @class = "form-text text-muted" })*@
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row email-soliictud" @emailSoliictud>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("Phone2", "Celular2:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.Phone2, new { @type = "number", @minlength = "10", @maxlength = "10", @pattern = "(09)?([0-9]){8}", @data_val_pattern = "Debe ingresar un número de celular válido (09XXXXXXXXXX)", @class = "form-control ", @placeholder = "Celular", })
+                                            <span class="form-text text-muted">Para descargar la firma, te enviaremos un código de verificación a este número</span>
+                                            @Html.ValidationMessageFor(model => model.Phone2, "", new { @class = "form-text text-muted" })
+                                            @*<div class="invalid-feedback">Debe ingresar un número de celular válido (09XXXXXXXXXX)</div>*@
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            @Html.Label("ConfirmPhone2", "Confirmar Celular2:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.ConfirmPhone2, new { @type = "number", @minlength = "10", @maxlength = "10", @pattern = "(09)?([0-9]){8}", @data_val_pattern = "Debe ingresar un número de celular válido (09XXXXXXXXXX)", @class = "form-control ", @placeholder = "Confirmar Celular", })
+                                            @Html.ValidationMessageFor(model => model.ConfirmPhone2, "", new { @class = "form-text text-muted" })
+                                            @*<div class="invalid-feedback">Debe ingresar un número de celular válido (09XXXXXXXXXX)</div>*@
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-sm-6 carg_juridico" id="carg_juridico" @display_perJur>
+                                        <div class="form-group">
+                                            @Html.Label("WorkPosition", "Cargo:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.WorkPosition, new { @type = "text", @required = true, @class = "form-control ", @placeholder = "Cargo" })
+                                            @Html.ValidationMessageFor(model => model.WorkPosition, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--end: Form Wizard Step 2-->
+                    <!--begin: Form Wizard Step 3-->
+                    <div class="kt-wizard-v1__content" data-ktwizard-type="step-content">
+                        <div class="alert alert-info alert-close alert-dismissible fade show" role="alert">
+                            <div class="alert-icon"><i class="flaticon-information"></i></div>
+                            <div class="alert-text">
+                                <h4 class="alert-heading">
+                                    Nota: Documentos legibles
+                                </h4>
+                                <p>
+                                    Por favor verificar que los documentos adjuntos como cédula frontal, cédula reverso y selfie, sean legibles,
+                                    caso contrario su trámite podría tardar mas tiempo.
+                                </p>
+                            </div>
+                        </div>
+                        @{
+                            var styleOK = "fa fa-check text-success kt-icon-lg";
+                            var styleError = "fa fa-times text-danger kt-icon-lg";
+
+
+                            var classConstitucion = Model.FileConstitution ? styleOK : styleError;
+                            var classNombramiento = Model.FileDesignation ? styleOK : styleError;
+                            var classRUC = Model.FileRuc ? styleOK : styleError;
+                            var cedfront = Model.FileCedulaFront ? styleOK : styleError;
+                            var cedBack = Model.FileCedulaBack ? styleOK : styleError;
+                            var selfie = Model.FileSelfie ? styleOK : styleError;
+                        }
+
+                        <div class="kt-heading kt-heading--md">Adjunte los siguientes requisitos para completar su solicitud:</div>
+                        <div class="kt-form__section kt-form__section--first">
+                            <div class="kt-wizard-v1__form">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-8" style="padding-top: 10px">
+                                        <div class="form-group fingerPrintCode-panel">
+                                            @Html.Label("FingerPrintCode", "Código Dactilar:", new { @class = "control-label" })
+                                            @Html.TextBoxFor(model => model.FingerPrintCode, new
+                                            {
+                                               @minlength = "10",
+                                               @maxlength = "10",
+                                               @type = "text",
+                                               @class = "form-control",
+                                               @required = true,
+                                               @placeholder = "Código dactilar",
+                                               @data_toggle = "kt-popover",
+                                               @data_container = "body",
+                                               @data_placement = "bottom",
+                                               @data_html = "true",
+                                               @data_skin = "dark",
+                                               @data_content = "> Digitar código dactilar registrado en la parte reverso del documento de identidad. <br/> <span><img src='" + @Url.Content("~/images/firmaelectronica/coddactilar.png") + "' width='150'  style='margin-bottom:2px'></span><br />",
+                                               @data_original_title = "Código dactilar de la cédula"
+                                            })
+                                            @Html.ValidationMessageFor(model => model.FingerPrintCode, "", new { @class = "form-text text-muted" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-7" style="padding-top: 10px">
+                                        <div class="form-group" style="padding-bottom: 20px">
+                                            <label title=""
+                                                   data-toggle="kt-popover"
+                                                   data-container="body"
+                                                   data-placement="bottom"
+                                                   data-html="true"
+                                                   data-skin="dark"
+                                                   data-content=">Subir el archivo en formato .JPG o PNG <br/> <span><img src='@Url.Content("~/images/firmaelectronica/cedulafront.png")' width='150'  style='margin-bottom:2px'></span><br />"
+                                                   data-original-title='Imagen de la cara frontal de la cédula'>
+                                                <i id="Cedula_Front_File" class="@cedfront"></i>&nbsp; Imagen frontal de la Cédula(max 2mb)
+                                                <p id="size_file_cedfront" style="color: #9c9c9c"></p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <button data-toggle="tooltip" value="CedulaFrontFile" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_select" type="button">
+                                            <i class="flaticon2-file-2"></i>&nbsp;Archivo
+                                        </button>
+                                        <input type="text" @(Model.FileCedulaFront ? "" : "required") class="sinbordefondo" id="Name_CedulaFrontFile" />                                                <input type="file" id="CedulaFrontFile" name="CedulaFrontFile" accept="image/jpeg, image/png" style=" display:none;" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-7" style="padding-top: 10px">
+                                        <div class="form-group" style="padding-bottom:20px;">
+                                            <label title=""
+                                                   data-toggle="kt-popover"
+                                                   data-container="body"
+                                                   data-placement="bottom"
+                                                   data-html="true"
+                                                   data-skin="dark"
+                                                   data-content=">Subir el archivo en formato .JPG o PNG <br/> <span><img src='@Url.Content("~/images/firmaelectronica/cedulaBack.png")' width='150' style='margin-bottom:2px'></span><br />"
+                                                   data-original-title='Imagen de la cara reverso de la cédula'>
+                                                <i id="Cedula_Back_File" class="@cedBack"></i>&nbsp; Imagen reverso de la Cédula(max 2mb)
+                                                <p id="size_file_cedBack" style="color: #9c9c9c"></p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <button data-toggle="tooltip" value="CedulaBackFile" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_select" type="button">
+                                            <i class="flaticon2-file-2"></i>&nbsp;Archivo
+                                        </button>
+                                        <input type="text" @(Model.FileCedulaBack ? "" : "required") class="sinbordefondo" id="Name_CedulaBackFile" />
+                                        <input type="file" id="CedulaBackFile" name="CedulaBackFile" accept="image/jpeg, image/png" style=" display:none;" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-7" style="padding-top: 10px">
+                                        <div class="form-group" style="padding-bottom: 20px">
+                                            <label title=""
+                                                   data-toggle="kt-popover"
+                                                   data-container="body"
+                                                   data-placement="bottom"
+                                                   data-html="true"
+                                                   data-skin="dark"
+                                                   data-content=">Subir selfie con la cédula en formato .JPG o PNG <br/> >Si su equipo cuenta con camara puede tomarse una selfie con la cédula <br/> <span><img src='@Url.Content("~/images/firmaelectronica/selfie.jpg")' width='100' style='margin-bottom:2px'></span><br />"
+                                                   data-original-title='Imagen de la Selfie con la cédula'>
+                                                <i id="Selfie_File" class="@selfie"></i>&nbsp;Selfie con la Cédula o Pasaporte(max 2mb)
+                                                <p id="size_file_selfie" style="color: #9c9c9c"></p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <div class="btn-group">
+                                            <button data-toggle="tooltip" value="SelfieFile" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_select" type="button">
+                                                <i class="flaticon2-file-2"></i>&nbsp;Archivo
+                                            </button>
+                                            <button data-toggle="modal" title="Tomar selfie" data-target="#modCamara" class="btn btn-brand btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_modCamara" type="button">
+                                                <i class="flaticon2-photo-camera"></i>&nbsp;Tomar
+                                            </button>
+                                        </div>
+                                        <input type="text" @(Model.FileSelfie ? "" : "required") class="sinbordefondo" id="Name_SelfieFile" />
+                                        <input type="file" id="SelfieFile" name="SelfieFile" accept="image/jpeg, image/png" style=" display:none;" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-7" style="padding-top: 10px">
+                                        <div class="form-group" style="padding-bottom:10px">
+                                            <label title=""
+                                                   data-toggle="kt-popover"
+                                                   data-container="body"
+                                                   data-placement="bottom"
+                                                   data-html="true"
+                                                   data-skin="dark"
+                                                   data-content='> Descargar archivo desde el SRI <br> > Subir el archivo descargado .PDF '
+                                                   data-original-title='RUC original del SRI'>
+                                                <i id="Ruc_File" class="@classRUC"></i>&nbsp; Copia del RUC (max 2mb)
+                                                <p id="size_file_ruc" style="color: #9c9c9c"></p>
+                                            </label>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <button data-toggle="tooltip" value="RucFile" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_select" type="button">
+                                            <i class="flaticon2-file-2"></i>&nbsp;Archivo
+                                        </button>
+                                        <input type="text" @(Model.FileRuc ? "" : "required") class="sinbordefondo" id="Name_RucFile" />
+                                        <input type="file" style="display:none;" id="RucFile" name="RucFile" accept="application/pdf" />
+                                    </div>
+                                </div>
+
+                                <div class="doc_juridico" id="doc_juridico" @display_juridical>
+                                    <div class="row">
+                                        <div class="col-7" style="padding-top: 10px">
+                                            <div class="form-group" style="padding-bottom: 20px">
+                                                <label>
+                                                    <i id="Designation_File" class="@classNombramiento"></i>&nbsp; Nombramiento de Representante Legal (max 2mb)
+                                                    <p id="size_file_nombramiento" style="color: #9c9c9c"></p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-5">
+                                            <button data-toggle="tooltip" value="DesignationFile" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_select" type="button">
+                                                <i class="flaticon2-file-2"></i>&nbsp;Archivo
+                                            </button>
+                                            <input type="text" @(Model.FileDesignation ? "" : "required") class="sinbordefondo" id="Name_DesignationFile" />
+                                            <input type="file" style="display:none;" id="DesignationFile" name="DesignationFile" accept="application/pdf" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-7" style="padding-top: 10px">
+                                            <div class="form-group" style="padding-bottom: 20px">
+                                                <label>
+                                                    <i id="Constitution_File" class="@classConstitucion"></i>&nbsp;
+                                                    Constitución de Compañia (max 5mb)
+                                                    <p id="size_file_constcomp" style="color: #9c9c9c"></p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-5">
+                                            <button data-toggle="tooltip" value="ConstitutionFile" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_select" type="button">
+                                                <i class="flaticon2-file-2"></i>&nbsp;Archivo
+                                            </button>
+                                            <input type="text" @(Model.FileConstitution ? "" : "required") class="sinbordefondo" id="Name_ConstitutionFile" />
+                                            <input type="file" style="display:none;" id="ConstitutionFile" name="ConstitutionFile" accept="application/pdf" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="video_autorizacion" id="video_autorizacion" @(display_videoAut ? "":"style=display:none")>
+                                    <div class="row">
+                                        <div class="col-7" style="padding-top: 10px">
+                                            <div class="form-group" style="padding-bottom:20px;">
+                                                <label title=""
+                                                       data-toggle="kt-popover"
+                                                       data-container="body"
+                                                       data-placement="bottom"
+                                                       data-html="true"
+                                                       data-skin="dark"
+                                                       data-content="> Subir el video en formato .mp4, .avi, .flv, .mkv, .3gp, .mov, .mpeg <br/>"
+                                                       data-original-title='Video Autorización para persona mayores de 65 años'>
+                                                    <i id="vid_file_edadAut" class="@cedBack"></i>&nbsp; Video Autorización(max 100mb)
+                                                    <p id="size_file_edadAut" style="color: #9c9c9c"></p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-5">
+                                            <button data-toggle="tooltip" value="AuthorizationAgeFile" class="btn btn-primary btn-bold btn-pill btn-sm btn-elevate btn-elevate-air btn_select" type="button">
+                                                <i class="flaticon2-file-2"></i>&nbsp;Archivo
+                                            </button>
+                                            <input type="text" @(Model.FileAuthorizationAge ? "" : "required") class="sinbordefondo" id="Name_AuthorizationAgeFile" />
+                                            <input type="file" id="AuthorizationAgeFile" name="AuthorizationAgeFile" accept="video/mp4, video/mov, video/avi, video/flv, video/mkv, video/3gp, video/mov, video/mpeg" style="display:none;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--end: Form Wizard Step 3-->
+                    <!--begin: Form Actions -->
+                    <div class="kt-form__actions">
+                        <button class="btn btn-secondary btn-md btn-pill btn-elevate btn-elevate-air btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-prev">
+                            Anterior
+                        </button>
+                        <button type="submit" class="btn btn-success btn-md btn-pill btn-elevate btn-elevate-air btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-submit">
+                            Guardar
+                        </button>
+                        <button class="btn btn-brand btn-md btn-pill btn-elevate btn-elevate-air btn-tall  btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-next">
+                            Siguiente
+                        </button>
+                    </div>
+
+                    <!--end: Form Actions -->
+                </form>
+
+                <!--end: Form Wizard Form-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--begin: Camara-->
+
+<div class="modal" id="modCamara">
+    <div class="modal-dialog modal-lg modal-notify modal-info show" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="fa fa-camera"></i> &nbsp;&nbsp; Selfie</h4>
+                <button type="button" class="close modal_Close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-5">
+                        <div class="video-wrap">
+                            <video id="video" playsinline autoplay></video>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <canvas id="canvas"> </canvas>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-5 text-center">
+                        <button style="display:none;" type="button" id="btnGrabar" class="btn btn-primary btn-pill btn-sm btn_Grabar" title="Tomar selfie"> Tomar <i class="fa fa-camera"></i></button>
+                    </div>
+                    <div class="col-5 text-center">
+                        <button style="display:none;" type="button" id="btnGuardar" class="btn btn-success btn-elevate btn-pill  btn-sm btn_Guardar" title="Tomar selfie">&nbsp;<i class="flaticon2-check-mark text-light"></i>  Aceptar</button>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--end: camara-->
+
+@section Scripts{
+    @Scripts.Render("~/js/inputmask")
+
+    @Scripts.Render("~/scripts/electronicSign.js")
+
+<script>
+
+    $(document).ready(function () {
+
+        electronicSign.PaymentUrl = "@Url.Action("Checkout", "Payment")";
+        electronicSign.HomeUrl = "@Url.Action("")";
+        electronicSign.VerUrl = "@Url.Action("Ver", "FirmaElectronica")";
+        electronicSign.SupElectSign = "@proveedor";
+        electronicSign.EmailUrl =  '@Url.Content("~/FirmaElectronica/ValidarRequestEmail")';
+        electronicSign.Init();
+
+    });
+
+</script>
+}

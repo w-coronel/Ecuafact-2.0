@@ -1,0 +1,86 @@
+﻿@{
+    var buttonText = "Conectar";
+
+    var ruc = "0000000000";
+    var nombre = "Usuario Desconocido";
+    var sri = false;
+    var messages = new List<string>();
+
+    if (SessionInfo.Issuer != null)
+    {
+        ruc = SessionInfo.Issuer.RUC;
+        nombre = SessionInfo.Issuer.BussinesName;
+        sri = SessionInfo.UserSession.SRIConnected;
+        messages = SessionInfo.UserSession.Messages;
+    }
+    else if (SessionInfo.UserInfo != null)
+    {
+        ruc = SessionInfo.UserInfo.Username;
+        nombre = SessionInfo.UserInfo.Name;
+        sri = SessionInfo.UserInfo.SRIConnected;
+        messages = SessionInfo.UserInfo.Messages;
+    }
+
+}
+@section styles{
+    <style>
+         .item-video, .owl-stage, .owl-video{
+            height:480px;
+        }
+    </style>
+}
+
+<div id="notificationModal" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="Notificaciones" style="padding-right: 17px; display: block;" aria-modal="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+
+
+
+
+                <div id="sync1" class="owl-carousel thumbnails-wrap">
+                    <div class="item"><img src="http://placehold.it/148x69" class="img-responsive"></div>
+                    <div class="item"><img src="http://placehold.it/148x69" class="img-responsive"></div>
+                    <div class="item"><img src="http://placehold.it/148x69" class="img-responsive"></div>
+                    <div class="item"><img src="http://placehold.it/148x69" class="img-responsive"></div>
+                    <div class="item"><img src="http://placehold.it/148x69" class="img-responsive"></div>
+                    <div class="item"><img src="http://placehold.it/148x69" class="img-responsive"></div>
+                    <div class="item"><img src="http://placehold.it/148x69" class="img-responsive"></div>
+                    <div class="item"><img src="http://placehold.it/148x69" class="img-responsive"></div>
+                    <div class="item"><img src="http://placehold.it/148x69" class="img-responsive"></div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $.ready = function () {
+        
+        $("#notificationModal").modal("show");
+
+        
+        var owl = $("#sync1");
+          
+        owl.owlCarousel({
+            items: 1,
+            itemsDesktop: [1199, 6],
+            itemsDesktopSmall: [979, 6],
+            itemsTablet: [768, 4],
+            itemsMobile: [479, 3],
+            pagination: false,
+            responsiveRefreshRate: 100,
+            dots: true
+        });
+   
+
+    }
+</script>
+
+@{
+    //   SessionInfo.ShowNotification = false;
+}

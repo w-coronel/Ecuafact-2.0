@@ -1,0 +1,94 @@
+﻿@using System.Web.Mvc.Html
+@using Ecuafact.Web.Domain.Entities;
+@model ObjectQueryModel<AtsFacturaReportResponse>
+@{
+    var tipoSustento = SessionInfo.Catalog.SustenanceType;
+    var lstAtsFactura = new List<AtsFactura>();
+
+    if (Model.Data != null && Model.Data.Entity != null && Model.Data.Entity.Count > 0)
+    {
+        lstAtsFactura = Model.Data.Entity;
+    }
+    var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    var lstdoc = serializer.Serialize(lstAtsFactura);
+}
+
+
+<table class="table table-striped table-bordered table-hover responsive dt-responsive table-checkable order-column" id="_compras" style="width:100%">
+    <thead>
+        <tr>
+            <th><i class="fa fa-bars"></i></th>
+            <th>Documento</th>
+            <th>Emisor</th>
+            <th class="text-center">Fecha</th>
+            <th class="text-center">Total</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Data.Entity != null)
+        {
+            foreach (var item in Model.Data.Entity)
+            {
+                var issuedOn = DateTime.Now;
+                var totalDoc = item.Total;
+                var sustento = tipoSustento?.FirstOrDefault(m => m.Codigo == item.CodSustento);
+                var codSustento = item.CodSustento;
+                var supportId = 0;
+                if (sustento != null)
+                {
+                    supportId = 1;
+                }
+                <tr>
+                    <td id="pk_@item.Id" title="@(sustento?.Nombre ?? "")" class="text-center" data-order="@codSustento">
+                        <label class="kt-hidden hidden" style="display:none;">@(sustento?.Nombre ?? "")</label>
+                        <a href="#" onclick="Ats.SetTipoSustento(@item.Id, @item.TipoEmision)" class="btn btn-sm btn-outline-hover-brand btn-circle btn-icon btn-icon-md" title="@(sustento?.Nombre ?? "")">
+                            <img id="img_@item.Id" class="kt-avatar--circle" src='@($"{Url.Content("~/Images/recibidos/")}{supportId}.png")' style="width:auto;height:25px" />
+                        </a>
+                    </td>
+
+                    <td>
+
+                        <div>
+                            <b>@item.DocumentoType</b>
+                        </div>
+
+                        <div>
+                            <a href="#"> @item.NumeroDocumento</a>
+                        </div>
+
+                    </td>
+                    <td>
+                        <div><b>@item.Rucproveedor</b></div>
+                        <div>@item.RazonSocialProveedor</div>
+
+                    </td>
+
+                    <td class="text-center" data-order="@item.FechaEmision.Value.ToFileTime()" data-value="@item.FechaEmision.Value">
+                        <span style='display:none;'>@($"{item.FechaEmision:yyyy/MM/dd}")</span>@($"{item.FechaEmision:dd/MM/yyyy}")
+                    </td>
+                    <td class="text-right" data-order="@item.Total" data-value="@item.Total">
+                        <span class="pull-left">$</span>
+                        <span class="pull-right">@item.Total</span>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        Ats.documents =  @Html.Raw(lstdoc);
+        $('#_compras').dataTable({
+               "language": {
+               "url": "@Url.Content("~/scripts/dt_spanish.json")"
+               },
+               "order": [[1, "desc"]]
+          });
+        });
+</script>
+

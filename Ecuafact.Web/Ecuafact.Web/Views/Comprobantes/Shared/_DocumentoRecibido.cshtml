@@ -1,0 +1,404 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web.MiddleCore.NexusApiServices
+@using Ecuafact.Web.MiddleCore.ApplicationServices
+@using System.Globalization
+
+@model DocumentReceived
+
+@{
+    if (Model?.codTypeDoc == "02")
+    {
+        Model.typeDoc = "Nota Venta";
+    }
+    ViewBag.Title = string.Format("{0} # {1}", Model.typeDoc, Model.sequence);
+    ViewBag.ParentTitle = "Recibidos";
+    var deducibles = SessionInfo.DeductibleTypes ?? new List<DeductibleType>(); ;
+    var deducibleDefault = new DeductibleType { id = "0", name = "Sin Clasificación", maxValue = 00 };
+    var date = !string.IsNullOrWhiteSpace(Model.accessKey) ? Model.accessKey.Substring(0, 8) : "";
+    var issuedOn = !string.IsNullOrWhiteSpace(date) ? $"{date.Substring(0, 2)}/{date.Substring(2, 2)}/{date.Substring(4, 4)}" : Model.authorizationDate;
+    var tipoIva = "15";
+    if (!string.IsNullOrWhiteSpace(Model.ivaType))
+    {
+        if (Model.ivaType == "5")
+        { tipoIva = "5"; }
+        else if (Model.ivaType == "8")
+        { tipoIva = "8"; }
+        else if (Model.ivaType == "2")
+        { tipoIva = "12"; }
+    }
+
+}
+
+@section Styles{
+
+    
+
+    <style>
+        control-label {
+            height: 34px;
+        }
+
+        control-total {
+            width: 180px;
+            text-align: right;
+            border: none;
+            background-color: white;
+        }
+
+        factura {
+            width: 100%;
+            height: 100%;
+            background: white;
+        }
+    </style>
+
+}
+<link href="~/content/invoice.css" rel="stylesheet" />
+
+<div class="modal-dialog modal-xl"  tabindex='-1' data-keyboard="true" role="document" style="height:100%">
+
+    <div class="modal-content">
+
+        @*<div class="alert alert-primary fade show" role="alert" style="background-color: #243356;background-size: cover;background-repeat: no-repeat; background-image:url(@Url.Content("~/images/bg-purple.png"));">
+
+            <div class="alert-text">
+
+                <h5 class="modal-title" id="title">@ViewBag.Title</h5>
+
+            </div>
+
+            <div class="alert-close">
+
+                <button type="button" class="btn btn-outline-hover-light btn-elevate btn-circle btn-icon" data-dismiss="modal" aria-label="Close">
+                    <i class="flaticon-close"></i>
+                </button>
+
+            </div>
+
+        </div>*@
+
+        <div class="modal-body">
+
+            <div class="kt-portlet">
+
+                <div class="kt-portlet__body kt-portlet__body--fit">
+
+                    <div class="kt-invoice-1">
+
+                        <div class="kt-invoice__head text-light" style="background-image: url(@Url.Content("~/assets/media/bg/450.jpg")); border-radius:10px;padding:30px 0px">
+
+
+                            <div class="kt-invoice__container">
+                                <div class="row">
+
+                                    <div class="col-3 col-sm-2" style="padding:0px;margin:0px;text-align:center">
+                                        <img class="kt-avatar--circle" src='~/Images/deducibles/@string.Format("{0}.png", Model.deductibleId)' style="width:auto;height:35px" /> &nbsp; &nbsp;
+                                    </div>
+                                     
+                                    <div class="col-9 col-sm-10" style="margin:0px;padding:0px">
+                                        <h4>
+                                             
+                                            <b>@Model.name</b>
+
+                                        </h4>
+                                        
+                                        RUC #: @Model.identificationNumber
+                                        
+                                    </div>
+
+                                </div>
+
+                                <div class="row" style="margin-bottom:20px">
+                                    <div class="kt-invoice__items">
+                                        <div class="kt-invoice__item col-12">
+                                            <div class="row">
+                                                <div class="col-12">
+
+                                                    <div class="row col-12 kt-font-bolder">
+                                                        @ViewBag.Title
+                                                    </div>
+
+                                                    <div class="row col-12">
+                                                        <span class='kt-font-bolder'>
+                                                            Fecha Emision:&nbsp;&nbsp;
+                                                        </span>
+
+                                                        <span>
+                                                            @issuedOn @*@Model.date*@
+                                                        </span>
+                                                    </div>
+
+                                                    <div class="row col-12">
+                                                        <span class='kt-font-bolder'>
+                                                            No. Autorizacion:&nbsp;&nbsp;
+                                                        </span>
+
+                                                        <span>
+                                                            @Model.authorizationNumber
+                                                        </span>
+                                                    </div>
+
+                                                    <div class="row col-12">
+                                                        <span class='kt-font-bolder'>
+                                                            Fecha Autorizacion:&nbsp;&nbsp;
+                                                        </span>
+
+                                                        <span>
+                                                            @Model.authorizationDate
+                                                        </span>
+                                                    </div>
+
+                                                    @*<div class="row col-12">
+                                                        <span class='kt-font-bolder'>
+                                                            Clave de Acceso:&nbsp;&nbsp;
+                                                        </span>
+
+                                                        <span>
+                                                            @Model.accessKey
+                                                        </span>
+                                                    </div>*@
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="kt-invoice__item col-12">
+
+                                        <div class="kt-invoice__item">
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row" style="margin:20px 0px">
+
+                            @* Detalle de los productos *@
+
+                            <div class="col-12">
+
+                                <div class="row panel panel-info">
+
+                                    <div class="panel-color text-light" style="background-image: url(/assets/media/bg/450.jpg); border-radius:10px;background-size: cover">
+
+                                        <h5>
+                                            Productos & Servicios
+                                        </h5>
+
+                                    </div>
+
+                                    <div class="panel-body" style="width:100%">
+
+                                        <div class="kt-container" style="width:auto">
+
+                                            <table id="product-items" name="product-items" class="table table-producto table-hover table-striped table-condensed kt-datatable__table cf">
+                                                @if (Model.codTypeDoc == TipoDocumento.ComprobanteDeRetencion.GetValorCore())
+                                                {
+                                                    <thead class="cf card-title">
+                                                        <tr>
+                                                            <th><center><i class="flaticon-squares-4"></i></center></th>
+                                                            <th><center>Impuestos</center></th>
+                                                            <th><center>Base Imponible</center></th>
+                                                            <th><center>Porcentaje</center></th>                                                            
+                                                            <th><center>Total</center></th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+
+                                                        @foreach (var detail in Model.details ?? new List<details>())
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    <center><img class="kt-avatar--circle" src='~/Images/deducibles/@string.Format("{0}.png", detail.deductible)' style="width:auto;height:25px" /></center>
+                                                                </td>
+                                                                <td>
+                                                                    <span>@($"{detail.taxCode}-{detail.taxType}") </span>
+                                                                </td>
+                                                                <td> <center>@detail.taxable </center></td>
+                                                                <td> <center>@detail.percentage  </center></td>
+                                                                <td> <center>@detail.value </center></td>                                                               
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+
+                                                }
+                                                else
+                                                {
+                                                    <thead class="cf card-title">
+                                                        <tr>
+                                                            <th><center><i class="flaticon-squares-4"></i></center></th>
+                                                            <th><center>Detalle</center></th>
+                                                            <th><center>Cantidad</center></th>
+                                                            <th><center>Precio</center></th>
+                                                            <th><center>Descuento</center></th>
+                                                            <th><center>Total</center></th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        @foreach (var detail in Model.details ?? new List<details>())
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    <center><img class="kt-avatar--circle" src='~/Images/deducibles/@string.Format("{0}.png", detail.deductible)' style="width:auto;height:25px" /></center>
+                                                                </td>
+                                                                <td>
+                                                                    <span>@detail.description </span>
+                                                                </td>
+                                                                <td> <center>@detail.quantity </center></td>
+                                                                <td> <center>@detail.price  </center></td>
+                                                                <td> <center>@detail.discount </center></td>
+                                                                <th> <center>@detail.subTotal</center></th>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                }
+
+
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!--Forma de Pago e Info Adicional-->
+
+                            <div class="col-12">
+
+                                <div class="row panel panel-info">
+
+                                    <div class="panel-color text-light" style="background-image: url(/assets/media/bg/450.jpg); border-radius:10px;background-size: cover">
+
+                                        <h5>
+                                            Totales
+                                        </h5>
+
+                                    </div>
+
+                                    <div class="col-12" style="text-align:center">
+
+                                        <div class="kt-invoice__total align-content-center align-items-center justify-content-center align-self-center">
+
+                                            <table class="table table-advance table-hover table-scrollable-borderless table-total table-striped">
+
+                                                <tbody>
+
+                                                    <tr>
+                                                        <td><label class="control-label">Subtotal Base 0%:</label></td>
+                                                        <td style="text-align:left">
+                                                            @Model.subTotal0
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><label class="control-label">Subtotal Base IVA:</label></td>
+                                                        <td style="text-align:left">
+                                                            @{
+                                                                if (tipoIva.Equals("15"))
+                                                                {
+                                                                    @Model.subTotal15;
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Model.subTotal12
+                                                                }
+                                                            }
+
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><label class="control-label">Total descuento:</label></td>
+                                                        <td style="text-align:left">
+                                                            @Model.discount
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><label class="control-label" id="etiqueta_iva">IVA @tipoIva%:</label></td>
+                                                        <td style="text-align:left">
+                                                            @Model.iva
+                                                        </td>
+                                                    </tr>
+
+
+                                                    <tr style="border-top:3px;border-top-style:double; margin-bottom:30px;">
+                                                        <td class="bold bg"><label class="control-label kt-font-bolder" id="etiqueta_total">TOTAL A PAGAR</label></td>
+                                                        <td class="bold kt-font-bolder" style="text-align:left">
+                                                            @Model.total
+                                                        </td>
+                                                    </tr>
+
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+        <div class="alert alert-secondary fade show justify-content-end" role="alert" style="margin:0px">
+            @{ if (Model.codTypeDoc != TipoDocumento.NotaDeVenta.GetValorCore())
+               {
+                    <button type="button" class="btn btn-outline-danger" id="btnPDF" onclick='window.open("@Url.Action("Recibidos", "Comprobantes", new { id = Model.authorizationNumber, type = "PDF" })");' tooltip="Descargar Documento" data-toggle="tooltip" style="margin-right:5px">
+                        <i class="fa fa-file-pdf"></i> PDF
+                    </button>
+
+                    <button type="button" class="btn btn-outline-primary" id="btnXML" onclick='window.open("@Url.Action("Recibidos", "Comprobantes", new { id = Model.authorizationNumber, type = "XML" })");' tooltip="Descargar XML" data-toggle="tooltip" style="margin-right:5px">
+                        <i class="fa fa-code"></i>  XML
+                    </button>
+
+                    <button type="button" class="btn btn-outline-warning email-button" id="btnEmail" tooltip="Reenviar Documento por Correo" data-toggle="tooltip" style="margin-right:5px" data-uid="@Model.pk" >
+                        <i class="flaticon2-mail-1"></i>  E-mail
+                    </button>
+               }
+            }
+            <button type="button" class="btn btn-outline-dark" data-keyboard="true" data-dismiss="modal"><i class="la la-close"></i>Cerrar</button>
+
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        Comprobantes.SetMail("@Url.Action("SendMail")/Recibidos");
+    });
+</script>
+
+ 

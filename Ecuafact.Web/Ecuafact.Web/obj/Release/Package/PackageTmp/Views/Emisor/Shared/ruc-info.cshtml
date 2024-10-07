@@ -1,0 +1,143 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+@{ 
+    var atributos = new Dictionary<string, object>() {
+        { "class", "form-control"},
+        { "type" , "number" },
+        { "minlength" , "1" },
+        { "maxlength", "8" },
+        { "data-toggle", "tooltip" },
+        { "data-placement", "top" },
+        { "title", "Ingresar los  últimos dígitos validos del numero de Resolución de Agente de Retención" },
+    };
+
+    Model.Establishments?.ForEach(e => { e.AmountIssuePoint = e.IssuePoint.Count();});
+
+    if (!Model.IsRetentionAgent) { atributos.Add("disabled", "disabled"); }
+   
+}
+<div class="kt-heading kt-heading--md">Informaci&oacute;n Tributaria</div>
+<div class="kt-form__section kt-form__section--first">
+
+    <div class="kt-wizard-v2__form">
+        <div class="row">
+            <div class="form-group col-lg-6 kt-valign-middle">
+                <label class="kt-checkbox" style="width: 100%;">
+                    @Html.EditorFor(model => model.IsAccountingRequired, new { htmlAttributes = new { @class = "kt-checkbox" } })
+                    @Html.LabelFor(model => model.IsAccountingRequired, htmlAttributes: new { @class = "control-label col-10" })
+                    @Html.ValidationMessageFor(model => model.IsAccountingRequired, "", new { @class = "text-danger" })
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6 kt-valign-middle">
+                <label class="kt-checkbox" style="width: 100%;">
+                    @Html.EditorFor(model => model.IsRimpe, new { htmlAttributes = new { @class = "kt-checkbox" } })
+                    @Html.LabelFor(model => model.IsRimpe, htmlAttributes: new { @class = "control-label col-10" })
+                    @Html.ValidationMessageFor(model => model.IsRimpe, "", new { @class = "text-danger" })
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6 kt-valign-middle">
+                <label class="kt-checkbox" style="width: 100%;">
+                    @Html.EditorFor(model => model.IsPopularBusiness, new { htmlAttributes = new { @class = "kt-checkbox" } })
+                    @Html.LabelFor(model => model.IsPopularBusiness, htmlAttributes: new { @class = "control-label col-10" })
+                    @Html.ValidationMessageFor(model => model.IsPopularBusiness, "", new { @class = "text-danger" })
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6 kt-valign-middle">
+                <label class="kt-checkbox" style="width: 100%;">
+                    @Html.EditorFor(model => model.IsGeneralRegime, new { htmlAttributes = new { @class = "kt-checkbox" } })
+                    @Html.LabelFor(model => model.IsGeneralRegime, htmlAttributes: new { @class = "control-label col-10" })
+                    @Html.ValidationMessageFor(model => model.IsGeneralRegime, "", new { @class = "text-danger" })
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6 kt-valign-middle">
+                <label class="kt-checkbox" style="width: 100%;">
+                    @Html.EditorFor(model => model.IsSimplifiedCompaniesRegime, new { htmlAttributes = new { @class = "kt-checkbox" } })
+                    @Html.LabelFor(model => model.IsSimplifiedCompaniesRegime, htmlAttributes: new { @class = "control-label col-10" })
+                    @Html.ValidationMessageFor(model => model.IsSimplifiedCompaniesRegime, "", new { @class = "text-danger" })
+                </label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-6">
+                <label class="kt-checkbox" style="width: 100%;">
+                    @Html.EditorFor(model => model.IsSpecialContributor, new { htmlAttributes = new { @class = "kt-checkbox" } })
+                    @Html.LabelFor(model => model.IsSpecialContributor, htmlAttributes: new { @class = "control-label col-10" })
+                    @Html.ValidationMessageFor(model => model.IsSpecialContributor, "", new { @class = "text-danger" })
+                </label>
+            </div>
+            <div class="form-group col-6">
+                @Html.LabelFor(model => model.ResolutionNumber, htmlAttributes: new { @class = "control-label col-12" })
+                <div class="col-12 kt-input-icon kt-input-icon--right">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon2-notepad"></i>
+                        </span>
+                    </span>
+                    @Html.EditorFor(model => model.ResolutionNumber, new { htmlAttributes = new { @type = "number", @class = "form-control", @disabled = "" } })
+                    @Html.ValidationMessageFor(model => model.ResolutionNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-6">
+                <label class="kt-checkbox" style="width: 100%;">
+                    @Html.EditorFor(model => model.IsRetentionAgent, new { htmlAttributes = new { @class = "kt-checkbox" } })
+                    @Html.LabelFor(model => model.IsRetentionAgent, htmlAttributes: new { @class = "control-label col-10" })
+                    @Html.ValidationMessageFor(model => model.IsRetentionAgent, "", new { @class = "text-danger" })
+                </label>
+            </div>
+            <div class="form-group col-6">
+                @Html.LabelFor(model => model.AgentResolutionNumber, htmlAttributes: new { @class = "control-label col-12" })
+                <div class="col-12 kt-input-icon kt-input-icon--right">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon2-notepad"></i>
+                        </span>
+                    </span>
+                    @Html.EditorFor(model => model.AgentResolutionNumber, new { htmlAttributes = atributos })
+                    @Html.ValidationMessageFor(model => model.AgentResolutionNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-6">
+                <label class="kt-checkbox" style="width: 100%;">
+                    @Html.EditorFor(model => model.IsSkilledCraftsman, new { htmlAttributes = new { @class = "kt-checkbox" } })
+                    @Html.LabelFor(model => model.IsSkilledCraftsman, htmlAttributes: new { @class = "control-label col-10" })
+                    @Html.ValidationMessageFor(model => model.IsSkilledCraftsman, "", new { @class = "text-danger" })
+                </label>
+            </div>
+            <div class="form-group col-6">
+                @Html.LabelFor(model => model.SkilledCraftsmanNumber, htmlAttributes: new { @class = "control-label col-12" })
+                <div class="col-12 kt-input-icon kt-input-icon--right">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon2-notepad"></i>
+                        </span>
+                    </span>
+                    @Html.EditorFor(model => model.SkilledCraftsmanNumber, new { htmlAttributes = new { @type = "number", @class = "form-control", @disabled = "" } })
+                    @Html.ValidationMessageFor(model => model.SkilledCraftsmanNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6 kt-valign-middle">
+                <label class="kt-checkbox" style="width: 100%;">
+                    @Html.EditorFor(model => model.IsCarrier, new { htmlAttributes = new { @class = "kt-checkbox" } })
+                    @Html.LabelFor(model => model.IsCarrier, htmlAttributes: new { @class = "control-label col-10" })
+                    @Html.ValidationMessageFor(model => model.IsCarrier, "", new { @class = "text-danger" })
+                </label>
+            </div>
+        </div>
+    </div>
+</div>

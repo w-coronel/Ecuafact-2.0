@@ -1,0 +1,63 @@
+﻿ <!--begin: Cart -->
+
+<div class="kt-header__topbar-item dropdown">
+    <div class="kt-header__topbar-wrapper text-warning" data-toggle="dropdown" data-offset="10px,0px">
+        <span class="kt-header__topbar-icon" style="border-style: solid; border-width: 2px; border-color: #ffc107;">
+            <small>
+                <span class="kt-header__topbar-icon"><i class="flaticon2-notification kt-font-warning"></i></span>                
+            </small>
+        </span>
+    </div>    
+    <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
+        <form>
+
+            <!-- begin:: Mycart -->
+            <div class="kt-mycart">
+                <div class="kt-mycart__head kt-head" style="background-image: url(@Url.Content("~/assets/media/misc/bg-1.jpg"));">
+                    <div class="kt-mycart__info">
+                        <span class="kt-mycart__icon"><i class="flaticon-cart kt-font-hover-warning"></i></span>
+                        <h3 class="kt-mycart__title">Pago Pendiente</h3>
+                    </div>
+                </div>
+                <div class="kt-mycart__body kt-scroll" data-scroll="true" data-height="150" data-mobile-height="150">
+                    <div class="kt-mycart__item">
+                        <div class="kt-mycart__container">
+                            <div class="kt-mycart__info">
+                                <a href="#" class="kt-mycart__title">
+                                    @SessionInfo.PendingPayments.ElectronicSign.PurchaseOrder.Products
+                                </a>
+                                <div class="kt-mycart__action">
+                                    <span class="kt-mycart__price">@SessionInfo.PendingPayments.ElectronicSign.PurchaseOrder.Subtotal.ToString("C", new System.Globalization.CultureInfo("en-US"))</span>
+                                </div>
+                            </div>
+                            <a href="#" class="kt-mycart__pic">
+                                <img src="~/Images/firmaelectronica.png" title="firmaelectronica" width="60">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="kt-mycart__footer">
+                    <div class="kt-mycart__section">
+                        <div class="kt-mycart__subtitel">
+                            <span>Sub Total</span>
+                            <span>Iva</span>
+                            <span>Total</span>
+                        </div>
+                        <div class="kt-mycart__prices">
+                            <span>$ @SessionInfo.PendingPayments.ElectronicSign.PurchaseOrder.Subtotal.ToString("#.00")</span>
+                            <span>$ @SessionInfo.PendingPayments.ElectronicSign.PurchaseOrder.IVA.ToString("#.00")</span>
+                            <span class="kt-font-brand">$ @SessionInfo.PendingPayments.ElectronicSign.PurchaseOrder.Total.ToString("#.00")</span>
+                        </div>
+                    </div>
+                    <div class="kt-mycart__button kt-align-right">
+                        <a href="@Url.Action("TypePayment", "Payment", new { purchaseorderid = SessionInfo.PendingPayments.ElectronicSign?.PurchaseOrderId })" class="btn btn-warning btn-pill btn-sm"><i class='fa fa-dollar-sign'></i> Pagar</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- end:: Mycart -->
+        </form>
+    </div>
+</div>
+
+<!--end: Cart-->

@@ -1,0 +1,516 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="EcuafactExpressModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'Ecuafact.WebAPI.dbo.PurchaseReport' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <EntityType Name="PurchaseReport">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="DocumentType" />
+            <PropertyRef Name="ContributorName" />
+            <PropertyRef Name="Base0" />
+            <PropertyRef Name="Base12" />
+            <PropertyRef Name="Total" />
+            <PropertyRef Name="Description" />
+            <PropertyRef Name="Notes" />
+            <PropertyRef Name="RetentionDescription" />
+            <PropertyRef Name="RetentionNotes" />
+            <PropertyRef Name="BussinesName" />
+          </Key>
+          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="IssuerId" Type="bigint" />
+          <Property Name="IssuedOn" Type="date" />
+          <Property Name="DocumentTypeCode" Type="varchar" MaxLength="2" />
+          <Property Name="DocumentType" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="EstablishmentCode" Type="varchar" MaxLength="3" />
+          <Property Name="IssuePointCode" Type="varchar" MaxLength="3" />
+          <Property Name="Sequential" Type="varchar" MaxLength="9" />
+          <Property Name="DocumentNumber" Type="varchar" MaxLength="17" />
+          <Property Name="AuthorizationNumber" Type="varchar" MaxLength="49" />
+          <Property Name="AuthorizationDate" Type="varchar" MaxLength="50" />
+          <Property Name="ContributorRUC" Type="varchar" MaxLength="13" />
+          <Property Name="ContributorName" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="Base0" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="Base12" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="IVA" Type="numeric" Precision="21" Scale="8" />
+          <Property Name="Total" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="Notes" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="RetentionId" Type="bigint" />
+          <Property Name="RetentionContributorRUC" Type="nvarchar" MaxLength="100" />
+          <Property Name="RetentionContributor" Type="nvarchar" MaxLength="300" />
+          <Property Name="RetentionIssuedOn" Type="date" />
+          <Property Name="RetentionNumber" Type="nvarchar" MaxLength="21" />
+          <Property Name="RetentionAuthorizationNumber" Type="varchar" MaxLength="50" />
+          <Property Name="RetentionReferenceType" Type="varchar" MaxLength="2" />
+          <Property Name="RetentionReferenceNumber" Type="varchar" MaxLength="20" />
+          <Property Name="RetentionReferenceDate" Type="varchar" MaxLength="10" />
+          <Property Name="Retention104TaxCode" Type="nvarchar" MaxLength="5" />
+          <Property Name="RetentionTaxBase" Type="decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionTaxRate" Type="decimal" Precision="5" Scale="0" />
+          <Property Name="RetentionTaxValue" Type="decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionVatCode" Type="nvarchar" MaxLength="5" />
+          <Property Name="RetentionVatBase" Type="decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionVatRate" Type="decimal" Precision="5" Scale="0" />
+          <Property Name="RetentionVatValue" Type="decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionISDCode" Type="nvarchar" MaxLength="5" />
+          <Property Name="RetentionISDBase" Type="decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionISDRate" Type="decimal" Precision="5" Scale="0" />
+          <Property Name="RetentionISDValue" Type="decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionReason" Type="nvarchar" MaxLength="300" />
+          <Property Name="RetentionDescription" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="RetentionNotes" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="RetentionRUC" Type="nvarchar" MaxLength="100" />
+          <Property Name="RetentionBusinessName" Type="nvarchar" MaxLength="300" />
+          <Property Name="RetentionDate" Type="nvarchar" MaxLength="10" />
+          <Property Name="RUC" Type="varchar" MaxLength="100" />
+          <Property Name="BussinesName" Type="varchar" MaxLength="300" Nullable="false" />
+        </EntityType>
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'Ecuafact.WebAPI.dbo.SalesReport' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <EntityType Name="SalesReport">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="IssuerId" />
+            <PropertyRef Name="RUC" />
+            <PropertyRef Name="DocumentTypeCode" />
+            <PropertyRef Name="EstablishmentCode" />
+            <PropertyRef Name="IssuePointCode" />
+            <PropertyRef Name="Sequential" />
+            <PropertyRef Name="DocumentNumber" />
+            <PropertyRef Name="ContributorName" />
+            <PropertyRef Name="Base0" />
+            <PropertyRef Name="Base12" />
+            <PropertyRef Name="IVA" />
+            <PropertyRef Name="Total" />
+            <PropertyRef Name="Description" />
+            <PropertyRef Name="Notes" />
+          </Key>
+          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="IssuerId" Type="bigint" Nullable="false" />
+          <Property Name="RUC" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="IssuedOn" Type="date" />
+          <Property Name="DocumentTypeCode" Type="nvarchar" MaxLength="2" Nullable="false" />
+          <Property Name="DocumentType" Type="nvarchar" MaxLength="300" />
+          <Property Name="EstablishmentCode" Type="nvarchar" MaxLength="5" Nullable="false" />
+          <Property Name="IssuePointCode" Type="nvarchar" MaxLength="5" Nullable="false" />
+          <Property Name="Sequential" Type="nvarchar" MaxLength="9" Nullable="false" />
+          <Property Name="DocumentNumber" Type="nvarchar" MaxLength="21" Nullable="false" />
+          <Property Name="AuthorizationNumber" Type="varchar" MaxLength="50" />
+          <Property Name="AuthorizationDate" Type="varchar" MaxLength="50" />
+          <Property Name="ContributorName" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="Base0" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Base12" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="IVA" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Total" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="RetentionId" Type="bigint" />
+          <Property Name="RetentionContributorRUC" Type="varchar" MaxLength="100" />
+          <Property Name="RetentionContributor" Type="varchar" MaxLength="300" />
+          <Property Name="RetentionIssuedOn" Type="varchar" MaxLength="10" />
+          <Property Name="RetentionNumber" Type="varchar" MaxLength="17" />
+          <Property Name="RetentionAuthorizationNumber" Type="varchar" MaxLength="49" />
+          <Property Name="RetentionReferenceType" Type="varchar" MaxLength="2" />
+          <Property Name="RetentionReferenceNumber" Type="varchar" MaxLength="15" />
+          <Property Name="RetentionReferenceDate" Type="varchar" MaxLength="10" />
+          <Property Name="Retention104TaxCode" Type="varchar" MaxLength="5" />
+          <Property Name="RetentionTaxBase" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionTaxRate" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionTaxValue" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionVatCode" Type="varchar" MaxLength="5" />
+          <Property Name="RetentionVatBase" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionVatRate" Type="int" />
+          <Property Name="RetentionVatValue" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionISDCode" Type="varchar" MaxLength="5" />
+          <Property Name="RetentionISDBase" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionISDRate" Type="int" />
+          <Property Name="RetentionISDValue" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionReason" Type="varchar" MaxLength="300" />
+          <Property Name="RetentionDescription" Type="varchar" MaxLength="300" />
+          <Property Name="RetentionNotes" Type="varchar" MaxLength="300" />
+          <Property Name="RetentionSupplierRUC" Type="varchar" MaxLength="13" />
+          <Property Name="RetentionSupplier" Type="varchar" MaxLength="300" />
+          <Property Name="RetentionDate" Type="date" />
+        </EntityType>
+        <EntityContainer Name="EcuafactExpressModelStoreContainer">
+          <EntitySet Name="PurchaseReport" EntityType="Self.PurchaseReport" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [PurchaseReport].[Id] AS [Id], 
+    [PurchaseReport].[IssuerId] AS [IssuerId], 
+    [PurchaseReport].[IssuedOn] AS [IssuedOn], 
+    [PurchaseReport].[DocumentTypeCode] AS [DocumentTypeCode], 
+    [PurchaseReport].[DocumentType] AS [DocumentType], 
+    [PurchaseReport].[EstablishmentCode] AS [EstablishmentCode], 
+    [PurchaseReport].[IssuePointCode] AS [IssuePointCode], 
+    [PurchaseReport].[Sequential] AS [Sequential], 
+    [PurchaseReport].[DocumentNumber] AS [DocumentNumber], 
+    [PurchaseReport].[AuthorizationNumber] AS [AuthorizationNumber], 
+    [PurchaseReport].[AuthorizationDate] AS [AuthorizationDate], 
+    [PurchaseReport].[ContributorRUC] AS [ContributorRUC], 
+    [PurchaseReport].[ContributorName] AS [ContributorName], 
+    [PurchaseReport].[Base0] AS [Base0], 
+    [PurchaseReport].[Base12] AS [Base12], 
+    [PurchaseReport].[IVA] AS [IVA], 
+    [PurchaseReport].[Total] AS [Total], 
+    [PurchaseReport].[Description] AS [Description], 
+    [PurchaseReport].[Notes] AS [Notes], 
+    [PurchaseReport].[RetentionId] AS [RetentionId], 
+    [PurchaseReport].[RetentionContributorRUC] AS [RetentionContributorRUC], 
+    [PurchaseReport].[RetentionContributor] AS [RetentionContributor], 
+    [PurchaseReport].[RetentionIssuedOn] AS [RetentionIssuedOn], 
+    [PurchaseReport].[RetentionNumber] AS [RetentionNumber], 
+    [PurchaseReport].[RetentionAuthorizationNumber] AS [RetentionAuthorizationNumber], 
+    [PurchaseReport].[RetentionReferenceType] AS [RetentionReferenceType], 
+    [PurchaseReport].[RetentionReferenceNumber] AS [RetentionReferenceNumber], 
+    [PurchaseReport].[RetentionReferenceDate] AS [RetentionReferenceDate], 
+    [PurchaseReport].[Retention104TaxCode] AS [Retention104TaxCode], 
+    [PurchaseReport].[RetentionTaxBase] AS [RetentionTaxBase], 
+    [PurchaseReport].[RetentionTaxRate] AS [RetentionTaxRate], 
+    [PurchaseReport].[RetentionTaxValue] AS [RetentionTaxValue], 
+    [PurchaseReport].[RetentionVatCode] AS [RetentionVatCode], 
+    [PurchaseReport].[RetentionVatBase] AS [RetentionVatBase], 
+    [PurchaseReport].[RetentionVatRate] AS [RetentionVatRate], 
+    [PurchaseReport].[RetentionVatValue] AS [RetentionVatValue], 
+    [PurchaseReport].[RetentionISDCode] AS [RetentionISDCode], 
+    [PurchaseReport].[RetentionISDBase] AS [RetentionISDBase], 
+    [PurchaseReport].[RetentionISDRate] AS [RetentionISDRate], 
+    [PurchaseReport].[RetentionISDValue] AS [RetentionISDValue], 
+    [PurchaseReport].[RetentionReason] AS [RetentionReason], 
+    [PurchaseReport].[RetentionDescription] AS [RetentionDescription], 
+    [PurchaseReport].[RetentionNotes] AS [RetentionNotes], 
+    [PurchaseReport].[RetentionRUC] AS [RetentionRUC], 
+    [PurchaseReport].[RetentionBusinessName] AS [RetentionBusinessName], 
+    [PurchaseReport].[RetentionDate] AS [RetentionDate], 
+    [PurchaseReport].[RUC] AS [RUC], 
+    [PurchaseReport].[BussinesName] AS [BussinesName]
+    FROM [dbo].[PurchaseReport] AS [PurchaseReport]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="SalesReport" EntityType="Self.SalesReport" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [SalesReport].[Id] AS [Id], 
+    [SalesReport].[IssuerId] AS [IssuerId], 
+    [SalesReport].[RUC] AS [RUC], 
+    [SalesReport].[IssuedOn] AS [IssuedOn], 
+    [SalesReport].[DocumentTypeCode] AS [DocumentTypeCode], 
+    [SalesReport].[DocumentType] AS [DocumentType], 
+    [SalesReport].[EstablishmentCode] AS [EstablishmentCode], 
+    [SalesReport].[IssuePointCode] AS [IssuePointCode], 
+    [SalesReport].[Sequential] AS [Sequential], 
+    [SalesReport].[DocumentNumber] AS [DocumentNumber], 
+    [SalesReport].[AuthorizationNumber] AS [AuthorizationNumber], 
+    [SalesReport].[AuthorizationDate] AS [AuthorizationDate], 
+    [SalesReport].[ContributorName] AS [ContributorName], 
+    [SalesReport].[Base0] AS [Base0], 
+    [SalesReport].[Base12] AS [Base12], 
+    [SalesReport].[IVA] AS [IVA], 
+    [SalesReport].[Total] AS [Total], 
+    [SalesReport].[Description] AS [Description], 
+    [SalesReport].[Notes] AS [Notes], 
+    [SalesReport].[RetentionId] AS [RetentionId], 
+    [SalesReport].[RetentionContributorRUC] AS [RetentionContributorRUC], 
+    [SalesReport].[RetentionContributor] AS [RetentionContributor], 
+    [SalesReport].[RetentionIssuedOn] AS [RetentionIssuedOn], 
+    [SalesReport].[RetentionNumber] AS [RetentionNumber], 
+    [SalesReport].[RetentionAuthorizationNumber] AS [RetentionAuthorizationNumber], 
+    [SalesReport].[RetentionReferenceType] AS [RetentionReferenceType], 
+    [SalesReport].[RetentionReferenceNumber] AS [RetentionReferenceNumber], 
+    [SalesReport].[RetentionReferenceDate] AS [RetentionReferenceDate], 
+    [SalesReport].[Retention104TaxCode] AS [Retention104TaxCode], 
+    [SalesReport].[RetentionTaxBase] AS [RetentionTaxBase], 
+    [SalesReport].[RetentionTaxRate] AS [RetentionTaxRate], 
+    [SalesReport].[RetentionTaxValue] AS [RetentionTaxValue], 
+    [SalesReport].[RetentionVatCode] AS [RetentionVatCode], 
+    [SalesReport].[RetentionVatBase] AS [RetentionVatBase], 
+    [SalesReport].[RetentionVatRate] AS [RetentionVatRate], 
+    [SalesReport].[RetentionVatValue] AS [RetentionVatValue], 
+    [SalesReport].[RetentionISDCode] AS [RetentionISDCode], 
+    [SalesReport].[RetentionISDBase] AS [RetentionISDBase], 
+    [SalesReport].[RetentionISDRate] AS [RetentionISDRate], 
+    [SalesReport].[RetentionISDValue] AS [RetentionISDValue], 
+    [SalesReport].[RetentionReason] AS [RetentionReason], 
+    [SalesReport].[RetentionDescription] AS [RetentionDescription], 
+    [SalesReport].[RetentionNotes] AS [RetentionNotes], 
+    [SalesReport].[RetentionSupplierRUC] AS [RetentionSupplierRUC], 
+    [SalesReport].[RetentionSupplier] AS [RetentionSupplier], 
+    [SalesReport].[RetentionDate] AS [RetentionDate]
+    FROM [dbo].[SalesReport] AS [SalesReport]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EcuafactExpressModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="PurchaseReport">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="DocumentType" />
+            <PropertyRef Name="ContributorName" />
+            <PropertyRef Name="Base0" />
+            <PropertyRef Name="Base12" />
+            <PropertyRef Name="Total" />
+            <PropertyRef Name="Description" />
+            <PropertyRef Name="Notes" />
+            <PropertyRef Name="RetentionDescription" />
+            <PropertyRef Name="RetentionNotes" />
+            <PropertyRef Name="BussinesName" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="IssuerId" Type="Int64" />
+          <Property Name="IssuedOn" Type="DateTime" Precision="0" />
+          <Property Name="DocumentTypeCode" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="DocumentType" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EstablishmentCode" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="IssuePointCode" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="Sequential" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
+          <Property Name="DocumentNumber" Type="String" MaxLength="17" FixedLength="false" Unicode="false" />
+          <Property Name="AuthorizationNumber" Type="String" MaxLength="49" FixedLength="false" Unicode="false" />
+          <Property Name="AuthorizationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContributorRUC" Type="String" MaxLength="13" FixedLength="false" Unicode="false" />
+          <Property Name="ContributorName" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Base0" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="Base12" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="IVA" Type="Decimal" Precision="21" Scale="8" />
+          <Property Name="Total" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Notes" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RetentionId" Type="Int64" />
+          <Property Name="RetentionContributorRUC" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="RetentionContributor" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="RetentionIssuedOn" Type="DateTime" Precision="0" />
+          <Property Name="RetentionNumber" Type="String" MaxLength="21" FixedLength="false" Unicode="true" />
+          <Property Name="RetentionAuthorizationNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionReferenceType" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionReferenceNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionReferenceDate" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Retention104TaxCode" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="RetentionTaxBase" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionTaxRate" Type="Decimal" Precision="5" Scale="0" />
+          <Property Name="RetentionTaxValue" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionVatCode" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="RetentionVatBase" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionVatRate" Type="Decimal" Precision="5" Scale="0" />
+          <Property Name="RetentionVatValue" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionISDCode" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="RetentionISDBase" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionISDRate" Type="Decimal" Precision="5" Scale="0" />
+          <Property Name="RetentionISDValue" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="RetentionReason" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="RetentionDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="RetentionNotes" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="RetentionRUC" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="RetentionBusinessName" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="RetentionDate" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="RUC" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="BussinesName" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SalesReport">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="IssuerId" />
+            <PropertyRef Name="RUC" />
+            <PropertyRef Name="DocumentTypeCode" />
+            <PropertyRef Name="EstablishmentCode" />
+            <PropertyRef Name="IssuePointCode" />
+            <PropertyRef Name="Sequential" />
+            <PropertyRef Name="DocumentNumber" />
+            <PropertyRef Name="ContributorName" />
+            <PropertyRef Name="Base0" />
+            <PropertyRef Name="Base12" />
+            <PropertyRef Name="IVA" />
+            <PropertyRef Name="Total" />
+            <PropertyRef Name="Description" />
+            <PropertyRef Name="Notes" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="IssuerId" Type="Int64" Nullable="false" />
+          <Property Name="RUC" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IssuedOn" Type="DateTime" Precision="0" />
+          <Property Name="DocumentTypeCode" Type="String" MaxLength="2" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DocumentType" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="EstablishmentCode" Type="String" MaxLength="5" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IssuePointCode" Type="String" MaxLength="5" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Sequential" Type="String" MaxLength="9" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DocumentNumber" Type="String" MaxLength="21" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="AuthorizationNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AuthorizationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContributorName" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Base0" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Base12" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="IVA" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Total" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Notes" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="RetentionId" Type="Int64" />
+          <Property Name="RetentionContributorRUC" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionContributor" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionIssuedOn" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionNumber" Type="String" MaxLength="17" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionAuthorizationNumber" Type="String" MaxLength="49" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionReferenceType" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionReferenceNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionReferenceDate" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Retention104TaxCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionTaxBase" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionTaxRate" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionTaxValue" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionVatCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionVatBase" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionVatRate" Type="Int32" />
+          <Property Name="RetentionVatValue" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionISDCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionISDBase" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionISDRate" Type="Int32" />
+          <Property Name="RetentionISDValue" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="RetentionReason" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionNotes" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionSupplierRUC" Type="String" MaxLength="13" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionSupplier" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="RetentionDate" Type="DateTime" Precision="0" />
+        </EntityType>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="PurchaseReport" EntityType="Self.PurchaseReport" />
+          <EntitySet Name="SalesReport" EntityType="Self.SalesReport" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EcuafactExpressModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="PurchaseReport">
+            <EntityTypeMapping TypeName="EcuafactExpressModel.PurchaseReport">
+              <MappingFragment StoreEntitySet="PurchaseReport">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="IssuerId" ColumnName="IssuerId" />
+                <ScalarProperty Name="IssuedOn" ColumnName="IssuedOn" />
+                <ScalarProperty Name="DocumentTypeCode" ColumnName="DocumentTypeCode" />
+                <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
+                <ScalarProperty Name="EstablishmentCode" ColumnName="EstablishmentCode" />
+                <ScalarProperty Name="IssuePointCode" ColumnName="IssuePointCode" />
+                <ScalarProperty Name="Sequential" ColumnName="Sequential" />
+                <ScalarProperty Name="DocumentNumber" ColumnName="DocumentNumber" />
+                <ScalarProperty Name="AuthorizationNumber" ColumnName="AuthorizationNumber" />
+                <ScalarProperty Name="AuthorizationDate" ColumnName="AuthorizationDate" />
+                <ScalarProperty Name="ContributorRUC" ColumnName="ContributorRUC" />
+                <ScalarProperty Name="ContributorName" ColumnName="ContributorName" />
+                <ScalarProperty Name="Base0" ColumnName="Base0" />
+                <ScalarProperty Name="Base12" ColumnName="Base12" />
+                <ScalarProperty Name="IVA" ColumnName="IVA" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="RetentionId" ColumnName="RetentionId" />
+                <ScalarProperty Name="RetentionContributorRUC" ColumnName="RetentionContributorRUC" />
+                <ScalarProperty Name="RetentionContributor" ColumnName="RetentionContributor" />
+                <ScalarProperty Name="RetentionIssuedOn" ColumnName="RetentionIssuedOn" />
+                <ScalarProperty Name="RetentionNumber" ColumnName="RetentionNumber" />
+                <ScalarProperty Name="RetentionAuthorizationNumber" ColumnName="RetentionAuthorizationNumber" />
+                <ScalarProperty Name="RetentionReferenceType" ColumnName="RetentionReferenceType" />
+                <ScalarProperty Name="RetentionReferenceNumber" ColumnName="RetentionReferenceNumber" />
+                <ScalarProperty Name="RetentionReferenceDate" ColumnName="RetentionReferenceDate" />
+                <ScalarProperty Name="Retention104TaxCode" ColumnName="Retention104TaxCode" />
+                <ScalarProperty Name="RetentionTaxBase" ColumnName="RetentionTaxBase" />
+                <ScalarProperty Name="RetentionTaxRate" ColumnName="RetentionTaxRate" />
+                <ScalarProperty Name="RetentionTaxValue" ColumnName="RetentionTaxValue" />
+                <ScalarProperty Name="RetentionVatCode" ColumnName="RetentionVatCode" />
+                <ScalarProperty Name="RetentionVatBase" ColumnName="RetentionVatBase" />
+                <ScalarProperty Name="RetentionVatRate" ColumnName="RetentionVatRate" />
+                <ScalarProperty Name="RetentionVatValue" ColumnName="RetentionVatValue" />
+                <ScalarProperty Name="RetentionISDCode" ColumnName="RetentionISDCode" />
+                <ScalarProperty Name="RetentionISDBase" ColumnName="RetentionISDBase" />
+                <ScalarProperty Name="RetentionISDRate" ColumnName="RetentionISDRate" />
+                <ScalarProperty Name="RetentionISDValue" ColumnName="RetentionISDValue" />
+                <ScalarProperty Name="RetentionReason" ColumnName="RetentionReason" />
+                <ScalarProperty Name="RetentionDescription" ColumnName="RetentionDescription" />
+                <ScalarProperty Name="RetentionNotes" ColumnName="RetentionNotes" />
+                <ScalarProperty Name="RetentionRUC" ColumnName="RetentionRUC" />
+                <ScalarProperty Name="RetentionBusinessName" ColumnName="RetentionBusinessName" />
+                <ScalarProperty Name="RetentionDate" ColumnName="RetentionDate" />
+                <ScalarProperty Name="RUC" ColumnName="RUC" />
+                <ScalarProperty Name="BussinesName" ColumnName="BussinesName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SalesReport">
+            <EntityTypeMapping TypeName="EcuafactExpressModel.SalesReport">
+              <MappingFragment StoreEntitySet="SalesReport">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="IssuerId" ColumnName="IssuerId" />
+                <ScalarProperty Name="RUC" ColumnName="RUC" />
+                <ScalarProperty Name="IssuedOn" ColumnName="IssuedOn" />
+                <ScalarProperty Name="DocumentTypeCode" ColumnName="DocumentTypeCode" />
+                <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
+                <ScalarProperty Name="EstablishmentCode" ColumnName="EstablishmentCode" />
+                <ScalarProperty Name="IssuePointCode" ColumnName="IssuePointCode" />
+                <ScalarProperty Name="Sequential" ColumnName="Sequential" />
+                <ScalarProperty Name="DocumentNumber" ColumnName="DocumentNumber" />
+                <ScalarProperty Name="AuthorizationNumber" ColumnName="AuthorizationNumber" />
+                <ScalarProperty Name="AuthorizationDate" ColumnName="AuthorizationDate" />
+                <ScalarProperty Name="ContributorName" ColumnName="ContributorName" />
+                <ScalarProperty Name="Base0" ColumnName="Base0" />
+                <ScalarProperty Name="Base12" ColumnName="Base12" />
+                <ScalarProperty Name="IVA" ColumnName="IVA" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="RetentionId" ColumnName="RetentionId" />
+                <ScalarProperty Name="RetentionContributorRUC" ColumnName="RetentionContributorRUC" />
+                <ScalarProperty Name="RetentionContributor" ColumnName="RetentionContributor" />
+                <ScalarProperty Name="RetentionIssuedOn" ColumnName="RetentionIssuedOn" />
+                <ScalarProperty Name="RetentionNumber" ColumnName="RetentionNumber" />
+                <ScalarProperty Name="RetentionAuthorizationNumber" ColumnName="RetentionAuthorizationNumber" />
+                <ScalarProperty Name="RetentionReferenceType" ColumnName="RetentionReferenceType" />
+                <ScalarProperty Name="RetentionReferenceNumber" ColumnName="RetentionReferenceNumber" />
+                <ScalarProperty Name="RetentionReferenceDate" ColumnName="RetentionReferenceDate" />
+                <ScalarProperty Name="Retention104TaxCode" ColumnName="Retention104TaxCode" />
+                <ScalarProperty Name="RetentionTaxBase" ColumnName="RetentionTaxBase" />
+                <ScalarProperty Name="RetentionTaxRate" ColumnName="RetentionTaxRate" />
+                <ScalarProperty Name="RetentionTaxValue" ColumnName="RetentionTaxValue" />
+                <ScalarProperty Name="RetentionVatCode" ColumnName="RetentionVatCode" />
+                <ScalarProperty Name="RetentionVatBase" ColumnName="RetentionVatBase" />
+                <ScalarProperty Name="RetentionVatRate" ColumnName="RetentionVatRate" />
+                <ScalarProperty Name="RetentionVatValue" ColumnName="RetentionVatValue" />
+                <ScalarProperty Name="RetentionISDCode" ColumnName="RetentionISDCode" />
+                <ScalarProperty Name="RetentionISDBase" ColumnName="RetentionISDBase" />
+                <ScalarProperty Name="RetentionISDRate" ColumnName="RetentionISDRate" />
+                <ScalarProperty Name="RetentionISDValue" ColumnName="RetentionISDValue" />
+                <ScalarProperty Name="RetentionReason" ColumnName="RetentionReason" />
+                <ScalarProperty Name="RetentionDescription" ColumnName="RetentionDescription" />
+                <ScalarProperty Name="RetentionNotes" ColumnName="RetentionNotes" />
+                <ScalarProperty Name="RetentionSupplierRUC" ColumnName="RetentionSupplierRUC" />
+                <ScalarProperty Name="RetentionSupplier" ColumnName="RetentionSupplier" />
+                <ScalarProperty Name="RetentionDate" ColumnName="RetentionDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

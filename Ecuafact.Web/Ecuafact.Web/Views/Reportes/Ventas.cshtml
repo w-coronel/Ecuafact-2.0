@@ -1,0 +1,151 @@
+﻿@using System.Web.Mvc.Html
+@using Ecuafact.Web.Domain.Entities;
+
+@model ObjectQueryModel<SalesReportResponse>
+@{
+    var columns = new SalesReportModel();
+}
+
+
+<div class="row">
+    @if (Model != null && Model.Data != null && Model.Data.Entity != null)
+    {
+        <a href="@Url.Action("Excel", "Reportes")/Ventas" class="btn btn-success btn-pill btn-elevate"><i class="fas fa-file-excel "></i> Descargar Excel</a>
+    }
+</div>
+<br />
+<table class="table table-striped table-responsive table-bordered table-hover table-checkable order-column responsive dt-responsive" style="width:100%" id="_compras">
+    <thead>
+        <tr>
+            <th></th>
+            <th>@Html.DisplayNameFor(model => columns.DocumentType)</th>
+            <th>@Html.DisplayNameFor(model => columns.DocumentNumber)</th>
+            <th>@Html.DisplayNameFor(model => columns.IssuedOn)</th>
+            <th>@Html.DisplayNameFor(model => columns.ContributorRUC)</th>
+            <th>@Html.DisplayNameFor(model => columns.ContributorName)</th>
+            <th>@Html.DisplayNameFor(model => columns.Base0)</th>
+            <th>@Html.DisplayNameFor(model => columns.Base12)</th>
+            <th>@Html.DisplayNameFor(model => columns.IVA)</th>
+            <th>@Html.DisplayNameFor(model => columns.Total)</th>
+            <th>@Html.DisplayNameFor(model => columns.AuthorizationNumber)</th>
+            <th>@Html.DisplayNameFor(model => columns.AuthorizationDate)</th>
+
+            <th>@Html.DisplayNameFor(model => columns.RetentionIssuedOn)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionNumber)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionAuthorizationNumber)</th>
+
+            <th>@Html.DisplayNameFor(model => columns.Retention104TaxCode)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionTaxBase)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionTaxRate)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionTaxValue)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionVatCode)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionVatBase)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionVatRate)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionVatValue)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionISDCode)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionISDBase)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionISDRate)</th>
+            <th>@Html.DisplayNameFor(model => columns.RetentionISDValue)</th>
+
+            <th>@Html.DisplayNameFor(model => columns.Description)</th>
+            <th>@Html.DisplayNameFor(model => columns.Notes)</th>
+            <th>@Html.DisplayNameFor(model => columns.Payment)</th>
+
+        </tr>
+    </thead>
+
+</table>
+  
+ 
+@{
+    var listaDocumentos = new List<SalesReportModel>();
+
+    if (Model.Data != null && Model.Data.Entity != null && Model.Data.Entity.Count > 0)
+    {
+        listaDocumentos = Model.Data.Entity;
+    }
+
+    var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    var lstdoc = serializer.Serialize(listaDocumentos);
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var documentos = @Html.Raw(lstdoc);
+
+        for (var i = 0; i < documentos.length; i++) {
+            var doc = documentos[i];
+            var dt = doc.IssuedOn.replace("/Date(", "");
+            dt = dt.replace(")/", "");
+            dt = parseFloat(dt);
+            dt = new Date(dt);
+            doc.IssuedOn = dt;
+
+            if (doc.RetentionIssuedOn) {
+                var dtr = doc.RetentionIssuedOn.replace("/Date(", "");
+                dtr = dtr.replace(")/", "");
+                dtr = parseFloat(dtr);
+                dtr = new Date(dtr)
+                doc.RetentionIssuedOn = dtr;
+            }
+        }
+
+        var table = $('#_compras').DataTable(
+            {
+                "destroy": "true",
+                "data": documentos,
+                "order": [[1, "desc"]],
+                "language": {
+                    "url": "@Url.Content("~/scripts/dt_spanish.json")"
+                },
+                "columns": [
+                    {
+                        "className": '',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": '<i class="fa fa-file-o"></i>'
+                    },
+                    { data: 'DocumentType' },
+                    { data: 'DocumentNumber' },
+                    { data: 'IssuedOn', render: formatDateColumn },
+                    { data: 'ContributorRUC' },
+                    { data: 'ContributorName' },
+                    { data: 'Base0', render: formatMoneyColumn },
+                    { data: 'Base12', render: formatMoneyColumn },
+                    { data: 'IVA', render: formatMoneyColumn },
+                    { data: 'Total', render: formatMoneyColumn },
+                    { data: 'AuthorizationNumber' },
+                    { data: 'AuthorizationDate' },
+
+                    { data: 'RetentionIssuedOn', render: formatDateColumn },
+                    { data: 'RetentionNumber' },
+                    { data: 'RetentionAuthorizationNumber' },
+
+                    { data: 'Retention104TaxCode' },
+                    { data: 'RetentionTaxBase', render: formatMoneyColumn },
+                    { data: 'RetentionTaxRate', render: formatPercentageColumn },
+                    { data: 'RetentionTaxValue', render: formatMoneyColumn },
+
+                    { data: 'RetentionVatCode' },
+                    { data: 'RetentionVatBase', render: formatMoneyColumn },
+                    { data: 'RetentionVatRate', render: formatPercentageColumn },
+                    { data: 'RetentionVatValue', render: formatMoneyColumn },
+
+                    { data: 'RetentionISDCode' },
+                    { data: 'RetentionISDBase', render: formatMoneyColumn },
+                    { data: 'RetentionISDRate', render: formatPercentageColumn },
+                    { data: 'RetentionISDValue', render: formatMoneyColumn },
+
+                    { data: 'Description' },
+                    { data: 'Notes' },
+                    { data: 'Payment' }
+
+                ]
+            });
+
+    });
+</script>
+ 

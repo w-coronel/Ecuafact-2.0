@@ -1,0 +1,30 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@{ 
+    SessionInfo.NotificationView = "1";
+}
+<div class="modal" id="_notification">
+    <div class="modal-dialog modal-lg modal-notify modal-info show" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="flaticon2-information"></i> &nbsp;&nbsp; Información Importante</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row text-center">                  
+                    <div class="col-12" >
+                        @if (SessionInfo.Catalog.MessageNotification.NotificationType == NotificationType.Image)
+                        {<img src="@SessionInfo.Catalog.MessageNotification.UrlImage" class="img-fluid" />}
+                    </div>                   
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+<script>
+
+    $.ready = function () {
+        $("#_notification").modal("show");
+    }
+</script>

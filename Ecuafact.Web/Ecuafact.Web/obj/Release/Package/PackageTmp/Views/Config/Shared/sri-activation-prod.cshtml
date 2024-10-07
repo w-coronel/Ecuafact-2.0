@@ -1,0 +1,100 @@
+﻿@{
+    var nombre = "Invitado";
+
+    if (SessionInfo.Issuer != null)
+    {
+        nombre = SessionInfo.Issuer.BussinesName;
+    }
+    else if (SessionInfo.UserInfo != null)
+    {
+        nombre = SessionInfo.UserInfo.Name;
+    }
+
+}
+
+<div class="kt-heading kt-heading--md">Activaci&oacute;n ambiente de producci&oacute;n SRI</div>
+
+<div class="kt-form__section kt-form__section--first">
+    <div class="kt-form__body">
+
+        <div class="alert alert-primary alert-close alert-dismissible fade show" role="alert">
+            <div class="alert-icon"><i class="flaticon2-accept"></i></div>
+
+            <div class="alert-text">
+                <h4 class="alert-heading">
+                    Ambiente Producci&oacute;n SRI
+                </h4>
+                Solicitud de autorizaci&oacute;n de la Emisi&oacute;n de Documentos Electr&oacute;nicos en Ambiente de Producci&oacute;n.
+            </div>
+        </div>
+
+        <h5>Requisitos para realizar el trámite en línea:</h5>
+        <p class="text-left m-1">
+            <i class="fa fa-check text-success"></i>&nbsp; N&uacute;mero de identificaci&oacute;n del contribuyente. <br />
+            <i class="fa fa-check text-success"></i>&nbsp; Clave de acceso a servicios en l&iacute;nea. <br />
+        </p>
+        <br />
+        <h5>Procedimiento para realizar el tr&aacute;mite en l&iacute;nea:</h5>
+
+        <div class="kt-timeline-v2">
+            <div class="kt-timeline-v2__items  kt-padding-top-25 kt-padding-bottom-30">
+                <div class="kt-timeline-v2__item">
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-danger"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text  kt-padding-top-5">
+                        Ingresar a <a title="Ingrese aqui al SRI en l&iacute;nea" data-toggle="tooltip" data-placement="bottom" href="https://srienlinea.sri.gob.ec/sri-en-linea/inicio/NAT" target="_blank"><b> SRI en l&iacute;nea</b></a>  
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-dark"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text  kt-padding-top-5">
+                        Escoger la opci&oacute;n facturaci&oacute;n electr&oacute;nica.
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-success"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                        Escoger la opci&oacute;n producci&oacute;n
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-brand"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                        Escoger la opci&oacute;n autorizaci&oacute;n
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-warning"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                        Ingresar n&uacute;mero de identificaci&oacute;n y clave
+                    </div>
+                </div>
+                <div class="kt-timeline-v2__item">
+
+                    <div class="kt-timeline-v2__item-cricle">
+                        <i class="fa fa-genderless kt-font-info"></i>
+                    </div>
+                    <div class="kt-timeline-v2__item-text kt-padding-top-5">
+                        Completar la solicitud de autorizaciones
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

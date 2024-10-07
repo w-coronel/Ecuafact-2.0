@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="d7d61db55a5440ebb75c52fe69e15492" Name="Diagram1" ZoomLevel="66">
+        <EntityTypeShape EntityType="EcuafactAPPModel.AdditionalInfo" Width="1.5" PointX="4" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EcuafactAPPModel.DocumentInfoDetail" Width="1.5" PointX="3.5" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EcuafactAPPModel.SupplierDocument" Width="1.5" PointX="0.875" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EcuafactAPPModel.DetailTaxInfo" Width="1.5" PointX="6.5" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EcuafactAPPModel.DocumentInfo" Width="1.5" PointX="6.125" PointY="7.375" IsExpanded="true" />
+        <AssociationConnector Association="EcuafactAPPModel.FK_campoAdicional_documento" ManuallyRouted="false" />
+        <AssociationConnector Association="EcuafactAPPModel.FK_detalle_documento" ManuallyRouted="false" />
+        <AssociationConnector Association="EcuafactAPPModel.FK_impuesto_detalle" ManuallyRouted="false" />
+        <AssociationConnector Association="EcuafactAPPModel.FK_infoFactura_documento" ManuallyRouted="false" />
+        <AssociationConnector Association="EcuafactAPPModel.FK_infoFactura_infoTributaria" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

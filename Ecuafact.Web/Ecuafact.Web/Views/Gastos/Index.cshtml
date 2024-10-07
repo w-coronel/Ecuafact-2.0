@@ -1,0 +1,159 @@
+﻿ @using Ecuafact.Web.MiddleCore.NexusApiServices
+@model DeductiblesReportResponse
+@{
+    ViewBag.Title = "Mis Gastos";
+    this.PageOptions(options =>
+    {
+        options.DataTables = true;
+        options.Charts = true;
+        options.CounterUp = true;
+        options.SparkLines = true;
+    });
+
+    var qYear = Convert.ToInt32(Request.QueryString["year"] ?? SessionInfo.CurrentYear.ToString());
+    var qMonth = Convert.ToInt32(Request.QueryString["month"] ?? "0");
+
+    var colors = new[]
+    {
+        "rgb(103, 183, 220)","rgb(253, 212, 0)","rgb(132, 183, 97)","rgb(204, 71, 72)","rgb(205, 130, 173)","rgb(47, 64, 116)","rgb(68, 142, 77)","rgb(255, 128, 0)","rgb(191, 255, 0)" 
+    };
+
+    var icons = new[]
+    {
+        "fa fa-ban","fa fa-home","fa fa-book","fas fa-concierge-bell","fa fa-male","fa fa-medkit","fa fa-university","fa fa-money","","",""
+    };
+
+    if (Model == null || Model.deductibles == null || Model.deductibles.Count == 0)
+    {
+        Model.deductibles = new List<DeductibleSum>();
+        Model.deductibles.AddRange(new[] {
+            new DeductibleSum{ id="0", name="", maxValue=0, total="0.00" }
+        });
+    }
+}
+    <div class="row">
+        <div class="col-6">
+            <form id="deductiblesForm">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-xs-6">
+
+                        <div class="input-group ">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text bold" for="year" style="margin-bottom: 0;">AÑO: </label>
+                            </div>
+                            <select class="custom-select  form-control" id="yearSelect" name="year">
+                                @for (int year = SessionInfo.CurrentYear; year > 2014; year--)
+                                {
+                                    var selected = (year == qYear) ? "selected" : "";
+                                    <option value="@year" @selected>@year</option>
+                                }
+                            </select>
+
+                        </div>
+                    </div>
+
+                    @*<input type="hidden"  id="monthSelect" name="month" value="0" />*@
+                    @*<div class=" col-lg-6  col-md-6  col-xs-6">
+
+                        <div class="input-group mb-3 ">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text bold" for="monthSelect" style="margin-bottom: 0;">MES: </label>
+                            </div>
+                            <select class="custom-select form-control">
+                                <option value="0" selected>TODOS</option>
+                                @for (int month = 1; month <= 12; month++)
+                                {
+                                    var selected = (month == qMonth) ? "selected" : "";
+                                    <option value="@month" @selected>@SessionInfo.Culture.Spanish.DateTimeFormat.MonthNames[month - 1].ToUpper()</option>
+                                }
+                            </select>
+
+                        </div>
+                    </div>*@
+                </div>
+            </form>
+        </div>
+    </div>
+<div class="row clear-fix clearfix"></div>
+
+<div class="row">
+
+    <div class="col-lg-5 col-xs-12 col-sm-12 col-xl-6">
+
+        <!--begin::Portlet-->
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <span class="kt-portlet__head-icon kt-hidden">
+                        <i class="la la-gear"></i>
+                    </span>
+                    <h3 class="kt-portlet__head-title">
+                        <span class="caption-subject bold uppercase font-dark">Gastos Deducibles</span>
+                        <span class="caption-helper">Impuesto a la Renta</span>
+                    </h3>
+                </div>
+            </div>
+            <div class="kt-portlet__body">
+
+
+                <div class="col-12" id="divReporteDeducibles">
+                    @{ Html.RenderPartial("_ReporteDeducibles", Model); }
+                </div>
+
+            </div>
+        </div>
+
+        <!--end::Portlet-->
+
+    </div>
+
+    <div class="col-lg-7 col-xs-12 col-sm-12 col-xl-6">
+
+        <!--begin::Portlet-->
+        <div class="kt-portlet">
+
+            <div class="kt-portlet__head">
+
+                <div class="kt-portlet__head-label">
+
+                    <span class="kt-portlet__head-icon kt-hidden">
+                        <i class="la la-gear"></i>
+                    </span>
+                    <h3 class="kt-portlet__head-title">
+                        <span class="caption-subject bold uppercase font-dark">Detalle </span>
+                        <span class="caption-helper">Gastos Deducibles</span>
+                    </h3>
+
+                </div>
+
+            </div>
+
+            <div class="kt-portlet__body">
+
+                <div class="scroller" data-always-visible="1" data-rail-visible="1" data-rail-color="red" data-handle-color="green">
+                    @{ Html.RenderPartial("_DetalleGastos", Model); }
+                </div>
+
+            </div>
+
+        </div>
+
+        <!--end::Portlet-->
+
+    </div>
+
+</div>
+
+
+@section scripts{
+    <script src="@Url.Content("~/scripts/gastos.js")"></script>
+
+    <script>
+        Gastos.deductibleReport.element = "divReporteDeducibles";
+        Gastos.deductibleReport.url = '@Url.Action("GetReporteDeduciblesAsync", "Gastos")';
+        Gastos.deductibleReport.year = '@DateTime.Now.Year';
+        Gastos.deductibleReport.month = '0';
+
+        Gastos.init();
+    </script>
+}

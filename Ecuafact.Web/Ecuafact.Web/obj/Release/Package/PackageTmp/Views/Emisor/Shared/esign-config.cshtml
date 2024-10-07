@@ -1,0 +1,203 @@
+﻿@model Ecuafact.Web.Domain.Entities.IssuerDto
+@{ 
+    var collapse1 = string.IsNullOrEmpty(Model.Certificate) ? "show" : "";
+    var collapse2 = string.IsNullOrEmpty(Model.Certificate) ? "" : "show";
+    var msg = "Estimado Cliente: Tu solicitud de firma electrónica no podrá ser realizada, debido a que existe un pago de suscripción que aún no hemos validado";
+}
+<div class="kt-heading kt-heading--md">Firma Electr&oacute;nica</div>
+
+@Html.Hidden("BuyCertificate", 0, new { @class = "certificate", @id = "buyCertificate" })
+
+<div class="kt-form__section kt-form__section--first">
+
+    <div class="kt-wizard-v2__form">
+        <div class="kt-section__body">
+
+            <div class="accordion accordion-light  accordion-toggle-arrow" id="accordionExample6">
+                <div class="card">
+                    <div class="card-header" id="headingOne6">
+                        <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne6" aria-expanded="false" aria-controls="collapseOne6">
+                            <i class="flaticon-pie-chart-1"></i> @(Model.viewRequests ? "Solicitudes de Firma Electrónica" : "Solicitar Nueva Firma") 
+                        </div>
+                    </div>
+                    <div id="collapseOne6" class="collapse @collapse1" aria-labelledby="headingOne6" data-parent="#accordionExample6" style="">
+                        <div class="card-body">                           
+                            @if (Model.viewRequests)
+                            {
+                                <div class=" row col-12 align-items-center">
+
+                                    <img class="col-6" src="~/images/digital_signature_certificate.jpg" width="370" style="margin-bottom: 15px">
+
+                                    <div class="col-6 " style="margin-bottom: 15px">
+                                        <p class="text-center">
+                                            Le ayudamos a obtener su Firma Electrónica de forma
+                                            rápida y segura.
+                                            Su tiempo es valioso y por eso lo respetamos, nuestro
+                                            proceso esta Diseñado para liberarlo de toda carga.
+                                        </p>
+                                        <div class="col-12" style="text-align:center">
+                                            <button  data-options='{"option":"3","valor":"@Url.Action("index","FirmaElectronica")"}' class="btn btn-primary solicitud-esign">
+                                                <i class="la la-gears"> </i> &nbsp;Ver mis solicitudes
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="~/images/firma_digital.jpg" width="300" style="margin-bottom: 15px">
+                                <div class="col-12">
+                                    <p class="text-justify">
+                                        Le ayudamos a obtener su Firma Electrónica de forma rápida y segura.
+                                        Nuestro proceso esta pensado para liberarlo de toda carga.
+                                    </p>
+                                </div>
+                                <div class="col-12 text-center">
+
+                                    @if (SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.ValidatingPayment)
+                                    {
+                                        <button data-options='{"option":"1","valor":"@msg"}' class="btn btn-primary solicitud-esign" type="button">
+                                            SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </button>
+                                    }
+                                    else if (SessionInfo.UserSession?.Subscription?.Status == Ecuafact.Web.Domain.Entities.SubscriptionStatusEnum.Inactiva || SessionInfo.UserSession?.Subscription?.Day <= 30)
+                                    {
+                                        msg = "Estimado Cliente: Antes de solicitar tu firma electrónica, por favor renovar tu suscripción, te recordamos que el pago de la  renovación de suscripción incluye GRATIS la emisión de la firma electrónica.";
+                                        <button class="btn btn-primary solicitud-esign" data-options='{"option":"2","valor":"@msg"}'>
+                                            SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </button>                                      
+                                    }
+                                    else if (SessionInfo.UserSession?.Subscription == null)
+                                    {
+                                        msg = "Estimado Cliente: Antes de solicitar tu firma electrónica, debes seleccionar un PLAN de suscripción, Incluye GRATIS la emisión de la firma electrónica";
+                                        <button class="btn btn-primary solicitud-esign" data-options='{"option":"2","valor":"@msg"}'>
+                                            SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button"  class="btn btn-primary btn-md btn-pill btn-elevate btn-elevate-air btn-tall btn-wide kt-font-bold kt-font-transform-u firma-button">
+                                            SOLICITUD <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </button>
+                                    }
+
+
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="headingTwo6">
+                        <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseTwo6" aria-expanded="false" aria-controls="collapseTwo6">
+                            <i class="flaticon2-notification"></i> Configurar Certificado
+                        </div>
+                    </div>
+                    <div id="collapseTwo6" class="collapse @collapse2" aria-labelledby="headingTwo6" data-parent="#accordionExample6" style="">
+                        <div class="card-body">
+                            <div class="row">
+
+                                <div class="form-group col-12 dropzone-input">
+                                    <label class="control-label">Firma Electr&oacute;nica: </label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="fa fa-credit-card"></i>
+                                            </span>
+                                        </span>
+                                        @Html.TextBoxFor(model => model.Certificate, new { @class = "form-control placeholder-no-fix readonly", @placeholder = "Firma Electronica", @readonly = "readonly", @autocomplete = "new-cert" })
+                                    </div>
+                                    <input type="file" name="CertificateRaw" class="dropzone dropzone-input needsclick dz-clickable"
+                                           accept="application/x-pkcs12" capture id="CertificateFile" value="" />
+                                </div>
+
+                                <div class="form-group col-12">
+                                    <label class="control-label visible-ie8 visible-ie9">Clave de la firma:</label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="fa fa-user-secret"></i>
+                                            </span>
+                                        </span>
+
+                                        @Html.PasswordFor(model => model.CertificatePass, new { @class = "form-control placeholder-no-fix", @placeholder = "Clave del Certificado", @autocomplete = "new-password", @id = "CertificatePass" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12">
+                                    <label class="control-label">Emitida a Nombre de: </label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="fa fa-user"></i>
+                                            </span>
+                                        </span>
+                                        @Html.TextBoxFor(model => model.CertificateIssuedTo, new { @class = "form-control placeholder-no-fix readonly", @placeholder = "Nombre Firma Electronica", @readonly = "readonly", @id = "CertificateIssuedTo" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-6">
+                                    <label class="control-label">Identidad del Certificado: </label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="fa fa-credit-card"></i>
+                                            </span>
+                                        </span>
+                                        @Html.TextBoxFor(model => model.CertificateRUC, new { @class = "form-control placeholder-no-fix readonly", @placeholder = "ID del Propietario", @readonly = "readonly", @id = "CertificateRUC" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-6">
+                                    <label class="control-label">Fecha de Expiraci&oacute;n: </label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="fa fa-calendar-alt"></i>
+                                            </span>
+                                        </span>
+                                        @Html.TextBoxFor(model => model.CertificateExpirationDate, Model.CertificateExpirationDate?.ToString("yyyy-MM-dd HH:mm:ss"), new { @class = "form-control placeholder-no-fix readonly", @placeholder = "Fecha de Caducidad", @readonly = "readonly", @id = "CertificateExpirationDate" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12">
+                                    <label class="control-label">Informaci&oacute;n Adicional: </label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="fa fa-ticket-alt"></i>
+                                            </span>
+                                        </span>
+                                        @Html.TextBoxFor(model => model.CertificateSubject, new { @class = "form-control placeholder-no-fix readonly", @placeholder = "Información Adicional", @readonly = "readonly", @id = "CertificateSubject" })
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group col-12">
+                                    <label class="control-label">Este certificado esta aprobado para estos usos: </label>
+                                    <div class="kt-input-icon kt-input-icon--right">
+                                        <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                            <span>
+                                                <i class="fa fa-acquisitions-incorporated"></i>
+                                            </span>
+                                        </span>
+                                        @Html.TextBoxFor(model => model.CertificateUsage, new { @class = "form-control placeholder-no-fix readonly", @placeholder = "Uso Certificado Digital", @readonly = "readonly", @id = "CertificateUsage" })
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+        </div>
+    </div>
+</div>
+
+

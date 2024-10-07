@@ -1,0 +1,160 @@
+﻿@model Ecuafact.Web.Domain.Entities.API.RegisterModel
+@{
+    Layout = "~/Views/Shared/_Auth.cshtml";
+    ViewBag.Title = "Registro";
+    ViewBag.ShowAds = false;
+    ViewBag.ContentWidth = "700px";
+
+    var boolSelectList = new List<SelectListItem>();
+    boolSelectList.Add(new SelectListItem { Value = "true", Text = "Sí" });
+    boolSelectList.Add(new SelectListItem { Value = "false", Text = "No" });
+
+    var avatar = Url.Content("~/logos/no_logo.jpg");
+
+    var token_registro = Session["TOKEN_REGISTRO"] = $"{Guid.NewGuid()}";
+}
+@section styles{
+
+    <!-- Start of HubSpot Embed Code -->
+    <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/8279501.js"></script>
+    <!-- End of HubSpot Embed Code -->
+
+}
+
+<div class="kt-login__form">
+
+    <form class="register-form" action="@Url.Action("Registro","Auth" )" method="post" autocomplete="off">
+        @Html.HiddenFor(model => model.UTMS.source)
+        @Html.HiddenFor(model => model.UTMS.medium)
+        @Html.HiddenFor(model => model.UTMS.campaign)
+
+        <div class="kt-portlet__head" style="margin-bottom:20px;">
+            <center>
+                <h1>CREAR CUENTA</h1>
+                <p>Por favor ingrese los datos de su cuenta:</p>
+            </center>
+        </div>
+
+
+        <div class="kt-portlet__body">
+
+            <div class="kt-section kt-section--first">
+
+                <div class="kt-section__body">
+
+                    <div class="form-group">
+                        <div class="kt-input-icon kt-input-icon--right">
+                            <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                <span>
+                                    <i class="fa fa-credit-card" id="user_icon"></i>
+                                </span>
+                            </span>
+                            @Html.TextBoxFor(model => model.User, new { @class = "form-control form-control-pill placeholder-no-fix register-user", @type = "number", @autocomplete = "new-user", @placeholder = "RUC o Cédula", @maxlength = "13", @id = "register_user", @required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="kt-input-icon kt-input-icon--right">
+                            <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                <span>
+                                    <i class="fa fa-font"></i>
+                                </span>
+                            </span>
+                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control form-control-pill  placeholder-no-fix", @autocomplete = "fullname", @placeholder = "Nombre Completo", @id = "register_name", @required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="kt-input-icon kt-input-icon--right">
+                            <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                <span>
+                                    <i class="fa fa-envelope"></i>
+                                </span>
+                            </span>
+                            @Html.TextBoxFor(model => model.Email, new { @type = "email", @class = "form-control form-control-pill  placeholder-no-fix", @autocomplete = "new-email", @placeholder = "Correo Electrónico", @id = "register_email", @required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="kt-input-icon kt-input-icon--right">
+                            <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                <span>
+                                    <i class="fa fa-lock"></i>
+                                </span>
+                            </span>
+                            @Html.PasswordFor(model => model.Password, new { @type = "password", @class = "form-control form-control-pill  placeholder-no-fix", @autocomplete = "new-password", @placeholder = "Password", @id = "register_password", @required = "required" })
+                        </div>
+                    </div>
+
+                    @*<div class="form-group">
+                        <div class="kt-input-icon kt-input-icon--right">
+                            <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                <span>
+                                    <i class="fa fa-users"></i>
+                                </span>
+                            </span>
+                            @Html.TextBoxFor(model => model.Dependents, new { @type = "number", @class = "form-control form-control-pill  placeholder-no-fix", @autocomplete = "new-depend", @placeholder = "# Integrantes del Hogar", @id = "dependents" })
+                        </div>
+                    </div>*@
+
+                    <div class="kt-separator kt-separator--space-md kt-separator--border-dashed"></div>
+
+                    <div class="form-group text-center">
+
+                        <label>
+
+                            <input type="checkbox" name="checkme" id="checkme" /> Acepto los
+
+                            <a href="#" onclick="window.open('http://nube.ecuafact.com/apidev/Disclaimer.pdf', '_blank', 'fullscreen=yes'); return false;">
+                                T&eacute;rminos y condiciones del Servicio
+                            </a>
+
+                        </label>
+
+                        <div id="register_tnc_error">
+
+                            <small style="color:red">
+                                @Html.ValidationMessageFor(model => model.User, "")
+                                @Html.ValidationMessageFor(model => model.Name, "")
+                                @Html.ValidationMessageFor(model => model.Email, "")
+                                @Html.ValidationMessageFor(model => model.Password, "")
+                                @Html.ValidationMessageFor(model => model.Dependents, "")
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+        <div class="kt-portlet__foot">
+            <center>
+
+                <button type="submit" id="logmein" class="btn btn-dark btn-pill btn-elevate  ">
+
+                    <i class="flaticon2-check-mark"></i> Registrarse
+
+                </button>
+            </center>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            Login.Authorization = "@DateTime.UtcNow.ToFileTimeUtc()";
+            Login.Servet = '@Url.Action(token_registro as string)';
+            Login.InitRegister();
+        });
+    </script>
+}

@@ -1,0 +1,61 @@
+﻿
+
+<div class="modal" id="notificModal">
+    <div class="modal-dialog modal-lg modal-notify modal-info show" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="flaticon2-information"></i> &nbsp;&nbsp; Información Importante</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-10">
+                        <br />
+                        <h5 class="kt-portlet__head-title">
+                            Estimado(a) Cliente: @SessionInfo.Issuer.BussinesName.
+                        </h5>
+                        <br />
+                        <p class="kt-portlet__head-label text-justify">
+                            El Modulo de Emisión de documentos electrónicos no se encuentra disponible
+                            en este momento por que ha caducado la suscripción anual.<br /><br />
+
+                            Por favor renovar.
+                        </p>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-12 align-content-center">
+                        <button type="button" class="btn btn-primary mr-1  btn-pagar">Renovar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">&nbsp;&nbsp; Salir &nbsp; &nbsp;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    var Urlpago = "#";
+    if (SessionInfo.Issuer != null)
+    {
+        var subc = SessionInfo.UserSession.Subscription;
+        if (subc != null)
+        {
+            Urlpago = Url.Content("~/Payment/TypeLicence");
+        }
+    }
+}
+<script>
+
+    $.ready = function () {
+        $("#notificModal").modal("show");
+
+        $(".btn-pagar").on("click", function () {
+            location.assign("@Url.Content(Urlpago)");
+        });
+    }
+</script>

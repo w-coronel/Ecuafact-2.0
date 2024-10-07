@@ -1,0 +1,387 @@
+﻿@using Ecuafact.Web.MiddleCore.ApplicationServices;
+@using Ecuafact.Web.Domain.Entities
+@model CreditNoteRequestModel
+@{
+    ViewBag.Title = "Crear Nota de Crédito";
+    ViewBag.ParentTitle = "Emitidos";
+
+    this.PageOptions(options =>
+    {
+        options.DatePicker = true;
+        options.Select2 = true;
+        options.DataTables = true;
+
+    });
+
+    var emisorActual = SessionInfo.Issuer;
+}
+
+@section styles{
+    <link href="~/content/invoice.css" rel="stylesheet" />
+
+}
+
+<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+    <div class="kt-portlet">
+        <div class="kt-portlet__body kt-portlet__body--fit">
+            <div class="kt-invoice-1">
+                <div class="kt-invoice__head" style="background-image: url(@Url.Content("~/assets/media/bg/300.jpg"));">
+                    <div class="kt-invoice__container">
+                        <div class="kt-invoice__brand">
+                            <h1 class="kt-invoice__title">Nota de Crédito</h1>
+                        </div>
+                        <div class="kt-invoice__items">
+                            <div class="kt-invoice__item col-12 col-md-7">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="row align-items-center" style="padding-bottom:5px">
+                                            <span class="kt-invoice__subtitle col-10">Cliente:</span>
+                                            <div class="col-2">
+                                                <button id="actualizarClienteButton" data-toggle="modal" data-target="#modal-cliente" type="button" onclick="editarComprador();" class="btn btn-pill btn-outline-dark btn-brand kt-hide" title="Actualizar información Contribuyente">
+                                                    <i class="la la-pencil"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div id="bodyContrib" name="bodyContrib" class="col-12">
+                                            <div class="row">
+                                                <select style="width:100%;" class="js-customerSelector col-12" id="inputClienteId"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-2"></div>
+                            <div class="kt-invoice__item col-md-3 col-12">
+                                <div class="row justify-content-end">
+                                    <div class="col-md-12 col-6 col-sm-4">
+                                        <span class="kt-invoice__subtitle">Fecha Emisión:</span>
+                                        <div class="kt-input-icon kt-input-icon--right">
+                                            <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                                                <span>
+                                                    <i class="fa fa-calendar-alt"></i>
+                                                </span>
+                                            </span>
+                                            <input name="fecha_documento" id="fecha_documento" type="text" class="form-control input-readonly bg-white"
+                                                    style="width:100%;border:none none solid none; text-align:right;" placeholder="Fecha" value="@DateTime.Now.ToString("dd/MM/yyyy")"
+                                                    aria-describedby="addon-fecha_documento" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 text-white" style="display:none" id="headDocument" name="headDocument">
+                                <div class="row">
+                                    <div class="col-md-12 normalform">
+                                        <div class="col-md-12">
+                                            @*<div class="col-md-12">*@
+                                            <h5> Documento Sustento </h5>
+                                            <select style="width:100%;" class="js-documentSelector" id="inputDocumentId">
+                                                <option></option>
+                                            </select>
+                                            <hr />
+
+                                            @*</div>*@
+
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-6" id="detailDocument" name="detailDocument">
+                                                        <table style="width:100%;">
+                                                            <tr>
+                                                                <td style="vertical-align:middle; width:50%; text-align:right;">Tipo de Comprobante: &nbsp;</td>
+                                                                <td style="text-align:right;padding-bottom:5px">
+                                                                    @Html.DropDownListFor(model => model.ReferenceDocumentCode,
+                                                                        new SelectList(SessionInfo.Catalog.DocumentTypes, "SriCode", "Name", Model.ReferenceDocumentCode),
+                                                                        new
+                                                                             {
+                                                                            @id = "ref_tipo_comprobante",
+                                                                            @class = "form-control m-b",
+                                                                            @style = "width:100%;",
+                                                                            @required = ""
+                                                                        })
+
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="vertical-align:middle; width:50%; text-align:right;">Numero de Comprobante: &nbsp;</td>
+                                                                <td style="text-align:right">
+                                                                    @Html.EditorFor(model => model.ReferenceDocumentNumber,
+                                                                        new
+                                                                        {
+                                                                            htmlAttributes = new
+                                                                            {
+                                                                                @id = "ref_numero_comprobante",
+                                                                                @class = "form-control",
+                                                                                @placeholder = "Numero de Comprobante",
+                                                                                @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                                @required = "",
+                                                                                @maxlength = "17",
+                                                                                @onchange = "docNumberChanged()"
+                                                                            }
+                                                                        })
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <table style="width:100%;">
+                                                            <tr>
+                                                                <td style="vertical-align:middle;  width:50%; text-align:right;">Fecha del Documento: &nbsp;</td>
+                                                                <td style="text-align:right;padding-bottom:5px">
+                                                                    @Html.EditorFor(model => model.ReferenceDocumentDate,
+                                                                                    new
+                                                                                         {
+                                                                                        htmlAttributes = new
+                                                                                        {
+                                                                                            @id = "ref_fecha_documento",
+                                                                                            @class = "form-control input-readonly",
+                                                                                            @placeholder = "Fecha del Documento",
+                                                                                            @style = "border:none none solid none;background-color:white; text-align:right;",
+                                                                                            @required = "",
+                                                                                            @readonly = ""
+                                                                                        }
+                                                                                    })
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="vertical-align:middle; width:50%; text-align:right;">Numero Autorizacion: &nbsp;</td>
+                                                                <td style="text-align:right">
+                                                                    @Html.EditorFor(model => model.ReferenceDocumentAuth,
+                                                                        new
+                                                                        {
+                                                                            htmlAttributes = new
+                                                                            {
+                                                                                @type = "number",
+                                                                                @id = "ref_autorizacion_comprobante",
+                                                                                @class = "form-control",
+                                                                                @placeholder = "Numero de Autorizacion",
+                                                                                @style = "width:100%;border:none none solid none; text-align:right;",
+                                                                                @maxlength = 49,
+                                                                                @required = "",
+                                                                                @onchange = "refautorizacionChanged()"
+                                                                            }
+                                                                        })
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <hr />
+                @* Detalle de los productos *@
+                <div class="row" name="productosPage">
+                    @{
+                        Html.RenderPartial("Shared/_productosPartial", Model, ViewData);
+                    }
+                </div>
+
+                <div class="kt-invoice__container">
+                    <div class="row">
+                        <div class="  col-12 col-md-7 col-lg-8">
+                            @{
+                                Html.RenderPartial("Shared/_infoAdicionalPartial", Model);
+                            }
+                        </div>
+
+                        <div class="col-12 col-md-5 col-lg-4 kt-invoice__total align-content-center align-items-center justify-content-center align-self-center">
+                            @*Total de la NC*@
+
+                            @{
+                                Html.RenderPartial("Shared/_totalPartial", Model);
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section toolbar{
+    <div class="btn-group">
+        <button type="button" class="btn btn-brand guardar-button">
+            <i class="la la-check"></i>
+            <span class="kt-hidden-mobile">Guardar</span>
+        </button>
+        <button type="button" class="btn btn-brand dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-58px, 38px, 0px);">
+            <ul class="kt-nav">
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link guardar-button" id="btnGuardar">
+                        <i class="kt-nav__link-icon flaticon2-shield"></i>
+                        <span class="kt-nav__link-text">Guardar borrador</span>
+                    </a>
+                </li>
+                <li class="kt-nav__item">
+                    <a href="#" class="kt-nav__link" id="btnEnviar">
+                        <i class="kt-nav__link-icon flaticon2-paper-plane"></i>
+                        <span class="kt-nav__link-text">Enviar al SRI</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+
+ 
+@{ // SCRIPTS C#
+
+    var formasPago = SessionInfo.Catalog.PaymentMethod.Select(o => new { id = o.SriCode, text = o.Name, data = o });
+    var ivaList = SessionInfo.Catalog.IVARates.Select(o => new { id = o.SriCode, text = o.Name, rate = o.RateValue, data = o });
+}
+
+@section scripts{
+
+    @Scripts.Render("~/js/creditnotes")
+
+    <script>
+
+    // FUNCIONES BASICAS
+    // Configuramos las variables que requieren informacion del Servidor
+    creditNoteSaveAction = '@Url.Action("SaveCreditNoteAsync", "NotaCredito")';
+    printCreditNoteAction = '@Url.Action("PrintDocument", "NotaCredito")';
+    fecha_mes_atras = '@System.DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy")';
+    fecha_actual = '@System.DateTime.Now.ToString("dd/MM/yyyy")';
+
+    emisor =  @Html.Raw(Json.Encode(emisorActual));
+    ivaList = @Html.Raw(Json.Encode(ivaList));
+
+    documentoNotaCredito = @Html.Raw(Json.Encode(new CreditNoteModel()));
+    productData = @Html.Raw(Json.Encode(new ProductDto()));
+
+    var adicionalItemCount = 0;
+
+    var getFormasDePago = function () { return @Html.Raw(Json.Encode(formasPago)); };
+
+    getSearchProductUrl = function(){
+        return  '@Url.Action("SearchProductAsync", "Producto")';
+    }
+    getCreateProductUrl = function(){
+        return "@Url.Action("Nuevo", "Producto")";
+    }
+
+    redirectAction = function(action, data){
+        var urlAction = '@Url.Action("", "NotaCredito")';
+        urlAction +='/'+action+'/'+data;
+        window.location.href = urlAction;
+    };
+
+    getUrlAuthorization = function (docTypeCode, docNumber) {
+        return '@Url.Action("GetDocumentAuthSync", "NotaCredito")' + '?docType=' + docTypeCode + '&docNumber=' + docNumber;
+    }
+
+    getUrlContribAction = function (id) {
+
+        if (typeof id !== 'undefined' && id>0) {
+            return "@Url.Action("Editar", "Contribuyentes")/"+id;
+        }
+        else {
+            return "@Url.Action("Nuevo", "Contribuyentes")";
+        }
+
+    }
+
+    getUrlSearchDocument = function (id) {
+            return "@Url.Action("SearchContribDocumentsAsync", "NotaCredito")/"+id;
+    }
+
+    getUrlGetDocument = function (id) {
+            return "@Url.Action("GetDocumentById", "NotaCredito")/"+id;
+    }
+
+    getUrlSearchContrib = function () { return '@Url.Action("SearchContribAsync", "Contribuyentes")'; }
+
+    getLoginFormUrl = function () {
+        return '@Url.Action("Index", "Auth")?ReturnURL=' + location.href;
+    }
+
+    getProductByCode = function ($code) {
+        var $url = '@Url.Action("GetProductByCodeAsync", "Producto")';
+        return $url + '/?search=' + $code;
+    };
+
+    // Configuracion de Controles
+    var fechaDocObj = $('#fecha_documento');
+
+
+    fechaDocObj.datepicker({
+        startDate: fecha_mes_atras,
+        endDate: fecha_actual,
+        keyboardNavigation: false,
+        format: "dd/mm/yyyy",
+        language: "es",
+        orientation: "bottom left",
+        forceParse: false,
+        autoclose: true
+    });
+
+    fechaDocObj.val(fecha_actual);
+
+
+
+    var fechaRefObj = $("#ref_fecha_documento");
+
+    fechaRefObj.datepicker({
+        endDate: fecha_actual,
+        keyboardNavigation: false,
+        format: "dd/mm/yyyy",
+        language: "es",
+        orientation: "bottom left",
+        forceParse: false,
+        autoclose: true
+    });
+
+    fechaRefObj.val(fecha_actual);
+
+    $(".guardar-button").click(function () {
+        if (!$(".guardar-button").hasClass("disabled")) {
+            guardarNotaCredito();
+        }
+    });
+
+    $("#btnEnviar").click(function () {
+        if (!$("#btnEnviar").hasClass("disabled")) {
+            guardarNotaCredito(1);
+        }
+    });
+
+    $("#btnCancelar").click(function () {
+        if (!$("#btnCancelar").hasClass("disabled")) {
+            history.go(-1);
+        }
+    });
+
+    //CONECTAMOS LA LISTA DEL CLIENTE
+    startCustomerSelector();
+
+    //CONECTAMOS LA LISTA DOCUMENTOS
+    startDocumentSelector(null);
+
+    // CREAMOS LA PRIMERA LINEA DE ITEM
+    //agregarItem();
+
+    // ADICIONALES PRINCIPALES
+    if (typeof agregarAditional != 'undefined') {
+        agregarAditional("Direccion", "");
+        agregarAditional("Telefono", "");
+        agregarAditional("Email", "");
+    }
+
+
+    $(".js-documentSelector").on("change", function () { documentListChanged(); });
+
+    window.scrollTo(0, 0);
+
+    initialized = true; // control inicialization;
+
+    $(".js-customerSelector a").focus();
+    </script>
+}

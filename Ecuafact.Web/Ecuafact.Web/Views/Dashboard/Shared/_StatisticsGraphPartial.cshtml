@@ -1,0 +1,93 @@
+﻿@using Ecuafact.Web.Controllers;
+@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web.MiddleCore.ApplicationServices;
+@model Ecuafact.Web.Domain.Entities.DashboardInfo
+@{
+    var activeUserTab = "";
+    var modelIsNull = (Model == null);
+}
+<!-- BEGIN STATISTICAL GRAPHS -->
+<div class="portlet light bordered">
+    <div class="portlet-title tabbable-line">
+        <div class="caption">
+            <i class="fa fa-bar-chart-o font-red"></i>
+            <span class="caption-subject font-red bold uppercase">Estad&iacute;sticas</span><br />
+            <span class="caption-helper">Graficos Estad&iacute;sticos de sus documentos emitidos y recibidos</span>
+        </div>
+        <ul class="nav nav-tabs">
+            @if (!modelIsNull)
+            {
+                <li class="active">
+                    <a href="#portlet_ecommerce_tab_1" id="emitidos_tab" data-toggle="tab"> EMITIDOS </a>
+                </li>
+            }
+            else
+            {
+                activeUserTab = "active";
+            }
+
+            <li class="@activeUserTab">
+                <a href="#portlet_ecommerce_tab_2" id="recibidos_tab" data-toggle="tab"> RECIBIDOS </a>
+            </li>
+        </ul>
+    </div>
+    <div class="portlet-body">
+        <div class="tab-content">
+            @if (Model != null)
+            {
+                <div class="tab-pane active" id="portlet_ecommerce_tab_1">
+                    <div id="statistics_1" class="chart" style="padding: 0px; position: relative;"></div>
+
+                    <div class="well margin-top-20">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                                <span class="label label-success"> Facturas: </span>
+                                <h3 id="statistics_1factura">@Model.TotalSales.ToString("c", new System.Globalization.CultureInfo("en-US"))</h3>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                                <span class="label label-info"> Notas de Credito: </span>
+                                <h3 id="statistics_1notacredito">@Model.TotalCredits.ToString("c", new System.Globalization.CultureInfo("en-US"))</h3>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                                <span class="label label-danger"> Retenciones: </span>
+                                <h3 id="statistics_1retencion">@Model.TotalRetentions.ToString("c", new System.Globalization.CultureInfo("en-US"))</h3>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                                <span class="label label-warning"> Guias de Remisi&oacute;n: </span>
+                                <h3 id="statistics_1guia">@Convert.ToInt64(Model.TotalReferrals) UNDS</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="tab-pane @activeUserTab" id="portlet_ecommerce_tab_2">
+                <div id="statistics_2" class="chart" style="padding: 0px; position: relative;"></div>
+
+
+                <div class="well margin-top-20">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                            <span class="label label-success"> Facturas: </span>
+                            <h3 id="statistics_2factura">$ 0.00</h3>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                            <span class="label label-info"> Notas de Credito: </span>
+                            <h3 id="statistics_2notacredito">$ 0.00</h3>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                            <span class="label label-danger"> Retenciones: </span>
+                            <h3 id="statistics_2retencion">$ 0.00</h3>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat text-center">
+                            <span class="label label-warning"> Guias de Remisi&oacute;n: </span>
+                            <h3 id="statistics_2guia">0 UNDS</h3>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- END STATISTICAL GRAPHS -->

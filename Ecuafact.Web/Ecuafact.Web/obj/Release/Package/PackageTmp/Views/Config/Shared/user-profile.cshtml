@@ -1,0 +1,68 @@
+﻿@model Ecuafact.Web.Domain.Entities.API.ClientModel
+ @{ 
+     Model.Phone = Model.Phone ?? "099999999";
+ }
+<div class="kt-heading kt-heading--md">Datos personales</div>
+<div class="kt-form__section kt-form__section--first">
+    <div class="kt-wizard-v2__form">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="kt-avatar kt-avatar--outline kt-avatar--circle-" id="kt_user_edit_avatar">
+                        <div class="kt-avatar__holder" style="background-image: url('@Url.Content(Server.GetLogoFile(Model.Username))')"></div>
+                        <label class="kt-avatar__upload" data-toggle="kt-tooltip" title="" data-original-title="Cambiar Imagen">
+                            <i class="fa fa-pen"></i>
+                            <input type="file" id="profile-photo" name="Avatar" accept="image/jpeg, image/png, image/pjpeg, image/bmp">
+                        </label>
+                        <span class="kt-avatar__cancel" data-toggle="kt-tooltip" title="" data-original-title="Cancelar">
+                            <i class="fa fa-times"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="row">
+
+                    <div class="form-group">
+                        <label>Identificaci&oacute;n</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-black-back-closed-envelope-shape"></i></span></div>
+                            @Html.TextBoxFor(model => model.Username, new { @class = "form-control readonly", @disabled = "", @readonly = "", @placeholder = "Correo Electrónico", @style = "maxwidth:150px", @autocomplete = Guid.NewGuid().ToString() })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon-profile-1"></i></span></div>
+                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @placeholder = "Tu Nombre" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Telefono</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-phone"></i></span></div>
+                            @Html.TextBoxFor(model => model.Phone, new { @type = "tel", @class = "form-control", @placeholder = "Telefono", @autocomplete = Guid.NewGuid().ToString() })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo Electr&oacute;nico</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text"><i class="flaticon2-black-back-closed-envelope-shape"></i></span></div>
+                            @Html.TextBoxFor(model => model.Email, new { @class = "form-control readonly", @disabled = "", @readonly = "", @placeholder = "Correo Electrónico", @style = "maxwidth:150px", @autocomplete = Guid.NewGuid().ToString() })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+         
+    </div>
+</div>

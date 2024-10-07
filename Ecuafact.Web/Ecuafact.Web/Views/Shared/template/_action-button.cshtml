@@ -1,0 +1,103 @@
+<!-- Action BUTTON -->
+@{
+    var permmission = SessionInfo.UserRole != Ecuafact.Web.Models.SecuritySessionRole.Cooperative;
+}
+<div class="btn-group">
+    <a href="javascript:;" class="btn btn-label-danger btn-pill btn-elevate btn-elevate-hover btn-sm btn-bold dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        <i class="flaticon2-plus-1"></i> Nuevo
+    </a>
+
+    <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(668px, 56px, 0px); top: 0px; left: 0px; will-change: transform;">
+
+        <ul class="kt-nav">
+
+            <li class="kt-nav__section kt-nav__section--first">
+                <span class="kt-nav__section-text">Documentos</span>
+            </li>
+
+            <li class="kt-nav__item">
+
+                <a href="~/Factura/Nuevo" class="kt-nav__link">
+                    <i class="kt-nav__link-icon flaticon2-file-1"></i>
+                    <span class="kt-nav__link-text">Factura</span>
+                </a>
+
+            </li>
+
+            <li class="kt-nav__item">
+
+                <a href="~/NotaCredito/Nuevo" class="kt-nav__link">
+                    <i class="kt-nav__link-icon flaticon2-layers-1"></i>
+                    <span class="kt-nav__link-text">Nota de Cr&eacute;dito</span>
+                </a>
+
+            </li>
+
+            <li class="kt-nav__item">
+
+                <a href="~/NotaDebito/Nuevo" class="kt-nav__link">
+                    <i class="kt-nav__link-icon flaticon2-layers-1"></i>
+                    <span class="kt-nav__link-text">Nota de D&eacute;bito</span>
+                </a>
+
+            </li>
+
+            <li class="kt-nav__item">
+
+                <a href="~/Retencion/Nuevo" class="kt-nav__link">
+                    <i class="kt-nav__link-icon flaticon-reply"></i>
+                    <span class="kt-nav__link-text">Comprobante de Retenci&oacute;n</span>
+                </a>
+
+            </li>
+
+            <li class="kt-nav__item">
+
+                <a href="~/GuiaRemision/Nuevo" class="kt-nav__link">
+                    <i class="kt-nav__link-icon flaticon2-delivery-truck"></i>
+                    <span class="kt-nav__link-text">Gu&iacutea de Remisi&oacute;n</span>
+                </a>
+
+            </li>
+
+            <li class="kt-nav__item">
+
+                <a href="~/Liquidacion/Nuevo" class="kt-nav__link">
+                    <i class="kt-nav__link-icon flaticon-list-2"></i>
+                    <span class="kt-nav__link-text">Liquidaci&oacute;n de Compras</span>
+                </a>
+
+            </li>
+            <li class="kt-nav__separator"></li>
+
+
+            <li class="kt-nav__item">
+
+                <a href="javascript:;" class="kt-nav__link" onclick="crearContribuyente()">
+                    <i class="kt-nav__link-icon flaticon2-user-1"></i>
+                    <span class="kt-nav__link-text">Clientes</span>
+                </a>
+
+            </li>
+
+            <li class="kt-nav__item">
+
+                <a href="javascript:;" class="kt-nav__link" onclick="crearProducto()">
+                    <i class="kt-nav__link-icon flaticon2-gift"></i>
+                    <span class="kt-nav__link-text">Producto</span>
+                </a>
+
+            </li>
+            <li class="kt-nav__separator"></li>
+            @if (permmission)
+            {
+                <li class="kt-nav__foot">
+                    <a class="btn btn-label-brand btn-bold btn-sm" href="~/Emisor/Configuracion"><i class="flaticon2-gear"></i> Configurar Emisi&oacute;n</a>
+                    <a class="btn btn-clean btn-bold btn-sm kt-hidden" href="#" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more...">Learn more</a>
+                </li>
+            }
+            </ul>
+
+    </div>
+</div>
+<!-- Action BUTTON -->

@@ -1,0 +1,81 @@
+﻿@using Ecuafact.Web.MiddleCore.NexusApiServices
+@model DeductibleLimitResponse
+@{ 
+    var total_mensual = 0D;
+    var total_anual = 0D;
+}
+<div class="kt-heading kt-heading--md">Presupuestos</div>
+
+<div class="kt-form__section kt-form__section--first">
+    <form method="post" action="@Url.Action("GuardarAsync","Presupuesto")" class="kt-wizard-v2__form budget-limits">
+
+        <table class="table table-responsive table-striped text-center" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Categoria</th>
+                    <th>Mensual</th>
+                    <th>Anual</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.limits != null)
+                {
+                    foreach (var item in Model.limits.Where(m => m.id != "-1" && m.id != "0"))
+                    {
+                        var total = item.maxValue * 12D;
+                        total_mensual = total_mensual + item.maxValue;
+                        total_anual = total_anual + total;
+                <tr>
+                    <td>
+                        @Html.Hidden("limits.index", item.id, new { @id = "limits_index_" + item.id.ToString() })
+                        @Html.Hidden("limits[" + item.id + "].id", item.id)
+                        <div class="kt-user-card-v2">
+                            <div class="kt-user-card-v2__pic">
+                                <img alt="photo" src="~/Images/deducibles/@string.Format("{0}.png", item.id)" class="img-thumbnail" style="border:0px; max-width: 25px; max-height:25px;">
+                            </div>
+                            <div class="kt-user-card-v2__details">
+                                <a class="kt-user-card-v2__name" href="#">@item.name</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        @Html.TextBox("limits[" + item.id + "].maxValue", item.maxValue.ToString("#.00"), new { @type = "number", @class = "text-center limits-value", @min="0.00" })
+                    </td>
+                    <td>
+                        @Html.Hidden("limits[" + item.id + "].total", total, new { @class = "invoice-subtotal limits-total" })
+                        <h5 class="text-right" data-field="limits[@(item.id)].total">@(total.ToString("#.00"))</h5>
+                    </td>
+                </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                
+                <tr>
+                    <th>
+                        <h5>Total</h5>
+                    </th>
+                    <th>
+                        @Html.Hidden("limits.total_mensual", total_mensual, new { @class = "invoice-subtotal" })
+                        <h5 class="text-center" data-field="limits.total_mensual">@(total_mensual.ToString("#.00"))</h5>
+                    </th>
+                    <th>
+                        @Html.Hidden("limits.total_anual", total_anual, new { @class = "invoice-subtotal" })
+                        <h5 class="text-right" data-field="limits.total_anual">@(total_anual.ToString("#.00"))</h5>
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="2">
+                    </th>
+                    <th>
+                        <div class="row">
+                            <button type="button" class="btn btn-dark btn-tall btn-pill btn-elevated save-budget" style= "padding-left:2rem;padding-right:2rem"><i class="flaticon2-check-mark"></i> Guardar</button>
+                        </div>
+
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+
+    </form>
+</div>

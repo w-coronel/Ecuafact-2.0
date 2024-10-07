@@ -1,0 +1,15 @@
+{
+  "RootDirectory": "D:\\Proyectos\\EcuaNexus\\ECUAFACT_2019\\Ecuafact.Web\\Ecuafact.Web\\VPOS",
+
+  "UrlVPOS": "https://vpayment.verifika.com/VPOS/MM/transactionStart20.do",
+  "IdCommerce": "6373",
+  "IdAcquirer": "8",
+  "TerminalCode": "000001",
+  "VectorInit": "49ED94EFA0792DDF",
+  //"<!--0B5BEF63094C1922-->": null,
+
+  "LlaveCifradoVPOSPublic": "ALIGNET.PRODUCCION.NOPHP.CRYPTO.PUBLIC.txt",
+  "LlaveFirmaVPOSPublic": "ALIGNET.PRODUCCION.NOPHP.SIGNATURE.PUBLIC.txt",
+  "LlaveCifradoComPrivate": "Produccion\\LLAVEPRIVADA_CIFRADO_RSA.txt",
+  "LlaveFirmaComPrivate": "Produccion\\LLAVEPRIVADA_FIRMA_RSA.txt"
+}

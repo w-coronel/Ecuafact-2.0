@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "Nuestros Productos";
+    
+}
+<!-- This snippet uses Font Awesome 5 Free as a dependency. You can download it at fontawesome.io! -->
+@section styles{
+    <link href="@Url.Content("~/assets/pages/css/pricing.min.css")" rel="stylesheet" type="text/css">
+    <link href="@Url.Content("~/Content/shopping.css")" rel="stylesheet" />
+}
+
+
+<div class="pricing-content-1" style="background:transparent!important;">
+    <div class="row">
+
+        <div class="col-md-offset-3 col-md-6">
+
+            <div class="price-column-container border-active">
+
+                <div class="price-table-head bg-red">
+                    <h2 class="no-margin">Firma Electr&oacute;nica</h2>
+                </div>
+                <a href="@Url.Action("Index", "FirmaElectronica")">
+                <img src="~/Images/digital_signature_certificate.jpg" style="width:100%" />
+                </a>
+                <div class="arrow-down border-top-green"></div>
+                <div class="price-table-pricing">
+
+                    <h3>
+                        <sup class="price-sign">$</sup>20
+                    </h3>
+                    <p>Con renovaci&oacute;n Anual</p>
+
+                    <div class="price-ribbon">Popular</div>
+                </div>
+
+
+                 <div class="price-table-content">
+                    <div class="row mobile-padding">
+                        <div class="col-xs-3 text-right mobile-padding">
+                            <i class="icon-user-follow"></i>
+                        </div>
+                        <div class="col-xs-9 text-left mobile-padding">Vigencia de 1 año</div>
+                    </div>
+                    <div class="row mobile-padding">
+                        <div class="col-xs-3 text-right mobile-padding">
+                            <i class="icon-drawer"></i>
+                        </div>
+                        <div class="col-xs-9 text-left mobile-padding">Encriptación de tus datos</div>
+                    </div>
+                    <div class="row mobile-padding">
+                        <div class="col-xs-3 text-right mobile-padding">
+                            <i class="icon-cloud-download"></i>
+                        </div>
+                        <div class="col-xs-9 text-left mobile-padding">Seguridad de la información</div>
+                    </div>
+                    <div class="row mobile-padding">
+                        <div class="col-xs-3 text-right mobile-padding">
+                            <i class="icon-refresh"></i>
+                        </div>
+                        <div class="col-xs-9 text-left mobile-padding">Respaldo de una empresa líder</div>
+                    </div>
+                </div>
+
+                <div class="arrow-down arrow-grey"></div>
+                <div class="price-table-footer">
+                    <a href="@Url.Action("Index", "FirmaElectronica")" class="btn red price-button product-certificate sbold uppercase">Comprar</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+ 

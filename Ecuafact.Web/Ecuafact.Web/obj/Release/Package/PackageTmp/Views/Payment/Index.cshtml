@@ -1,0 +1,86 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@model PurchaseOrderModel
+
+<form class="payment-form" method="post" action="@Url.Action("Checkout")">
+    <div class="column col-lg-6 col-lg-offset-3 " data-fade="1" data-fade-animation="in" style="opacity: 1;">
+        <img src="@Url.Content("~/images/firma_digital.jpg")" style="width:100%;margin-bottom: 15px">
+        <h4>EMISIÓN DE FIRMA</h4>
+        <div class="text-block" style="margin-bottom: 15px">
+            <p>
+                Le ayudamos a obtener su Firma Electrónica de forma
+                rápida y segura.
+                Su tiempo es valioso y por eso lo respetamos, nuestro
+                proceso esta pensado para liberarlo de toda carga. En 72
+                horas le entregamos.
+            </p>
+        </div>
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label"># Tramite: </label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(model => model.PurchaseOrderId, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">No. Identificacion: </label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(model => model.Identification, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Nombres: </label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Apellidos: </label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Monto: </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">$</span>
+                        @Html.TextBoxFor(model => model.Total, new { @class = "form-control", @type = "number", @step = "0.01", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-ok pull-right">
+            Obtener firma electrónica&nbsp; <i class="fa fa-chevron-right" aria-hidden="true"></i>
+        </button>
+    </div>
+</form>
+
+<div class="modal payment-modal">
+    <div class="modal-dialog" style="width: 800px!important;">
+
+        <div class="modal-dialog modal-notify modal-info" style="width: 800px!important;" role="document">
+
+            <div class="modal-content  center-align" style="width: 800px!important;">
+
+                <div class="modal-header d-flex justify-content-center bg-primary text-white">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Pasarela de Pagos</h4>
+                </div>
+                <div class="modal-body payment-content">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/scripts/payment.js"></script>
+    <script>
+        Payment.CheckoutUrl = '@Url.Action("Checkout")';
+        Payment.Configure();
+    </script>
+}

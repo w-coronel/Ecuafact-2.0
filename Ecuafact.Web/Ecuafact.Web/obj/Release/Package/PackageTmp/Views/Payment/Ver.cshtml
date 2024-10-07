@@ -1,0 +1,172 @@
+﻿@using Ecuafact.Web.Domain.Entities
+@using Ecuafact.Web
+@model  PurchaseSubscription
+@{
+    ViewBag.Title = "Suscripción Anual";
+    ViewBag.ParentTitle = "Nuestros Servicios";
+    this.PageOptions(p => p.DropZone = true);
+
+    var status = "PENDIENTE DE PAGO";
+    var icon = "flaticon2-warning";
+    var type = "warning";
+    var msg = "Esta solicitud se encuentra en estado de espera debido a que no se ha confirmado el pago de la orden.";
+
+    if (Model.PurchaseOrder?.Status == PurchaseOrderStatusEnum.Transfer)
+    {
+        status = "VALIDANDO PAGO";
+        icon = "flaticon2-warning";
+        type = "warning";
+        msg = " Esta solicitud se encuentra en estado de espera debido a que nos encontramos validando su pago realizado por transferencia.";
+    }
+
+    var url = Url.Content("~/Payment/CheckOut?PurchaseOrderId=" + Model.PurchaseOrderId.ToString());
+    if (Constants.TypePayment)
+    {
+        url = Url.Content("~/Payment/typePayment?PurchaseOrderId=" + Model.PurchaseOrderId.ToString());
+    }
+
+}
+
+
+
+<div class="row justify-content-center">
+    <div class="kt-portlet col-md-10">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h4 class="kt-portlet__head-title">
+                    <strong>@($"PLAN {Model.Subscription.LicenceType.Name}")</strong> SOLICITUD No. @Model.PurchaseOrderId.ToString("D10")
+                </h4>
+
+                <div class="kt-portlet__head-toolbar">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="kt-portlet__body">
+
+
+            <div class="row">
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Identificacion">RUC: </label>
+                        <span class="form-control">@Model.Subscription.RUC</span>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="RazonSocial">Razón Social</label>
+                        <span class="form-control">@Model.Subscription.Issuer.BussinesName</span>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Dirección</label>
+                        <span class="form-control">@Model.Subscription.Issuer.MainAddress</span>
+                    </div>
+                </div>
+            </div>
+
+          
+            <hr />
+
+            @if (Model.PurchaseOrder != null)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h4>FACTURADO A NOMBRE DE:</h4>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Número Identificación: </label>
+                            <span class="form-control">@Model.PurchaseOrder.Identification</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label>Razón Social: </label>
+                            <span class="form-control">@Model.PurchaseOrder.BusinessName</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9 dir-fisica">
+                        <div class="form-group">
+                            <label> Direcci&oacute;n de Facturaci&oacute;n: </label>
+                            <span class="form-control">@Model.PurchaseOrder.Address</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Correo Electr&oacute;nico: </label>
+                            <span class="form-control">@Model.PurchaseOrder.Email</span>
+                        </div>
+                    </div>
+
+                </div>
+            }
+            <hr />
+        </div>
+        <div class="kt-portlet__foot justify-content-center">
+
+            <div class="kt-portlet__foot-wrapper">
+                <div class="alert alert-icon-top alert-outline-@type col-md-8" role="alert" id="@type">
+                    <div class="alert-icon">  <i class="@icon"> </i>  </div>
+
+                    <div class="alert-text  ">
+                        <h4 class="alert-heading">  @status   </h4>
+                        <p> @Html.Raw(msg)</p>                       
+
+                    </div>
+
+
+                    <div class="alert-close">
+
+                    </div>
+                </div>
+              
+                @if (Model.Subscription.Status == SubscriptionStatusEnum.Inactiva) // Si el estado es guardado debe generar el pago
+                {
+                    if (Model?.InvoiceId == 0 && Model.PurchaseOrder?.Status == PurchaseOrderStatusEnum.Saved || Model.PurchaseOrder?.Status == PurchaseOrderStatusEnum.Rejected)
+                    {
+                        <button type="button" class="btn btn-success btn-lg btn-pagar ">
+                            <i class="fa fa-dollar-sign"></i> Pagar
+                        </button>
+                    }
+                }
+                @*else if (Model.Status >= ElectronicSignStatusEnum.Processed) // Si el estado es guardado debe generar el pago
+                    {
+                        <button type="button" class="btn btn-brand btn-lg btn-nuevo ">
+                            <i class="fa fa-folder-plus"></i> Nueva Solicitud
+                        </button>
+                    }*@
+
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(".btn-pagar").on("click", function () {
+            location.assign("@url")
+        });
+
+        $(".btn-nuevo").on("click", function () {
+            location.assign("@Url.Content("Nuevo")")
+        });
+
+        $(".alert").fadeIn();
+    </script>
+
+}
